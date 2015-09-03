@@ -1,0 +1,10 @@
+import numpy as np
+import scipy.stats
+
+X = np.vstack((np.random.randn(250,20000), np.random.randn(250,20000) - 0.1))
+
+y = [0] * 250 + [1] * 250
+
+corr_pvalue = np.array([scipy.stats.pearsonr(X[:,i], y) for i in range(X.shape[1])])
+
+corr_pvalue[corr_pvalue[:,1] < (0.05 / 20000), :]

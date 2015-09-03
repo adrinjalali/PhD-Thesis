@@ -1,4 +1,47 @@
 \chapter{Background}
-\section{Kernel Methods}
-\section{Boosting and Ensemble Methods}
+
+\section{Machine Learning}
+Machine learning techniques are used to extract information from data, or make some predictions about the data. This chapter briefly explains methods and techniques used in, or required to understand the proceeding chapters.
+
+\subsection{Feature Selection}
+Feature selection is the task of selecting important features to the problem at hand. It becomes particularly a hard task when the number of features in the data is of a higher magnitude compared to the number of given samples. Table~\ref{tab:sample-sample-size} shows an example number of samples vs. number of features in a typical data. One of the challenges when dealing with such a large number of features is that if enough number of features have a probability distribution independent of the outcome, some of them might falsely seem correlated with the outcome. Another obstacle comes from the fact that our features are not independent and they function in complex networks. As a result, features should be considered in groups, which is a combinatorial and intractable problem.
+
+\begin{table}[th!]
+  \centering
+  \begin{tabular}{p{3cm} p{3.5cm} p{4cm}}
+    \hline
+    \multicolumn{3}{c}{Sample Data} \\
+    \cline{1-3}
+    Sample Count   & Gene Expression Data Feature Count & 450K Methylation Chip Data Feature Count \\
+    \hline
+    $500$      & $\approx 20,000$    & $\approx 450,000$   \\
+    \hline
+  \end{tabular}
+  \caption{An example number of samples and features in our usual data}
+  \label{tab:sample-sample-size}
+\end{table}
+
+We have used correlation~\cite{correlation}, mutual information~\cite{mutual-information}, and $l1$-regularized methods~\cite{l1-regularized} as techniques to select features.
+
+\subsection{Classification}
+Classification is the problem of putting data into different classes~\cite{classification}. During the training phase, the matrix $X_{samples \times features}$ is given as the input and $y_{samples}$ as the desired output. The vector $y$ has values from a discrete set. If the set has only two distinct values, the problem is called a binary classification.
+
+Logistic regression~\cite{logistic-regression}, Support Vector Machines (SVM)~\cite{svm}, and decision trees~\cite{decision-trees} are examples of classification methods.
+
+\subsection{Regression}
+In statistics, predicting a continues output value given an input data is called regression~\cite{regression}. Regression and classification differ in their desired output type. In regression the output is continues in contrast to classification in which the output is a discrete value.
+
+
+
+\subsection{Regularization}
+\subsection{Empirical Risk Minimization}
+
+\subsection{Kernel Methods}
+
+\subsection{Gaussian Processes}
+
+\subsection{Boosting and Ensemble Methods}
+
 \section{K Best Shortest Paths}
+
+\section{Lymphoma}
