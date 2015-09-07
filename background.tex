@@ -31,9 +31,13 @@ Logistic regression~\cite{logistic-regression}, Support Vector Machines (SVM)~\c
 \subsection{Regression}
 In statistics, predicting a continues output value given an input data is called regression~\cite{regression}. Regression and classification differ in their desired output type. In regression the output is continues in contrast to classification in which the output is a discrete value.
 
-
+Linear regression~\cite{linear-regression}, Gaussian processes~\cite{gaussian-processes}, and kernel based regression~\cite{kernel-based-regression} are some available methods here.
 
 \subsection{Regularization}
+Building a machine to predict the outcome with a good performance on the training set is easy if the number of features in the data is large enough compared to the number of samples, even if features are drawn from a random background probability distribution independent of the outcome. But the trained machine will perform poorly on the unseen test samples. This phenomenon is called overfitting. One way to prevent overfitting is to select potential features before training a selected model.
+
+Another way to tackle the problem is to modify the models in a way that they tend to use less number of features and extract less complex patters from the data. The intuition behind regularization is that having a simple explanation for the data is probably a closer estimation to the reality than a complex one.
+
 \subsection{Empirical Risk Minimization}
 
 \subsection{Kernel Methods}

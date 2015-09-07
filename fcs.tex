@@ -3,8 +3,62 @@
 Here we talk about flow cytometry data, how we analyze and visualize it; and how we use that analysis alongside with some machine learning tools to classify samples into cancer subtypes.
 
 \section{Flow Cytometry}
+Flow cytometry is a technology that allows measurement of biomarkers inside and outside cells on a single cell basis~\cite{flow-cytometry}. The technology can also sort certain cells according to a given criterion~\cite{flow-cytometry-sorting}.
+
+Cell preparation in flow cytometry involves suspension of the cells in a liquid containing biomarker reagents. Reagents are marked antibodies that can be detected by the laser beams in the flow cytometer machine~\cite{flow-cytometry-cell-preparation}. The antibodies are usually marked with a fluorescent label. Each fluorescent marker has a corresponding peak excitation and emission wavelength which can be detected using lasers available on the flow cytometry machine. The combination of markers has to be chosen such that their corresponding wavelengths have minimal overlap; otherwise they cannot be distinguished from one another.
+
+
 
 \section{Data Preprocessing and Challenges}
+Transformation and spillover compensation are the two main phases of raw flow cytometry data preprocessing.
+
+\emph{Transformation}: The measured fluorescent intensities almost exponentially correspond to the number of existing fluorescent markers on or inside the cell. Therefor a proper transformation of the raw data is essential in order to have the data in a linear space.
+
+\emph{Spillover Compensation}: Many commonly used fluorescent markers have overlapping wavelengths. Spillover is when a marker optically interferes with another marker.
+
+Flow cytometry data usually suffers from batch effects, and the batch effect comes from at least three different sources:
+
+\begin{itemize}
+\item \emph{Reagent and Solution Batches}: The smallest variation in the solution used to stain the target cells can affect the amount of antibodies attached to target cells.
+\item \emph{Laser Intensity}: The intensity of the laser used to detect stained antibodies affects values read by the instrument.
+\item \emph{Compensation Matrices}: The compensation matrix is used to post-process the data and to correct for overlapping spectrum of the color of the lasers.
+\end{itemize}
+
+Compensation is necessary due to spillover.
+\url{https://www.bdbiosciences.com/documents/Compensation_Multicolor_TechBulletin.pdf}
+
+\begin{quote}
+What are spillover and compensation?
+When using multiple fluorochromes in an experiment, there are many factors
+that can impact the accuracy and quality of the data. The most critical factor
+is determining which color should be matched to each antibody in the reagent
+panel. This is due to a very large range of intrinsic brightness among the
+fluorochromes commonly used, some antigens being dimly expressed while
+others brightly expressed, and signals from one reagent optically interfering
+with signals from another. These choices of color and antibody must also be
+made in the context of which markers might be coexpressed on the same cells.
+Whenever more than one marker is expressed on a single cell, the presence of
+the other fluorescent reagents can contribute significant optical background in
+proportion to their brightness. This phenomenon is called spillover.
+
+Spillover is due to the physical overlap among the emission spectra of certain
+commonly used fluorochromes.
+
+Spillover occurs whenever the fluorescence emission of one fluorochrome is
+detected in a detector designed to measure signal from another fluorochrome
+(Figure 1).
+
+The amount of spillover is a linear function, so the measured average signal
+levels can be corrected (ie, the population medians aligned) by the process
+called compensation.
+
+With proper compensation setup, complex data sets can then be properly
+visualized and analyzed if a well chosen immunofluorescent reagent panel
+is used. If the compensation is incorrect, interpreting the data can become
+extremely difficult or impossible.
+\end{quote}
+
+Usually the data comes with its corresponding compensation matrix. 
 
 \section{High Dimensional Analysis and Visualization}
 \subsection{flowType}
