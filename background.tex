@@ -21,24 +21,46 @@ Feature selection is the task of selecting important features to the problem at 
   \label{tab:sample-sample-size}
 \end{table}
 
-We have used correlation~\cite{correlation}, mutual information~\cite{mutual-information}, and $l1$-regularized methods~\cite{l1-regularized} as techniques to select features.
+We have used correlation~\cite{correlation}, mutual information~\cite{mutual-information}, and $l_1$-regularized methods~\cite{l1-regularized} as techniques to select features.
 
 \subsection{Classification}
 Classification is the problem of putting data into different classes~\cite{statistical-learning}. During the training phase, the matrix $X_{samples \times features}$ is given as the input and $y_{samples}$ as the desired output. The vector $y$ has values from a discrete set. If the set has only two distinct values, the problem is called a binary classification.
 
-Logistic regression~\cite{logistic-regression1,logistic-regression2}, Support Vector Machines (SVM)~\cite{svm1,svm2}, and decision trees~\cite{decision-trees} are examples of classification methods.
+Logistic regression~\cite{logistic-regression1,logistic-regression2}, Support Vector Machines (SVM)~\cite{svm1,svm2}, and decision trees~\cite[TODO:chapter]{statistical-learning} are examples of classification methods.
 
 \subsection{Regression}
-In statistics, predicting a continues output value given an input data is called regression~\cite{regression}. Regression and classification differ in their desired output type. In regression the output is continues in contrast to classification in which the output is a discrete value.
+In statistics, predicting a continues output value given an input data is called regression~\cite[TODO:chapter]{statistical-learning}. Regression and classification differ in their desired output type. In regression the output is continues in contrast to classification in which the output is a discrete value.
 
-Linear regression~\cite{statistical-learning}, Gaussian processes~\cite{gaussian-processes}, and kernel based regression~\cite{kernel-based-regression} are some available methods here.
+Linear regression~\cite[TODO:chapter]{statistical-learning}, Gaussian processes~\cite{gaussian-processes}, and kernel based regression~\cite[TODO:chapter]{learning-with-kernels} are some available methods here.
 
 \subsection{Regularization}
 Building a machine to predict the outcome with a good performance on the training set is easy if the number of features in the data is large enough compared to the number of samples, even if features are drawn from a random background probability distribution independent of the outcome. But the trained machine will perform poorly on the unseen test samples. This phenomenon is called overfitting. One way to prevent overfitting is to select potential features before training a selected model.
 
-Another way to tackle the problem is to modify the models in a way that they tend to use less number of features and extract less complex patters from the data. The intuition behind regularization is that having a simple explanation for the data is probably a closer estimation to the reality than a complex one.
+Another way to tackle the problem is to reduce the complexity of the models. This can be done via regularization. The $l_1$-regularization is an appropriate tool when the intention is to reduce the number of features a model takes into account for prediction as well as its complexity~\cite{l1-regularized}.
+
+Assume a model minimizes a loss function $E(X, Y)$, where $X$ is the input matrix and $Y$ is the output vector or matrix. In most regression models the loss function is defined as:
+
+\begin{align}
+  E(X, Y) = \parallel Y - X \beta \parallel_2
+  \label{frm:loss-function}
+\end{align}
+
+The optimization algorithm finds a $\beta$ that minimizes the loss function in Formula~\ref{frm:loss-function}. Having enough number of features, the optimization algorithm might find a $\beta$ that gives a perfect loss, i.e. 0. But in noisy environments the resulting $\beta$ is probably not the real $\beta$ of the underlying model producing the data. The vector $\beta$ might also have some extreme values that are likely not desired. Penalizing the \emph{size} of $\beta$ as shown in Formula~\ref{frm:regularized} will address the abovementioned concern. The size of a vector in this context is represented by its $l_1$ or $l_2$ norm as defined in Formula~\ref{frm:lp-norm}.
+
+
+\begin{align}
+  \parallel \beta \parallel_p := \left(\sum\limits_{i=1}^n \mid \beta_i \mid^p \right)^{1/p}
+  \label{frm:lp-norm}
+\end{align}
+\begin{align}
+  &E(X, Y) + \alpha \parallel \beta \parallel_2 = \parallel Y - X \beta \parallel_2 + \alpha \parallel \beta \parallel_2 \nonumber \\
+  &\text{or} \nonumber \\
+  &E(X, Y) + \alpha \parallel \beta \parallel_1 = \parallel Y - X \beta \parallel_2 + \alpha \parallel \beta \parallel_1
+  \label{frm:regularized}
+\end{align}
 
 \subsection{Empirical Risk Minimization}
+We need to minimize the risk of the error of the predictor~\cite{thenatureofstatisticallearningtheory} (p. 20).
 
 \subsection{Kernel Methods}
 
