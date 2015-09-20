@@ -60,13 +60,14 @@ The optimization algorithm finds a $\beta$ that minimizes the loss function in F
 \end{align}
 
 \subsection{Empirical Risk Minimization}
-We need to minimize the risk of the error of the predictor~\cite{thenatureofstatisticallearningtheory} (p. 20).
+We need to minimize the risk of the error of the predictor~\cite[p.~20]{thenatureofstatisticallearningtheory}.
 
 \subsection{Kernel Methods}
 
 \subsection{Gaussian Processes}
 
 \subsection{Boosting and Ensemble Methods}
+For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
 
 \section{K Best Shortest Paths}
 

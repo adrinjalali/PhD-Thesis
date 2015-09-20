@@ -12,7 +12,7 @@
 %%% Definition of abstract environment %%%
 \RequirePackage{fancyhdr}
 \RequirePackage[german,english]{babel}
-\pagestyle{empty}
+\pagestyle{plain}
 \newenvironment{abstract}%
 {\cleardoublepage\null\vfill\begin{center}%
 \bfseries\abstractname\end{center}}%

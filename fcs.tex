@@ -53,26 +53,6 @@ However, the higher dimensionality of data produced by mass cytometry generates 
 Furthermore, flowType and RchyOptimyx have thus far only treated cells as being either positive or negative for a marker.
 In practice, many biomarkers can have a range of expression levels such as ``dim'' and ``bright''. 
 In this application note, we detail architectural improvements to flowType and RchyOptimyx to overcome these limitations.  
-%
-%
-%
-%RB
-%\textbf{missing legend in panel C \& remove 12GB line in red as it looks like flowType-BF line, BF line in panel D?; y axis should be GB in panel C (who measure memory in bytes?), missing y axis marks in panel d and x and y-axis lines in d, fix gaps in lines for other panels where appropriate (b-x axis)  [for a 15 marker sample] this text not needed in legend in panel D I think)}
-%
-% Biggest thing is I save 5 lines of text by cutting white space out from top and bottom of figure, could probably save a few more as needed after you produce next (hopefully final) version. 
-%
-%
-%
-\begin{figure*}[!tpb]%figure1
-\center{\includegraphics[width=\textwidth]{figs/flowtype2-figure}}
-\caption{
-\textbf{a-b. Run time comparison of flowType-DP to flowType-BF} in terms of number of cells (a) and number of markers (b). 
-\textbf{c-d. Possible thresholds for marker combinations using flowType-DP} for typical mass cytometry data (c) and polychromatic flow cytometry data (d). 
-\textbf{e-f. Three/four-partition flowType-generated, RchyOptimyx-visualized cell type hierarchy} on a bone marrow sample from a patient with AML. Cell population identification strategy used for SSC and CD45, with the CD34-enriched subset highlighted (e).
-RchyOptimyx analysis showing CD34 enrichment (f). }
-\label{fig:01}
-\end{figure*}
-
 \subsubsection{Approach}
 Our primary challenge was to enable flowType to generate a number of cell types tractable on most common workstations (e.g. those with 4--12GB of RAM).
 %RB\textbf{define tractable in terms of some kind of upper/lower bounds, goals need to be specific and measurable, you do this two sentences down, but add here}
@@ -104,6 +84,16 @@ We evaluated flowType-DP against flowType-BF on a 10-marker dataset available fr
 flowType-DP showed a substantial speedup over flowType-BF, which increases exponentially with the number of cells and markers. 
 For example, at $10^6$ cells and $10$ markers, flowType-DP is 14 times faster (see Fig. \ref{fig:01}a and b). %Change to e.g. 14-fold at 100k cells; fold-difference grows exponentially
 Comparison on larger datasets was not possible, due to the limitations of flowType-BF.
+
+\begin{figure*}[!ht]%figure1
+\center{\includegraphics[width=\textwidth]{figs/flowtype2-figure}}
+\caption{
+\textbf{a-b. Run time comparison of flowType-DP to flowType-BF} in terms of number of cells (a) and number of markers (b). 
+\textbf{c-d. Possible thresholds for marker combinations using flowType-DP} for typical mass cytometry data (c) and polychromatic flow cytometry data (d). 
+\textbf{e-f. Three/four-partition flowType-generated, RchyOptimyx-visualized cell type hierarchy} on a bone marrow sample from a patient with AML. Cell population identification strategy used for SSC and CD45, with the CD34-enriched subset highlighted (e).
+RchyOptimyx analysis showing CD34 enrichment (f). }
+\label{fig:01}
+\end{figure*}
 
 We also computed the limits for $k$ on a hypothetical machine with 12GB of RAM for samples representative of mass cytometry (Fig. \ref{fig:01}c) and polychromatic flow cytometry (Fig. \ref{fig:01}d), both of which would be intractable for flowType-BF.
 flowType and RchyOptimyx are now able, within the memory of a common workstation (12GB), to analyze 34-marker data. 
@@ -205,7 +195,20 @@ Let the weight of edge $(s,t)$ be $-S(t)$ (so that paths with maximum score can 
 The node with $0$ markers is the root (or source) node, and the node with the complete set of markers is the sink node. 
 A path from source to sink is called a hierarchy path, or simply a hierarchy. 
 An example of graph $G_M$ for $M = KI\mbox{--}67^+CD4^-CCR5^+CD127^-$ is
-illustrated in Supplementary Figure S3.
+illustrated in Supplementary Figure~\ref{r1:HIVClinicalOutcomeComplete}.
+
+  \begin{landscape}
+    \begin{figure}[ht]
+      \begin{center}
+        \includegraphics[width=13cm, angle=270]{figs/rchy/figs/HIVClinicalOutcomeComplete}
+      \end{center}
+      \caption{A complete cellular hierarchy for prediction of HIV's clinical outcome using KI67$^+$CD4$^-$CCR5$^+$CD127$^-$ T-cells. 
+      The color of the nodes indicates the significance of the correlation with clinical outcome (p-value of the logrank test for the Cox proportional hazards model) and the width of each edge (arrow) shows the amount of change in this variable between the respective nodes.
+        The positive and negative correlation of each immunophenotype with outcome can be seen from the arrow type leading to the node; however, as all correlations are negative in this hierarchy, only one arrow type is shown. 
+      }
+      \label{r1:HIVClinicalOutcomeComplete}
+    \end{figure}
+  \end{landscape}
 
 The graph $G_M$ has $|\mathcal{P}(M)|=2^m$ nodes, one node for each parent phenotype of the phenotype of interest. 
 The number of edges is equal to the number of markers ($m$), times the number of edges that have the specified marker.  
@@ -265,6 +268,29 @@ $O(m \times 2^{m-1})$.
 An illustration of the dynamic programming space for three dimensional space, \emph{i.e.} having three markers, as well as 
 two paths in that space is shown in Figure \ref{r1:3dDP}.
 
+
+%\begin{landscape}
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figs/rchy/2path}
+  \end{center}
+  \caption{Dynamic programming algorithm for two cell populations defined by $3$ markers.
+    The best path for each of the cell population is shown in red and blue respectively.
+    As an example, the red path ends at CD4$^+$CCR5$^+$CD127$^+$.
+    Three markers are available to be added.
+    First, CD4 is added (changes from does not matter to positive).
+    Then two options will be available for the next step (CD127 and CCR5).
+    After selection of CCR5, only one option will be left for the final step (CD127).
+    Therefore for three markers, $\frac{3 \cdot (3-1)}{2}=6$ comparisons were required.
+	\textbf{Left:} A hierarchy for the two paths. The label of an edge is the name of the single marker phenotype that
+	is the difference between its head set ($s$) and its tail set ($t$).  \textbf{Right:} the dynamic programming space
+	for the $3$ markers. Black spheres mark the nodes in the dynamic programing space used by the two paths. 
+	The colors of the nodes on the left match that of the square tori on the right and  correspond to the relative score of each cell population. 
+}
+  \label{r1:3dDP}
+\end{figure}
+%\end{landscape}
+
 %To implement this computationally, we represented cell populations as base $3$ numbers.  For example, given the set of
 %markers \{A, B, C, and D\}, the A$^-$B$^+$D$^+$ population can be represented as $1202$, where $0$, $1$, and $2$
 %represent \emph{not considered}, \emph{negative}, and \emph{positive}, respectively \cite{janet8exhaustive,
@@ -278,7 +304,7 @@ two paths in that space is shown in Figure \ref{r1:3dDP}.
 \subsubsection{Search for Near-Optimal Hierarchies}
 The hierarchy selected by the dynamic programming algorithm is the best gating strategy for a given cell population.
 %%NA: Changed awkward wording
-However, we would also like to identify alternate gating strategies with slightly worse scores.  
+However, we would also like to identify alternate gating strategies with slightly less desirable scores.  
 To find these near-optimal paths, we reformulate the problem as identification of a desired number of minimum weight paths: %%NA Shouldn't break paragraph here
 In $G_M$, the minimum weight path from source to sink is the best hierarchy (identical to the one generated by dynamic programming).  
 To generate additional, sub-optimal hierarchies, a list of the next minimum weight paths must also be generated. 
@@ -310,7 +336,19 @@ seconds (more than $4000$ years), respectively.  Even for a phenotype involving 
 (mass spectrometry-flow cytometry hybrid device \cite{ornatsky2010highly,bendall2011single,Chattopadhyay2012Cytometry}),
 RchyOptimyx remains feasible, with a runtime of $\approx 102$ CPU seconds, while the brute-force method would take
 $\approx 10^{22}$ CPU seconds.  The final output of RchyOptimyx is the corresponding subgraph of $G_M$ that includes all
-calculated paths (\emph{i.e.}, the optimized hierarchy, \emph{e.g.}, Supplementary Figure S4).
+calculated paths (\emph{i.e.}, the optimized hierarchy, \emph{e.g.}, Fig.~\ref{r1:HIVClinicalOutcome}).
+
+  \begin{figure}[ht]
+    \begin{center}
+      \includegraphics[width=.7\textwidth]{figs/rchy/figs/HIVClinicalOutcome}
+    \end{center}
+    \caption{An optimized cellular hierarchy for prediction of HIV's clinical outcome using KI67$^+$CD4$^-$CCR5$^+$CD127$^-$ T-cells. 
+The color of the nodes shows the significance of the correlation with clinical outcome (p-value of the logrank test for the Cox proportional hazards model) and the width of each edge (arrow) shows the amount of change in this variable between the respective nodes. 
+}
+    \label{r1:HIVClinicalOutcome}
+  \end{figure}
+
+
 %\tin{don't have single sentence paragraphs}
 
 % \subsection*{Trimming the Hierarchies}
@@ -348,18 +386,44 @@ Using a log rank test with Bonferroni's multiple test correction, we scored each
 
 \subsubsection{Designing a Panel to Detect a Population Expressing an Intracellular Marker using Surface Markers}
 In this use--case, our goal was to identify cell populations that are affected by different stimulations in the mass cytometry dataset.
-We used flowType to identify a list of populations that had a high overlap with either the IL3$^+$, BCR$^+$, or LPS$^+$ populations (determined manually - see Supplementary Figure S6).
+We used flowType to identify a list of populations that had a high overlap with either the IL3$^+$, BCR$^+$, or LPS$^+$ populations (determined manually - see Fig.~\ref{r1:overlaps}).
 For each cell population, this value was calculated as the difference in its intersection with the IL3$^+$, BCR$^+$, or LPS$^+$ compartments between the stimulated and unstimulated sample.
 For example, for a given cell population CP, the overlap with IL3$^+$ was defined as:
 \begin{equation}\small
   Overlap^{IL3^+}(CP)=\left(\frac{\# \; \mbox{IL3}^+cells \; in \; CP}{\# \; cells \; in \; CP}\right)_{stim}-  \left(\frac{\# \; \mbox{IL3}^+cells \; in \; CP}{\# \; cells \; in \; CP}\right)_{unstim}
 \end{equation}
 
-The immunophenotypes with a high overlap, as identified by flowType, are listed in Supplemental Tables S1, S2, and S3.
-These immunophenotypes were analyzed using RchyOptimyx (\emph{e.g.}, Figure S1 for BCR) and then merged into a single graph, shown in Figure \ref{r1:CyTOF}.
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figs/rchy/figs/overlaps}
+  \end{center}
+  \caption{All immunophenotypes ordered by their overlap with the cell population of interest. The red dashed lines indicate the cutoffs used for selecting the immunophenotypes with ``high overlap''.}
+  \label{r1:overlaps}
+\end{figure}
+
+
+The immunophenotypes with a high overlap, as identified by flowType, are listed in Tables~\ref{apx:BCR},~\ref{apx:IL7}, and~\ref{apx:LPS}.
+These immunophenotypes were analyzed using RchyOptimyx (\emph{e.g.}, Fig.~\ref{r1:CyTOF} for BCR) and then merged into a single graph, shown in Fig.~\ref{r1:CyTOF}.
 This graph suggests that T-cells (CD3$^+$) followed by cytotoxic T-cells (CD3$^+$CD4$^+$) are the main parent populations that are affected by IL7 stimulation (panel A).
 As expected, BCR stimulation affected B-cells (CD19$^+$CD20$^+$CD3$^-$), and LPS stimulation increased the proportion of CD19$^-$CD33$^+$CD3$^-$ cells (Panels B and C, respectively).
 These results are generally consistent with those reported in the original study (Figure 2 and panel C of Figure 3 of \cite{bendall2011single}).
+
+%\begin{landscape}
+\begin{figure}[!h]
+  \begin{center}
+    \begin{tabular}{c||c||c}
+      \includegraphics[width=.6\textwidth,angle=270]{figs/rchy/IL7}&
+      \includegraphics[width=.6\textwidth,angle=270]{figs/rchy/BCR}&
+      \includegraphics[width=.6\textwidth,angle=270]{figs/rchy/LPS}\\
+      (A) IL7/pSTAT5 &(B) BCR/pBLNK &(C) LPS/p-p38\\
+    \end{tabular}
+  \end{center}
+  \caption{Three optimized hierarchies for identification of cell populations with maximum response to IL7, BCR, and LPS measured by pSTAT5, pBLNK, and p-p38, respectively.
+    The colour of the nodes and the thickness of the edges shows the proportion and change in proportion of cells expressing the intracellular marker of interest, respectively.
+  }
+  \label{r1:CyTOF}
+\end{figure}
+%\end{landscape}
 
 
 \subsubsection{Simplifying Gating Strategies}
@@ -372,13 +436,22 @@ The purity of a given parent cell population (CP) of  this target was defined as
 \end{equation}
 
 Figure \ref{r1:NaiveOverlap} shows the results of analysis with RchyOptimyx where a combination of only three markers (CD45RO$^-$CCR5$^-$CCR7$^+$) identified the strict naive T cell population to $95\%$ purity (within the CD3$^+$CD14$^-$ compartment).
-The range of available purities, and determination of an appropriate cutoff is experiment dependent (\emph{e.g.}, on the range of available markers, biological question being researched) and this result is only provided as an example of the utility. 
+The range of available purities, and determination of an appropriate cutoff is experiment dependent (\emph{e.g.}, on the range of available markers or biological question being researched) and this result is only provided as an example of the utility. 
+
+\begin{figure}[ht]
+  \begin{center}
+    \includegraphics[width=.7\textwidth]{figs/rchy/NaiveOverlap}
+  \end{center}
+  \caption{An optimized cellular hierarchy for identifying naive T-cells. The color of the nodes and the thickness of the edges shows the purity and change in purity of the original naive phenotype within the given cell population, respectively.
+  }
+  \label{r1:NaiveOverlap}
+\end{figure}
 
 
 \subsubsection{Characterization of a Large Number of Immunophenotypes}
 Here we use RchyOptimyx to demonstrate an example of the use-case of summarizing a large list of immunophenotypes of interest (as identified by a bioinformatics pipeline) into a single hierarchy using their most important common parent populations.
 
-In a previous study of the PFC dataset, we identified $101$ immunophenotypes (Supplemental Table S4) in HIV$^+$ patients that had a statistically significant correlation with HIV's progression \cite{Aghaeepour2012}.
+In a previous study of the PFC dataset, we identified $101$ immunophenotypes (Table~\ref{apx:tsl}) in HIV$^+$ patients that had a statistically significant correlation with HIV's progression \cite{Aghaeepour2012}.
 %We used RchyOptimyx to simplify these cell populations and then merge them into a single graph. %duplicated line 306
 The score of each population was calculated as $-log_{10}(p)$ where $p$ was the p-value of the logrank test before adjustment for multiple testing (higher values represent a stronger correlation with the clinical outcome).
 The $101$ immunophenotypes were analyzed using RchyOptimyx and the resulting hierarchies were merged into a single graph (Figure \ref{r1:merged}).
@@ -391,6 +464,19 @@ The terminal node of the center branch consisted of seven markers (CD45RO$^-$CD8
 RchyOptimyx revealed that its most important parent population is CD8$^+$CCR7$^-$CD127$^-$, with a weaker correlation with the clinical outcome.
 Finally, the right branch (CD28$^-$CD45RO$^+$CD4$^-$CD57$^-$ CD27$^-$CD127$^-$) suggests several parent populations with minimal overlap and strong correlation with the clinical outcome (\emph{e.g.,} CD28$^-$CD4$^-$CD57$^-$CD127$^-$ and CD45RO$^+$ CD4$^-$CD127$^-$). 
 
+\begin{landscape}
+  \begin{figure}[!hp]
+    \begin{center}
+      \includegraphics[width=\textwidth,angle=270]{figs/rchy/merged}
+    \end{center}
+    \caption{An optimized hierarchy for all three populations correlated with protection against HIV.
+      The color of the nodes shows the significance of the correlation with the clinical outcome (p-value of the logrank test for the Cox proportional hazards model) and the width of each edge (arrow) shows the amount of change in this variable between the respective nodes.
+      The positive and negative correlation of each immunophenotype with outcome can be seen from the arrow type leading to the node; however as all correlations are negative in this hierarchy, only one arrow type is shown. 
+   }
+    \label{r1:merged}
+  \end{figure}
+\end{landscape}
+
 
 \subsubsection{Discussion}
 Sequential analysis of the markers involved in manual or automated identification of cell populations is fundamental to our understanding of the characteristics of the cell population.
@@ -398,7 +484,18 @@ In sequential gating, the order in which the gates have been applied does not af
 However, ordering the gates by their relative importance has two use-cases: 1) identifying a cell population of interest, using the smallest possible panel of markers; 2) summarizing a long list of closely related (and perhaps overlapping) immunophenotypes by identifying their most important common parent populations.
 %For immunophenotypes with fewer markers, the importance of the markers can be manually investigated (see example of a complete cellular hierarchy for a phenotype with four markers in Figure S3).
 %By visual inspection one can find that KI-67 and CCR5 are the two most important markers.
-However, increasing the number of markers quickly renders this approach unfeasible (\emph{e.g.}, Figure S5 for only six markers).
+However, increasing the number of markers quickly renders this approach infeasible (\emph{e.g.}, Fig.~\ref{r1:NaiveOverlapComplete} for only six markers).
+
+%\begin{landscape}
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[width=.8\textwidth, angle=270]{figs/rchy/figs/NaiveOverlapComplete}
+  \end{center}
+  \caption{A complete cellular hierarchy for identifying naive T-cells. The colour of the nodes and the thickness of the edges have been removed to facilitate visualization of the complex graph.
+  }
+  \label{r1:NaiveOverlapComplete}
+\end{figure}
+%\end{landscape}
 
 To address this challenge, we  developed RchyOptimyx, a computational tool that automatically characterizes the complex findings of high-dimensional exploratory FCM studies.
 RchyOptimyx sorts all parent populations of an immunophenotype of interest into hierarchies, and selects those hierarchies that are better able to maintain the characteristics of the immunophenotype of interest (\emph{e.g.,} correlation with a clinical outcome).
@@ -406,8 +503,8 @@ This reveals the best order in which markers can be excluded from an immunopheno
 RchyOptimyx uses dynamic programming and efficient tools from graph theory to make the problem tractable using the computing resources readily available in most laboratories. 
 
 Since most cells can be described using more than one combination of markers, there usually are several alternative cellular hierarchies associated with every population.
-RchyOptimyx is able to find all these ``paths'' and merge them into a single hierarchy, starting from ``all cells'', or any arbitrary point in a hierarchy,  and finishing at the terminal population of interest.
-This reveals the relationships between different gating strategies and how they differentiate, and also facilitates the reproduction of high--dimensional exploratory studies using low--color instruments.
+RchyOptimyx finds all these ``paths'' and merges them into a single hierarchy, starting from ``all cells'', or any arbitrary point in a hierarchy,  and finishing at the terminal population of interest.
+This reveals the relationships between different gating strategies and how they differ, and also facilitates the reproduction of high--dimensional exploratory studies using low--color instruments.
 The ability to suggest multiple panels is particularly important when designing new panels, because the choice of markers depends on a large number of external parameters including, but not limited to, reagents available through vendors, potential spectral overlaps, the instruments available, and budget limitations.
 
 
@@ -423,7 +520,7 @@ In evaluating  RchyOptimyx, we  combined its functionality with the
 automated gating functionality provided by flowMeans and flowType. 
 However,  RchyOptimyx can be built upon the results of any cell  %is the grammar here correct? RchyOptimyx can be built upon...?
 population identification method, including manual analysis, provided
-all intermediate cell populations (\emph{i.e.,} each layer, removing one marker at a time) from the cell population of interest  up to the desired start of the hierarchy are provided to the algorithm.
+all intermediate cell populations (\emph{i.e.,} each layer, removing one marker at a time) from the cell population of interest  up to the desired start of the hierarchy are provided to the method.
 
 We evaluated RchyOptimyx for three use-cases, using a small but high-dimensional mass cytometry dataset and a clinical dataset of high-dimensional conventional FCM  assays of $466$ patients, previously analyzed by both manual and automated analysis.
 First, we constructed cellular hierarchies for identification of cells that were produced in response to different stimulations.
@@ -447,8 +544,19 @@ This feature is particularly important in hypothesis generating studies that nee
 For the third example, it is important to note that the correct measure for the amount of correlation with a clinical outcome is an effect size (such as the root squared error of the estimated proportional hazard). 
 However, such effect size does not provide any information about the significance of the correlation. 
 As RchyOptimyx is intended to be a decision support tool, and in this case the decision is the degree to which a cell population can be generalized while maintaining the statistical significance of the correlation, we decided that the p-values of the log-rank tests were more appropriate for optimization of the hierarchies.
-To support this decision, we empirically investigated the differences between the p-values and effect sizes of the Cox proportional hazard models (Supplementary Figure S7) and concluded that these values are highly correlated (which is not surprising considering the large size of our cohort).
+To support this decision, we empirically investigated the differences between the p-values and effect sizes of the Cox proportional hazard models (Fig.~\ref{r1:effectsizevspv}) and concluded that these values are highly correlated (which is not surprising considering the large size of our cohort).
 It should be noted that as RchyOptimyx allows the user to choose which measure to provide, they can make this decision as appropriate for their specific data.
+
+\begin{figure}[!ht]
+  \begin{center}
+    \includegraphics[width=10cm]{figs/rchy/figs/cor}
+  \end{center}
+  \caption{The correlation between the effect sizes and p-values of the log rank tests for the Cox proportional hazards models for each immunophenotype. The Pearson correlation coefficient was determined as $0.997$, indicating a highly significant correlation with a p-value  $< 2.2 \times 10^{-16}$.}
+  \label{r1:effectsizevspv}
+\end{figure}
+
+
+
 % \hide{
 %   RchyOptimyx, when applied to high-dimensional datasets \emph{e.g.,} through FlowRepository), can provide significant guidance into panel design.
 %   However, it is important to note that in practice, many other factors including the instruments available, the conjugated antibodies produced by vendors, and potential spectral overlaps, should be considered as well.}
@@ -497,68 +605,6 @@ The RchyOptimyx R package (including source code, documentation, and examples) i
 The raw data and meta-data used in this study is publicly available through FlowRepository.org (under experiment ID \emph{FR-FCM-ZZZK}) and through Cytobank.org (under experiment ID \emph{6033}) for the PFC and CyTOF datasets, respectively.
 
 
-\begin{landscape}
-\begin{figure}[ht]
-  \begin{center}
-    \includegraphics[width=15cm]{figs/rchy/2path}
-  \end{center}
-  \caption{Dynamic programming algorithm for two cell populations defined by $3$ markers.
-    The best path for each of the cell population is shown in red and blue respectively.
-    As an example, the red path ends at CD4$^+$CCR5$^+$CD127$^+$.
-    Three markers are available to be added.
-    First, CD4 is added (changes from does not matter to positive).
-    Then two options will be available for the next step (CD127 and CCR5).
-    After selection of CCR5, only one option will be left for the final step (CD127).
-    Therefore for three markers, $\frac{3 \cdot (3-1)}{2}=6$ comparisons were required.
-	\textbf{Left:} A hierarchy for the two paths. The label of an edge is the name of the single marker phenotype that
-	is the difference between its head set ($s$) and its tail set ($t$).  \textbf{Right:} the dynamic programming space
-	for the $3$ markers. Black spheres mark the nodes in the dynamic programing space used by the two paths. 
-	The colors of the nodes on the left match that of the square tori on the right and  correspond to the relative score of each cell population. 
-}
-  \label{r1:3dDP}
-\end{figure}
-\end{landscape}
-
-\begin{landscape}
-\begin{figure}[!h]
-  \begin{center}
-    \begin{tabular}{c||c||c}
-      \includegraphics[width=4in,angle=270]{figs/rchy/IL7}&
-      \includegraphics[width=4in,angle=270]{figs/rchy/BCR}&
-      \includegraphics[width=4in,angle=270]{figs/rchy/LPS}\\
-      (A) IL7/pSTAT5 &(B) BCR/pBLNK &(C) LPS/p-p38\\
-    \end{tabular}
-  \end{center}
-  \caption{Three optimized hierarchies for identification of cell populations with maximum response to IL7, BCR, and LPS measured by pSTAT5, pBLNK, and p-p38, respectively.
-    The colour of the nodes and the thickness of the edges shows the proportion and change in proportion of cells expressing the intracellular marker of interest, respectively.
-  }
-  \label{r1:CyTOF}
-\end{figure}
-\end{landscape}
-
-\begin{figure}[ht]
-  \begin{center}
-    \includegraphics[width=4in]{figs/rchy/NaiveOverlap}
-  \end{center}
-  \caption{An optimized cellular hierarchy for identifying naive T-cells. The color of the nodes and the thickness of the edges shows the purity and change in purity of the original naive phenotype within the given cell population, respectively.
-  }
-  \label{r1:NaiveOverlap}
-\end{figure}
-
-
-
-\begin{landscape}
-  \begin{figure}[ht]
-    \begin{center}
-      \includegraphics[width=\textwidth,angle=270]{figs/rchy/merged}
-    \end{center}
-    \caption{An optimized hierarchy for all three populations correlated with protection against HIV.
-      The color of the nodes shows the significance of the correlation with the clinical outcome (p-value of the logrank test for the Cox proportional hazards model) and the width of each edge (arrow) shows the amount of change in this variable between the respective nodes.
-      The positive and negative correlation of each immunophenotype with outcome can be seen from the arrow type leading to the node; however as all correlations are negative in this hierarchy, only one arrow type is shown. 
-   }
-    \label{r1:merged}
-  \end{figure}
-\end{landscape}
 
 
 
@@ -572,276 +618,29 @@ The raw data and meta-data used in this study is publicly available through Flow
 %  \end{figure}
 %}
 
-\begin{table}[ht]\footnotesize
-  \begin{center}
-    \caption{The phenotypes with a high overlap with the BCR(pBLNK)$^+$ compartment as identified by flowType. The table includes the cell proportion of these immunophenotypes (second column) and the differences in the cell proportion of BCR(pBLNK)$^+$ cells in the stimulated and unstimulated assays (third column).}
-    \label{BCR}
-    \begin{tabular}{lll}
-      \hline
-      Phenotype Name & Cell Proportion & BCR$^+_{(stim-unstim)}$ \\ 
-      \hline
-      CD19+CD4-CD8-CD34+CD20+CD123+CD38-CD3- & 0.001 & 0.160 \\ 
-      CD19+CD4-CD34+CD20+CD123+CD38-CD3- & 0.001 & 0.160 \\ 
-      CD19+CD4-CD34+CD20+CD123+CD3- & 0.001 & 0.155 \\ 
-      \hline
-    \end{tabular}
-  \end{center}
-\end{table}
+%  \begin{figure}[ht]
+%    \begin{center}
+%      \includegraphics[height=9cm, angle=0]{figs/rchy/figs/cdf}
+%    \end{center}
+%    \caption{Empirical cumulative distribution function of the $24$ possible paths (one dot per path, with some dots overlapping) for constructing the KI67$^+$CD4$^-$CCR5$^+$CD127$^-$ population. A change point in the path scores was defined manually (the red dashed line). The paths above the dashed line are those selected for construction of Figure \ref{r1:HIVClinicalOutcome}.}
+%    \label{r1:cdf}
+%  \end{figure}
 
 
-% latex table generated in R 2.14.1 by xtable 1.7-0 package
-% Mon Mar 19 12:59:47 2012
-\begin{table}[ht]\footnotesize
-  \begin{center}
-    \caption{The phenotypes with a high overlap with the IL7(pSTAT5)$^+$ compartment as identified by flowType. The table includes the cell proportion of these immunophenotypes (second column) and differences in the cell proportion of IL7(pSTAT5)$^+$ cells in the stimulated and unstimulated assays (third column).}
-    \label{IL7}
-    \begin{tabular}{lll}
-      \hline
-      Phenotype Name & Cell Proportion & IL7$^+_{(stim-unstim)}$ \\ 
-      \hline
-        CD19-CD4+CD8+CD20+CD33+CD38-CD3+ & 0.008 & 0.364 \\ 
-        CD19-CD4+CD8+CD20+CD33+CD3+ & 0.008 & 0.366 \\ 
-        CD19-CD4+CD8+CD34+CD33+CD38-CD3+ & 0.008 & 0.366 \\ 
-        CD19-CD4+CD8+CD34+CD33+CD3+ & 0.008 & 0.368 \\ 
-        CD19-CD4+CD8+CD34+CD20+CD33+CD38-CD3+ & 0.006 & 0.399 \\ 
-        CD19-CD4+CD8+CD34+CD20+CD33+CD3+ & 0.006 & 0.402 \\ 
-        CD4+CD8+CD20+CD33+CD38-CD3+ & 0.011 & 0.365 \\ 
-        CD4+CD8+CD20+CD33+CD3+ & 0.011 & 0.371 \\ 
-        CD4+CD8+CD34+CD33+CD38-CD3+ & 0.011 & 0.366 \\ 
-        CD4+CD8+CD34+CD33+CD3+ & 0.011 & 0.371 \\ 
-        CD4+CD8+CD34+CD20+CD33+CD38-CD3+ & 0.008 & 0.399 \\ 
-        CD4+CD8+CD34+CD20+CD33+CD3+ & 0.009 & 0.405 \\ 
-        CD19+CD4+CD8+CD20+CD33+CD38-CD3+ & 0.003 & 0.364 \\ 
-        CD19+CD4+CD8+CD20+CD33+CD3+ & 0.003 & 0.378 \\ 
-        CD19+CD4+CD8+CD34+CD33+CD38-CD3+ & 0.003 & 0.359 \\ 
-        CD19+CD4+CD8+CD34+CD33+CD3+ & 0.003 & 0.372 \\ 
-        CD19+CD4+CD8+CD34+CD20+CD33+CD38-CD3+ & 0.002 & 0.397 \\ 
-        CD19+CD4+CD8+CD34+CD20+CD33+CD3+ & 0.002 & 0.409 \\ 
-      \hline
-    \end{tabular}
-  \end{center}
-\end{table}
-
-
-% latex table generated in R 2.14.1 by xtable 1.7-0 package
-% Mon Mar 19 12:55:05 2012
-\begin{table}[ht]\footnotesize
-  \begin{center}
-    \caption{The phenotypes with a high overlap with the LPS(p-p38)$^+$ compartment as identified by flowType. The table includes the cell proportion of these immunophenotypes (second column) and differences in the cell proportion of LPS(p-p38)$^+$ cells in the stimulated and unstimulated assays (third column).}
-    \label{LPS}
-    \begin{tabular}{lll}
-      \hline
-      Phenotype Name & Cell Proportion & LPS$^+_{(stim-unstim)}$ \\ 
-      \hline
-      CD19-CD4-CD8-CD34-CD20-CD33+CD123-CD38-CD3- & 0.008 & 0.474 \\ 
-      CD19-CD4-CD8-CD34-CD20-CD33+CD123-CD3- & 0.008 & 0.473 \\ 
-      CD19-CD4-CD8-CD34-CD20-CD33+CD38-CD3- & 0.009 & 0.466 \\ 
-      CD19-CD4-CD8-CD34-CD20-CD33+CD3- & 0.009 & 0.465 \\ 
-      CD19-CD4-CD8-CD34-CD33+CD123-CD38-CD3- & 0.022 & 0.460 \\ 
-      CD19-CD4-CD8-CD34-CD33+CD123-CD3- & 0.022 & 0.459 \\ 
-      CD19-CD4-CD8-CD34-CD33+CD38-CD3- & 0.022 & 0.452 \\ 
-      CD19-CD4-CD8-CD34-CD33+CD3- & 0.022 & 0.451 \\ 
-      CD19-CD4-CD8-CD34-CD20+CD33+CD123-CD38-CD3- & 0.013 & 0.450 \\ 
-      CD19-CD4-CD8-CD34-CD20+CD33+CD123-CD3- & 0.013 & 0.449 \\ 
-      CD19-CD4-CD8-CD20-CD33+CD123-CD38-CD3- & 0.023 & 0.453 \\ 
-      CD19-CD4-CD8-CD20-CD33+CD123-CD3- & 0.023 & 0.452 \\ 
-      CD19-CD4-CD34-CD20-CD33+CD123-CD38-CD3- & 0.011 & 0.456 \\ 
-      CD19-CD4-CD34-CD20-CD33+CD123-CD3- & 0.011 & 0.455 \\ 
-      CD19-CD8-CD34-CD20-CD33+CD123-CD38-CD3- & 0.012 & 0.462 \\ 
-      CD19-CD8-CD34-CD20-CD33+CD123-CD3- & 0.012 & 0.461 \\ 
-      CD19-CD8-CD34-CD20-CD33+CD38-CD3- & 0.012 & 0.454 \\ 
-      CD19-CD8-CD34-CD20-CD33+CD3- & 0.012 & 0.454 \\ 
-      CD4-CD8-CD34-CD20-CD33+CD123-CD38-CD3- & 0.011 & 0.462 \\ 
-      CD4-CD8-CD34-CD20-CD33+CD123-CD3- & 0.011 & 0.461 \\ 
-      CD4-CD8-CD34-CD20-CD33+CD38-CD3- & 0.011 & 0.454 \\ 
-      CD4-CD8-CD34-CD20-CD33+CD3- & 0.011 & 0.454 \\ 
-      CD8-CD34-CD20-CD33+CD123-CD38-CD3- & 0.015 & 0.450 \\ 
-      CD8-CD34-CD20-CD33+CD123-CD3- & 0.015 & 0.449 \\ 
-      \hline
-    \end{tabular}
-  \end{center}
-\end{table}
-
-% latex table generated in R 2.11.1 by xtable 1.5-6 package
-% Sat Dec 11 12:28:36 2010
-% \begin{table}\tiny
-\begin{landscape}
-\begin{center}
-  {\tiny 
-    % \begin{longtable}{rp{6cm}lllll}
-    \begin{longtable}{rlllllll}
-      \caption{\normalsize Statistically significant immunophenotypic correlates of survival of HIV$^+$ subjects are predicted by flowType. The p-values of the log rank tests, 95\% confidence intervals calculated using bootstrapping, adjusted p-values using Bonferroni's method, coefficients and $R^2$ values of the Cox proportional hazards regression models, and the frequency of the cells are provided as columns of the table.}\\
- \hline
-      \# & Phenotype & p-value & p-value, CI & adjusted & CPHR & R$^2$ & Cell \\
-      &  & & & p-value & Coefficient &  & Frequency \\
-      \hline
-      \endhead
-      1 & CD28-CD45RO+CD57-CCR5+ & 5.3e-07 & (4.3e-14, 1.3e-02) & 2e-02 &  20.5 & 0.056 & 0.03048 \\ 
-      2 & CD28-CD8+CD57-CD127- & 2.5e-07 & (2.3e-14, 3.8e-04) & 1e-02 &  12.3 & 0.060 & 0.05975 \\ 
-      3 & CD28-CD45RO+CD57-CCR7- & 5.1e-07 & (2.3e-14, 6.1e-04) & 2e-02 &  15.7 & 0.057 & 0.03829 \\ 
-      4 & CD28-CD45RO+CD4-CD57- & 3.5e-07 & (2.3e-14, 1.1e-03) & 1e-02 &  13.2 & 0.058 & 0.04357 \\ 
-      5 & CD45RO+CD4-CD57-CD127- & 2.7e-07 & (1.2e-13, 7.1e-03) & 1e-02 &  12.8 & 0.059 & 0.05062 \\ 
-      6 & CD28-CD45RO+CD57-CD127- & 4.7e-08 & (1.7e-14, 6.8e-04) & 2e-03 &  16.0 & 0.067 & 0.03732 \\ 
-      7 & CD45RO+CD4-CD27-CD127- & 4.4e-07 & (5.8e-14, 1.1e-03) & 2e-02 &  14.3 & 0.057 & 0.04830 \\ 
-      8 & CD28-CD45RO+CD57- & 5.6e-07 & (4.4e-14, 4.1e-04) & 2e-02 &  12.4 & 0.056 & 0.05015 \\ 
-      9 & CD45RO+CD4-CD127- & 6.5e-07 & (4.7e-15, 2.9e-03) & 2e-02 &   9.6 & 0.056 & 0.07176 \\ 
-      10 & CD28-CD45RO+CD4-CD127- & 3.1e-07 & (0.0e+00, 5.7e-03) & 1e-02 &  11.7 & 0.059 & 0.05300 \\ 
-      11 & CD28-CD45RO+CD57-CCR5+CD27-CCR7+CD127- & 4.7e-07 & (5.7e-14, 7.7e-03) & 2e-02 & 171.4 & 0.057 & 0.00315 \\ 
-      12 & CD28-CD45RO+CD4-CD57-CCR5+CD27-CCR7+CD127- & 4.5e-07 & (1.8e-13, 3.9e-04) & 2e-02 & 176.2 & 0.057 & 0.00294 \\ 
-      13 & CD28-CD57-CD127- & 3.3e-07 & (3.4e-15, 8.0e-03) & 1e-02 &   8.0 & 0.058 & 0.12341 \\ 
-      14 & CD28-CD4-CD57- & 8.8e-07 & (2.2e-15, 2.9e-03) & 3e-02 &   7.2 & 0.054 & 0.15525 \\ 
-      15 & CD57-CD27-CD127- & 6.2e-08 & (2.4e-14, 4.7e-03) & 2e-03 &   9.5 & 0.065 & 0.12173 \\ 
-      16 & CD4-CD57-CD27-CD127- & 4.7e-08 & (4.2e-14, 3.3e-03) & 2e-03 &   9.7 & 0.067 & 0.09721 \\ 
-      17 & CD28-CD57-CCR7-CD127- & 2.8e-07 & (9.7e-15, 1.0e-02) & 1e-02 &   9.8 & 0.059 & 0.08417 \\ 
-      18 & CD28-CD4-CD57-CD127- & 3.3e-08 & (2.0e-12, 5.7e-04) & 1e-03 &   9.1 & 0.068 & 0.10852 \\ 
-      19 & CD4-CD57-CCR7-CD127- & 6.5e-07 & (3.8e-15, 2.3e-03) & 2e-02 &   8.8 & 0.056 & 0.09501 \\ 
-      20 & CD45RO-CD4-CD57+CCR5-CD27+CCR7-CD127- & 6.1e-07 & (1.2e-12, 2.6e-03) & 2e-02 & 498.4 & 0.056 & 0.00097 \\ 
-      21 & CD28-CD45RO-CD4-CD57+CCR5-CD27+CCR7-CD127- & 2.5e-07 & (0.0e+00, 7.7e-03) & 1e-02 & 561.2 & 0.060 & 0.00074 \\ 
-      22 & CD45RO-CD8+CD57+CCR5-CD27+CCR7-CD127- & 1.2e-07 & (4.6e-14, 3.3e-04) & 5e-03 & 638.6 & 0.063 & 0.00068 \\ 
-      23 & CD45RO-CD8+CD4-CD57+CCR5-CD27+CCR7-CD127- & 1.2e-07 & (5.1e-14, 2.0e-03) & 5e-03 & 638.6 & 0.063 & 0.00068 \\ 
-      24 & CD28-CD45RO-CD4-CD57+CCR5-CD27+CD127- & 5.7e-07 & (1.1e-13, 2.3e-03) & 2e-02 & 298.3 & 0.056 & 0.00099 \\ 
-      25 & KI-67+CD28-CCR5+ & 1.0e-11 & (2.9e-13, 2.8e-03) & 4e-07 &  96.1 & 0.101 & 0.00547 \\ 
-      26 & KI-67+CD28-CCR5+CD27- & 8.7e-12 & (1.5e-14, 8.9e-04) & 3e-07 & 115.3 & 0.102 & 0.00453 \\ 
-      27 & KI-67+CCR5+ & 1.3e-11 & (2.4e-14, 7.0e-03) & 5e-07 &  53.4 & 0.100 & 0.01192 \\ 
-      28 & KI-67+CD28+CD45RO+CD57-CCR7-CD127- & 4.2e-09 & (5.6e-16, 3.0e-03) & 2e-04 & 241.3 & 0.077 & 0.00209 \\ 
-      29 & KI-67+CD45RO-CD4-CD27-CCR7-CD127- & 1.2e-09 & (2.0e-14, 4.4e-03) & 4e-05 & 161.9 & 0.082 & 0.00297 \\ 
-      30 & KI-67+CD28-CD45RO-CD8-CD4- & 5.0e-09 & (2.9e-12, 1.7e-03) & 2e-04 & 176.0 & 0.076 & 0.00225 \\ 
-      31 & KI-67+CD8-CD4- & 8.1e-09 & (6.1e-13, 4.5e-02) & 3e-04 &  58.1 & 0.074 & 0.00738 \\ 
-      32 & KI-67+CCR5+CD27-CCR7- & 2.0e-11 & (3.8e-14, 6.0e-04) & 8e-07 & 109.8 & 0.099 & 0.00532 \\ 
-      33 & KI-67+CD8-CCR5+CCR7- & 1.3e-10 & (3.1e-13, 2.0e-03) & 5e-06 & 147.3 & 0.091 & 0.00392 \\ 
-      34 & KI-67+CD28-CD8-CCR5+CCR7+CD127- & 2.6e-09 & (1.6e-14, 1.1e-02) & 1e-04 & 625.8 & 0.079 & 0.00061 \\ 
-      35 & KI-67+CD28+CD45RO+CD8+CD57-CD27+CCR7+ & 6.7e-07 & (3.8e-13, 1.5e-03) & 3e-02 & 585.4 & 0.055 & 0.00051 \\ 
-      36 & KI-67+CD28+CD45RO+CD8+CD4-CD57-CD27+CCR7+ & 6.7e-07 & (1.1e-16, 4.7e-03) & 3e-02 & 585.4 & 0.055 & 0.00051 \\ 
-      37 & KI-67+CD8+CD27-CCR7-CD127- & 4.7e-11 & (1.3e-13, 1.4e-03) & 2e-06 & 141.3 & 0.095 & 0.00292 \\ 
-      38 & KI-67+CD8+CD4-CD27-CCR7-CD127- & 4.7e-11 & (1.3e-13, 1.3e-03) & 2e-06 & 141.3 & 0.095 & 0.00292 \\ 
-      39 & KI-67+CD28-CD8+CD27-CCR7-CD127- & 2.7e-11 & (1.0e-13, 7.6e-04) & 1e-06 & 164.5 & 0.097 & 0.00241 \\ 
-      40 & KI-67+CD28-CD8+CD4-CD27-CCR7-CD127- & 2.7e-11 & (2.7e-13, 1.4e-03) & 1e-06 & 164.5 & 0.097 & 0.00241 \\ 
-      41 & KI-67+CD28-CD8+CCR7-CD127- & 6.6e-11 & (5.6e-14, 1.5e-02) & 3e-06 & 132.9 & 0.094 & 0.00293 \\ 
-      42 & KI-67+CD28-CD8+CD4-CCR7-CD127- & 6.6e-11 & (1.2e-14, 8.4e-04) & 3e-06 & 132.9 & 0.094 & 0.00293 \\ 
-      43 & KI-67+CD45RO+CD8+CD27-CCR7- & 1.2e-09 & (4.0e-12, 2.8e-03) & 5e-05 & 143.6 & 0.082 & 0.00216 \\ 
-      44 & KI-67+CD45RO+CD8+CD4-CD27-CCR7- & 1.2e-09 & (1.0e-12, 1.2e-02) & 5e-05 & 143.6 & 0.082 & 0.00216 \\ 
-      45 & KI-67+CD28-CD45RO+CD8+CD27-CCR7- & 1.0e-09 & (1.9e-15, 7.3e-04) & 4e-05 & 188.5 & 0.082 & 0.00155 \\ 
-      46 & KI-67+CD28-CD45RO+CD8+CD4-CD27-CCR7- & 1.0e-09 & (1.7e-13, 2.0e-03) & 4e-05 & 188.5 & 0.082 & 0.00155 \\ 
-      47 & KI-67+CD45RO+CD8+CD27-CD127- & 7.1e-10 & (1.2e-14, 6.8e-03) & 3e-05 & 152.4 & 0.084 & 0.00221 \\ 
-      48 & KI-67+CD45RO+CD8+CD4-CD27-CD127- & 7.1e-10 & (3.4e-14, 1.5e-03) & 3e-05 & 152.4 & 0.084 & 0.00221 \\ 
-      49 & KI-67+CD28-CD45RO+CD8+CD27-CD127- & 5.0e-10 & (6.0e-13, 3.1e-03) & 2e-05 & 201.3 & 0.085 & 0.00163 \\ 
-      50 & KI-67+CD28-CD45RO+CD8+CD4-CD27-CD127- & 5.0e-10 & (4.6e-14, 2.7e-03) & 2e-05 & 201.3 & 0.085 & 0.00163 \\ 
-      51 & KI-67+CD28-CD45RO+CD8+CD127- & 1.0e-09 & (1.2e-15, 3.2e-03) & 4e-05 & 150.5 & 0.083 & 0.00222 \\ 
-      52 & KI-67+CD28-CD45RO+CD8+CD4-CD127- & 1.0e-09 & (1.5e-11, 3.6e-03) & 4e-05 & 150.5 & 0.083 & 0.00222 \\ 
-      53 & KI-67+CD45RO+CD8+CD4-CD127- & 2.2e-09 & (2.8e-13, 2.1e-03) & 9e-05 &  99.8 & 0.079 & 0.00362 \\ 
-      54 & KI-67+CD28-CD45RO+CD8+CD4-CCR7- & 8.0e-09 & (2.7e-12, 7.2e-04) & 3e-04 & 133.6 & 0.074 & 0.00209 \\ 
-      55 & KI-67+CD28-CD45RO+CD57-CCR7+CD127- & 5.9e-08 & (4.0e-15, 4.5e-03) & 2e-03 & 376.6 & 0.066 & 0.00075 \\ 
-      56 & KI-67+CD28-CD45RO+CD4-CD57-CCR7+CD127- & 5.0e-08 & (4.8e-13, 3.9e-03) & 2e-03 & 409.6 & 0.066 & 0.00070 \\ 
-      57 & KI-67+CD57-CD27-CD127- & 5.9e-10 & (3.2e-14, 2.7e-03) & 2e-05 &  44.9 & 0.085 & 0.00806 \\ 
-      58 & KI-67+CD28-CD27-CD127- & 4.8e-10 & (7.3e-15, 2.5e-03) & 2e-05 &  50.6 & 0.086 & 0.00711 \\ 
-      59 & KI-67+CD4-CD127- & 1.3e-10 & (4.4e-16, 9.7e-03) & 5e-06 &  37.1 & 0.091 & 0.01159 \\ 
-      60 & KI-67+CD28-CD127- & 4.9e-10 & (1.1e-12, 1.4e-03) & 2e-05 &  41.4 & 0.086 & 0.00823 \\ 
-      61 & KI-67+CD4-CD27- & 5.6e-09 & (2.1e-14, 2.6e-03) & 2e-04 &  28.6 & 0.075 & 0.01122 \\ 
-      62 & KI-67+CD28-CD4-CD27- & 1.8e-09 & (3.6e-13, 5.3e-03) & 7e-05 &  40.2 & 0.080 & 0.00785 \\ 
-      63 & KI-67+CD27-CD127- & 1.3e-09 & (9.8e-15, 1.1e-03) & 5e-05 &  33.0 & 0.082 & 0.01052 \\ 
-      64 & KI-67+CCR7-CD127- & 6.5e-11 & (1.4e-15, 9.6e-04) & 2e-06 &  47.3 & 0.094 & 0.00947 \\ 
-      65 & KI-67+CD4-CD27-CCR7- & 9.6e-11 & (1.1e-16, 1.5e-03) & 4e-06 &  52.1 & 0.092 & 0.00764 \\ 
-      66 & KI-67+CD4-CCR7- & 1.7e-10 & (3.0e-14, 1.0e-02) & 7e-06 &  41.4 & 0.090 & 0.00987 \\ 
-      67 & KI-67+CD45RO+CD57-CCR7- & 1.4e-09 & (6.6e-13, 1.2e-03) & 5e-05 &  49.6 & 0.081 & 0.00695 \\ 
-      68 & KI-67+CD45RO+CD57-CD27-CCR7- & 9.1e-10 & (8.6e-12, 2.5e-03) & 3e-05 &  66.4 & 0.083 & 0.00505 \\ 
-      69 & KI-67+CD45RO+CD4- & 2.0e-09 & (8.0e-13, 2.5e-03) & 8e-05 &  45.3 & 0.080 & 0.00851 \\ 
-      70 & KI-67+CD28-CD45RO+ & 1.3e-08 & (1.2e-12, 2.4e-03) & 5e-04 &  54.9 & 0.072 & 0.00525 \\ 
-      71 & KI-67+CD45RO+CD127- & 1.1e-09 & (4.4e-16, 1.5e-02) & 4e-05 &  42.5 & 0.082 & 0.00834 \\ 
-      72 & KI-67+CD45RO+CD57-CD127- & 2.9e-10 & (1.5e-14, 6.4e-04) & 1e-05 &  55.0 & 0.088 & 0.00719 \\ 
-      73 & KI-67+CD28-CD45RO+CD8+CD27- & 9.2e-09 & (2.6e-15, 2.3e-03) & 4e-04 & 138.0 & 0.073 & 0.00201 \\ 
-      74 & KI-67+CD28-CD45RO+CD8+CD4-CD27- & 9.2e-09 & (1.0e-15, 4.6e-03) & 4e-04 & 138.0 & 0.073 & 0.00201 \\ 
-      75 & KI-67+CD8+CD4-CD57-CD27-CD127- & 1.9e-09 & (5.9e-14, 7.0e-03) & 7e-05 & 113.8 & 0.080 & 0.00274 \\ 
-      76 & KI-67+CD28-CD45RO+CD8+ & 9.3e-09 & (5.9e-13, 1.4e-03) & 4e-04 & 102.7 & 0.073 & 0.00279 \\ 
-      77 & KI-67+CD28-CD45RO+CD8+CD4- & 9.3e-09 & (0.0e+00, 1.6e-03) & 4e-04 & 102.7 & 0.073 & 0.00279 \\ 
-      78 & KI-67+CD45RO+CD8+ & 2.1e-08 & (6.9e-15, 6.8e-04) & 8e-04 &  59.1 & 0.070 & 0.00512 \\ 
-      79 & KI-67+CD8+CCR7- & 3.0e-08 & (7.7e-13, 2.8e-03) & 1e-03 &  49.5 & 0.068 & 0.00530 \\ 
-      80 & KI-67+CD8+CD27-CCR7- & 8.3e-09 & (1.0e-13, 3.6e-03) & 3e-04 &  70.7 & 0.074 & 0.00377 \\ 
-      81 & KI-67+CD4- & 2.8e-08 & (1.0e-13, 2.3e-03) & 1e-03 &  17.1 & 0.069 & 0.01627 \\ 
-      82 & KI-67+CD28-CD4- & 1.1e-08 & (5.9e-14, 4.0e-03) & 4e-04 &  26.7 & 0.073 & 0.00950 \\ 
-      83 & KI-67+CD127- & 2.7e-08 & (1.2e-12, 2.1e-03) & 1e-03 &  19.1 & 0.069 & 0.01460 \\ 
-      84 & KI-67+CCR7- & 8.4e-08 & (3.4e-15, 2.3e-03) & 3e-03 &  18.3 & 0.064 & 0.01311 \\ 
-      85 & KI-67+CD27-CCR7- & 3.5e-08 & (1.7e-13, 1.2e-03) & 1e-03 &  25.2 & 0.068 & 0.00998 \\ 
-      86 & KI-67+CD45RO+CD27- & 7.5e-07 & (5.4e-13, 1.8e-03) & 3e-02 &  24.0 & 0.055 & 0.00862 \\ 
-      87 & KI-67+CD45RO+CD57- & 1.2e-07 & (2.1e-13, 3.1e-03) & 5e-03 &  22.9 & 0.062 & 0.01123 \\ 
-      88 & KI-67+CD4-CD57- & 1.3e-08 & (3.8e-15, 2.1e-03) & 5e-04 &  25.3 & 0.072 & 0.01209 \\ 
-      89 & KI-67+CD28-CD4-CD57- & 9.7e-09 & (5.5e-12, 1.2e-03) & 4e-04 &  37.7 & 0.073 & 0.00698 \\ 
-      90 & KI-67+CD57-CD127- & 3.3e-09 & (1.3e-13, 3.3e-03) & 1e-04 &  28.1 & 0.078 & 0.01128 \\ 
-      91 & KI-67+CD45RO+CCR7- & 4.2e-09 & (7.8e-15, 2.5e-03) & 2e-04 &  37.5 & 0.077 & 0.00819 \\ 
-      92 & KI-67+CD57-CCR7- & 2.7e-08 & (2.8e-13, 2.8e-03) & 1e-03 &  26.6 & 0.069 & 0.01008 \\ 
-      93 & KI-67+CD57-CD27-CCR7- & 1.2e-08 & (4.9e-13, 2.6e-03) & 5e-04 &  36.8 & 0.072 & 0.00762 \\ 
-      94 & KI-67+CD28-CCR7- & 3.3e-09 & (4.6e-14, 5.7e-03) & 1e-04 &  37.7 & 0.078 & 0.00739 \\ 
-      95 & KI-67+CD28-CD27-CCR7- & 3.3e-09 & (2.6e-14, 6.5e-04) & 1e-04 &  43.0 & 0.078 & 0.00647 \\ 
-      96 & KI-67+CD28- & 1.9e-07 & (4.0e-15, 2.7e-03) & 7e-03 &  18.3 & 0.061 & 0.01053 \\ 
-      97 & KI-67+CD28-CD27- & 7.1e-08 & (1.5e-12, 8.6e-04) & 3e-03 &  26.3 & 0.065 & 0.00874 \\ 
-      98 & KI-67+CD28-CD8- & 8.3e-08 & (5.5e-14, 2.5e-03) & 3e-03 &  44.2 & 0.064 & 0.00523 \\ 
-      99 & KI-67+CD45RO+ & 8.9e-07 & (1.9e-13, 2.5e-03) & 3e-02 &  15.4 & 0.054 & 0.01343 \\ 
-      100 & KI-67+CD8+CD57- & 1.1e-06 & (4.4e-14, 3.1e-03) & 4e-02 &  28.3 & 0.053 & 0.00648 \\ 
-      101 & KI-67+CD8+CD27- & 6.4e-07 & (2.3e-14, 1.1e-02) & 2e-02 &  35.2 & 0.056 & 0.00560 \\ 
-      \hline
-      \label{ts1}
-      % \end{table}
-    \end{longtable}
-  }
-\end{center}
-\end{landscape}
-
-  \begin{landscape}
-    \begin{figure}[ht]
-      \begin{center}
-        \includegraphics[width=13cm, angle=270]{figs/rchy/figs/HIVClinicalOutcomeComplete}
-      \end{center}
-      \caption{A complete cellular hierarchy for prediction of HIV's clinical outcome using KI67$^+$CD4$^-$CCR5$^+$CD127$^-$ T-cells. 
-      The color of the nodes indicates the significance of the correlation with clinical outcome (p-value of the logrank test for the Cox proportional hazards model) and the width of each edge (arrow) shows the amount of change in this variable between the respective nodes.
-        The positive and negative correlation of each immunophenotype with outcome can be seen from the arrow type leading to the node; however, as all correlations are negative in this hierarchy, only one arrow type is shown. 
-      }
-      \label{r1:HIVClinicalOutcomeComplete}
-    \end{figure}
-  \end{landscape}
-
-  \begin{figure}[ht]
-    \begin{center}
-      \includegraphics[width=13cm]{figs/rchy/figs/HIVClinicalOutcome}
-    \end{center}
-    \caption{An optimized cellular hierarchy for prediction of HIV's clinical outcome using KI67$^+$CD4$^-$CCR5$^+$CD127$^-$ T-cells. 
-The color of the nodes shows the significance of the correlation with clinical outcome (p-value of the logrank test for the Cox proportional hazards model) and the width of each edge (arrow) shows the amount of change in this variable between the respective nodes. 
-}
-    \label{r1:HIVClinicalOutcome}
-  \end{figure}
-
-\begin{landscape}
-\begin{figure}[!ht]
-  \begin{center}
-    \includegraphics[width=13cm, angle=270]{figs/rchy/figs/NaiveOverlapComplete}
-  \end{center}
-  \caption{A complete cellular hierarchy for identifying naive T-cells. The colour of the nodes and the thickness of the edges have been removed to facilitate visualization of the complex graph.
-  }
-  \label{r1:NaiveOverlapComplete}
-\end{figure}
-\end{landscape}
-
-  \begin{figure}[ht]
-    \begin{center}
-      \includegraphics[height=9cm, angle=0]{figs/rchy/figs/cdf}
-    \end{center}
-    \caption{Empirical cumulative distribution function of the $24$ possible paths (one dot per path, with some dots overlapping) for constructing the KI67$^+$CD4$^-$CCR5$^+$CD127$^-$ population. A change point in the path scores was defined manually (the red dashed line). The paths above the dashed line are those selected for construction of Figure \ref{r1:HIVClinicalOutcome}.}
-    \label{r1:cdf}
-  \end{figure}
-
-
-  \begin{landscape}
-  \begin{figure}[!ht]
-    \begin{center}
-      \begin{tabular}{c||c||c}
-        \includegraphics[width=4in,angle=270]{figs/rchy/figs/IL7Proportions}&
-        \includegraphics[width=4in,angle=270]{figs/rchy/figs/BCRProportions}&
-        \includegraphics[width=4in,angle=270]{figs/rchy/figs/LPSProportions}\\
-        (A) IL7 &(B) BCR &(C) LPS\\
-      \end{tabular}
-    \end{center}
-    \caption{Average F-measures of all pairs of results for the cell populations across all samples in the HSCT dataset (\emph{i.e.,} one heatmap for every cell population in the reference).}
-    \label{CyTOFProp}
-  \end{figure}
-  \end{landscape}
+%  \begin{landscape}
+%  \begin{figure}[!ht]
+%    \begin{center}
+%      \begin{tabular}{c||c||c}
+%        \includegraphics[width=4in,angle=270]{figs/rchy/figs/IL7Proportions}&
+%        \includegraphics[width=4in,angle=270]{figs/rchy/figs/BCRProportions}&
+%        \includegraphics[width=4in,angle=270]{figs/rchy/figs/LPSProportions}\\
+%        (A) IL7 &(B) BCR &(C) LPS\\
+%      \end{tabular}
+%    \end{center}
+%    \caption{Average F-measures of all pairs of results for the cell populations across all samples in the HSCT dataset (\emph{i.e.,} one heatmap for every cell population in the reference).}
+%    \label{CyTOFProp}
+%  \end{figure}
+%  \end{landscape}
 
   \begin{figure}[!ht]
     \begin{center}
@@ -862,22 +661,6 @@ The color of the nodes shows the significance of the correlation with clinical o
     \label{r1:KI67Overlap}
   \end{figure}
 
-\begin{figure}[!ht]
-  \begin{center}
-    \includegraphics[width=\textwidth]{figs/rchy/figs/overlaps}
-  \end{center}
-  \caption{All immunophenotypes ordered by their overlap with the cell population of interest. The red dashed lines indicate the cutoffs used for selecting the immunophenotypes with ``high overlap''.}
-  \label{r1:overlaps}
-\end{figure}
-
-
-\begin{figure}[!ht]
-  \begin{center}
-    \includegraphics[width=10cm]{figs/rchy/figs/cor}
-  \end{center}
-  \caption{The correlation between the effect sizes and p-values of the log rank tests for the Cox proportional hazards models for each immunophenotype. The Pearson correlation coefficient was determined as $0.997$, indicating a highly significant correlation with a p-value  $< 2.2 \times 10^{-16}$.}
-  \label{r1:effectsizevspv}
-\end{figure}
 
 
 \section{Lymphoma Diagnosis Quality Checking}

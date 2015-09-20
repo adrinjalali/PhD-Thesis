@@ -1,3 +1,8 @@
+\begin{savequote}[.5\linewidth]
+  ``All models are wrong; some models are useful.''
+  \qauthor{- George Box}
+\end{savequote}
+
 \chapter{Adaptive Learning}
 
 Here we talk about adaptive and interpretable methods.
@@ -8,17 +13,17 @@ Here we talk about adaptive and interpretable methods.
 \subsection{Batch Effects and Noise}
 
 \section{RatBoost}
-\section*{Background}
-Over the past few decades, biology has transformed into a high throughput research field, both in terms of the number of different measurement techniques as well as the amount of variables measured by each technique (e.g., from Sanger sequencing to deep sequencing), and is more and more targeted to individual cells~\cite{Shapiro2013}. This has led to an unprecedented growth of biological information. Consequently, techniques that can help researchers find important insights into the data are becoming increasingly important.
+\subsection{Background}
+Over the past few decades, biology has become more targeted to individual cells, and has transformed into a high throughput research field, both in terms of the number of different measurement techniques, and the amount of variables measured by each technique (e.g., from Sanger sequencing to deep sequencing), and is more and more targeted to individual cells~\cite{Shapiro2013}. This has led to an unprecedented growth of biological information. Consequently, techniques that can help researchers find important insights into the data are becoming increasingly important.
 Predicting survival of cancer patients based on measurements from
-microarray experiments has been a field of great interest, but there is often very little overlap between the important genes or biomarkers identified by different studies~\cite{Ein-Dor2005}. Several reasons have been suggested to explain these findings (e.g., heterogeneity of cancer samples or insufficient sample size). Attempts have been made to incorporate additional information from other sources, such as protein-protein interaction (PPI) networks, to make the predictions more robust~\cite{Chuang2007}. One of the latest approaches integrates network and expression data by introducing a network-induced classification kernel (NICK)~\cite{Lavi2012}. Although this method exhibits state-of-the-art performance, determining the variables leading to the method's performance is not straightforward. Furthermore, a central assumption underlying many methods is that all data are drawn from the same unknown underlying distribution. This may not be the case, especially for heterogeneous cancer samples, and in particular not for all measured genes.
+microarray experiments has been a field of great interest, but there is often very little overlap between the important genes or biomarkers identified by different studies~\cite{Ein-Dor2005}. Several reasons have been suggested to explain these findings (e.g., heterogeneity of cancer samples or insufficient sample size). Attempts have been made to incorporate additional information from other sources, such as protein-protein interaction (PPI) networks, to make the predictions more robust~\cite{Chuang2007}. One of the latest approaches has integrated network and expression data by introducing a network-induced classification kernel (NICK)~\cite{Lavi2012}. Although this method exhibits state-of-the-art performance, determining the variables leading to the method's performance is not straightforward. Furthermore, many of these methods assume that all data is drawn from the same unknown underlying distribution. However this might not be the case for all measured genes in heterogeneous cancer samples.
 
-In this work, we introduce a method that is aware of this potential bias and utilizes an estimate of the differences during the generation of the final prediction method. For this, we introduce a set of sparse classifiers based on $L1$-SVMs~\cite{bradley1998feature}, where each set of features used by one classifier is disjoint from the selected feature set of any other classifier. Furthermore, for each feature chosen by one of the classifiers, we introduce a regression model that uses additional features and is based on Gaussian process regression. These regression models are then used to estimate how predictable the features of each classifier are for each test sample. This information can then be used to find a confidence weighting of the classifiers, i.e. up-weighting classifiers with high confidence and down-weighting classifiers with lower confidence, for each test sample. Schapire and Singer show that incorporating confidences of classifiers can improve the performance of an ensemble method~\cite{adaboost99improved}. However, in their setting, confidences of classifiers are estimated using the training data and are thus fixed for all test samples, whereas in our setting, we estimate confidences of individual classifiers per given test sample.
+In this work, we introduce a method that is aware of this potential bias. We utilize an estimate of the differences between observed and predicted values, during the generation of the final prediction method. Hence, we introduce a set of sparse classifiers based on $L1$-SVMs~\cite{bradley1998feature}, where each set of features used by one classifier is disjoint from the selected feature set of any other classifier. Furthermore, for each feature chosen by one of the classifiers, we introduce a regression model that uses additional features and is based on Gaussian process regression. These regression models are then used to estimate how predictable the features of each classifier are for each test sample, using other features of the test sample itself. This information is then used to find a confidence weighting of the classifiers, i.e. up-weighting classifiers with high confidence and down-weighting classifiers with lower confidence, for each test sample. Schapire and Singer have shown that incorporating confidences of classifiers can improve the performance of an ensemble method~\cite{adaboost99improved}. However, in their setting, confidences of classifiers are estimated using the training data and are thus fixed for all test samples, whereas in our setting, we estimate confidences of individual classifiers per given test sample.
 We show that this method exhibits state-of-the-art performance for different cancer types, with gene expression or methylation data sets as the input. Since the weighting of the classifiers is customized for each test sample, the estimated confidences can offer insights into the specific characteristics of each individual's cancer. To facilitate interpretation of the model, we then create a visualization of the important genes found through this analysis for each test sample. Additionally, we show how the important genes of the training set can be found using our learning method and cross validation.
 
-\section*{Methods}
-\subsection*{Materials}
-\subsubsection*{Data Sources:}
+\subsection{Methods}
+\subsubsection{Materials}
+\textbf{Data Sources:}
 In this article, our method is applied to two different data types: gene expression data and DNA methylation data, which we retrieved from The Cancer Genome Atlas (TCGA)~\cite{tcga-ref}. TCGA is a joint effort of the National Cancer Institute and the National Human Genome Research Institute to advance the understanding of the molecular basis of cancer. They provide access to the different measurements from cancer samples that have been analyzed to external researchers. 
 Samples are categorized according to diagnosed cancer from which we use the following groups:
 
@@ -30,14 +35,12 @@ In our analysis, regarding risk group, \{favorable\} and \{intermediate/normal, 
   Hence the data are analyzed according to ``tumor size'', ``affected nearby lymph nodes'', ``stage'', and ``estrogen receptor''. Estrogen receptor was shown to be an important factor in prognosis~\cite{knight1977estrogen}, and along with other factors directly affects the decision for therapy~\cite{goldhirsch2001meeting,national2001national}. For tumor size \{T1, T2\} samples are one category and \{T3, T4\} the other category; in order to analyze affected nearby lymph nodes, \{N0\} is compared to \{N1, N2, N3\}; stage is analyzed as having \{stage I, stage II\} vs. \{stage III\} samples. Estrogen receptor status of samples is either positive or negative, and they form our two classes.
 \end{itemize}
 
-\subsubsection*{Data Preprocessing:}
+\textbf{Data Preprocessing:}
 To prepare gene expression data for analysis, microarray probes are mapped to their respective gene. If there are multiple probes for a gene, the median reported gene expression value of those probes is adopted as the gene expression for that gene.
 
 Preparing the methylation data, we use the nearby gene for each methylation site available for each sample and each methylation site. The median beta value of methylation sites mapped to each gene is taken as the methylation value of the corresponding gene. In this process only methylation sites located on the promoter region of a gene are considered and others are discarded.
 
-\subsection*{Boosting}
-For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
-\subsection*{Learning a Mixture of Disjoint Classifiers}
+\subsubsection{Learning a Mixture of Disjoint Classifiers}
 When dealing with cancer, we need to consider the fact that tumors of the same type of cancer can be very different in nature and they are usually classified as different cancer subtypes. In fact, even one single tumor can be very heterogeneous~\cite{heppner1984tumor}. This means that the malignancies causing the cancer to happen are genetically different between subtypes, or even within subtypes, and it is possible to have multiple underlying cellular processes causing a particular cancer.
 Also it is important to note that the nature of our given data is such that the input features are properties measured from genes, e.g. gene expression or methylation values, and these variables are correlated and statistically dependent on each other. Our method tries to exploit these properties of the problem to infer an interpretable model with state-of-the-art performance.
 
@@ -57,17 +60,24 @@ Prediction phase:
 \item Calculate a weighted prediction label based on the individual classifier confidences.
 \end{itemize}
 
-\subsubsection*{Properties of the Individual Classifiers:}
-A wide variety of classifiers is possible within our framework. One requirement is that the classifier is regularized (i.e., the stronger the regularization, the less complex the model gets and consequently the less features are used). The classifier is also required to report the probability of its calculated output, or to give a decision value according to which it chooses the predicted class. We use an $L1$ regularized SVM for this purpose with a linear kernel~\cite{bradley1998feature}. The $L1$ regularization makes the SVM sparse, i.e. using only a few input features, and the linear kernel allows us to infer which features are used in the decision function of the SVM after it is fit to the data.
+\textbf{Properties of the Individual Classifiers:}
+A wide variety of classifiers can be used within our framework. One requirement is that the classifier is regularized (i.e., the stronger the regularization, the less complex the model gets and consequently the less features are used). The classifier is also required to report the probability of its calculated output, or to give a decision value according to which it chooses the predicted class. We use an $L1$ regularized SVM for this purpose with a linear kernel~\cite{bradley1998feature}. The $L1$ regularization makes the SVM sparse, i.e. using only a few input features, and the linear kernel allows us to infer which features are used in the decision function of the SVM after it is fit to the data.
 
-\subsubsection*{Training the Individual Classifiers:}
-The model starts with no individual classifiers and an empty set of excluded features. In each step, the excluded set of features is removed from the data, then a classifier is fit to the data. Next the features used by the most recent trained classifier are added to the excluded set. In the case of a linear kernel SVM, this is achieved by finding features with a non-zero coefficient in the model. This way the features being used by classifiers are disjoint and might represent different underlying causes of groups into which samples are to be classified.
+\textbf{Training the Individual Classifiers:}
+The model starts with no individual classifier and an empty set of excluded features. In each step, the excluded set of features is removed from the data, then a classifier is fit to the data. Next the features used by the most recent trained classifier are added to the excluded set. In the case of a linear kernel SVM, this is achieved by finding features with a non-zero coefficient in the model. This way the features being used by classifiers are disjoint and might represent different underlying causes of groups into which samples are to be classified.
 
-\subsubsection*{Combining Classifiers by Estimating Confidences of Individual Predictors:}
+\textbf{Combining Classifiers by Estimating Confidences of Individual Predictors:}
 Given a set of classifiers, the question is how to combine them to come up with a joint prediction value for each test sample for which we want to predict the output label. The intuition behind combining the classifiers is to put more weight on classifiers that use features whose behavior is similar to the training data. This is motivated by the fact that some parts of the test data might behave very differently to the training data, meaning that a classifier using these features should have lower performance than a classifier using features that are distributed similarly to the training data. Therefore we need to evaluate the reliability of the input features of each individual classifier. In scenarios like gene expression or methylation analysis, we usually have many input features. Furthermore, many features are correlated and statistically dependent. The idea of our new method is to build separate prediction models for each feature of each classifier. These prediction models can then be used to obtain a confidence for the feature in a given test sample. These confidences can then be combined for each classifier to give a weighting of the classifiers for the given test sample.
 To evaluate an observed feature $f$, we try to choose a few statistically dependent features, and fit a model to predict $f$. 
 To find these features, first the estimated mutual information of all other features with feature $f$ is calculated~\cite{reshef2011detecting}. Then, features having mutual information value within the top $5\%$ or the 5 features with highest mutual information with $f$ (if the top $5\%$ features consist of less than 5 features), are selected as predictors of $f$.
-Given a test sample, the closer the predicted value of $f$ is to the observed value, the more reliable it is. To quantify this, we need to not only know the predicted value of the feature, but also a confidence interval for that prediction. This can be achieved using Gaussian processes, which give the mean and variance of the posterior probability under the condition of observed values for selected features. A weighted average of these values gives us the overall reliability of the features of an individual classifier.
+Given a test sample, the closer the predicted value of $f$ is to the observed value, the more reliable it is. To quantify this, we need to not only know the predicted value of the feature, but also a confidence interval for that prediction. This can be achieved using Gaussian processes, which give the mean and variance of the posterior probability under the condition of observed values for selected features. A weighted average of these values gives us the overall reliability of the features of an individual classifier. A schematic view of the trained classifier is shown in Fig.~\ref{fig:ratboost-schema}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.6\textwidth]{figs/rat/m9}
+  \caption{Schematic view of the method}
+  \label{fig:ratboost-schema}
+\end{figure}
 
 In addition to the confidence in the classifier estimated by looking at the confidences of its individual features, we also account for the confidence that the classifier has in the prediction label of the test sample. If the method supplies such a confidence value (e.g., Gaussian processes), we can directly use it. Otherwise, we estimate it using the decision value. In our setting, the linear SVM gives a decision value whose sign defines the predicted class. Using these values we estimate a confidence for each individual classifier. Several approaches exist for deriving a confidence from the decision values~\cite{Lin2007}. Whether these or other additional methods could lead to further improvements of our method, will be topic of further study.
 
@@ -157,7 +167,8 @@ c_{l_i}(X_s) := c^1_{l_i}(X_s) \cdot c^2_{l_i}(X_s)
 \hat{y}_s := \textrm{sign}\left(\frac{\sum_{l_i \in \Delta} c_{l_i}(X_s) \cdot l_i(X_s)}{\sum_{l_i \in \Delta} c_{l_i}(X_s)}\right)
 \end{equation}
 
-\subsection*{Visualization of Model Predictions}
+\subsubsection{Visualization of Model Predictions}
+\label{sec:visualization-of-model-predictions}
 The interpretation of the model can be understood on two different ways. First we assume for a given training data set, the model is trained and a new test sample is given.
 For the given test sample it is possible to visualize the reliability of each used feature in individual classifiers, as well as the overall confidence of each individual classifier. 
 Used features can be superimposed onto a PPI network as well as their reliability and the confidence of their respective individual classifier.
@@ -166,7 +177,7 @@ Used features can be superimposed onto a PPI network as well as their reliabilit
  To visualize high confidence relationships between features, we create a graph which has a node for every chosen feature in any of the 100 train partitions in any of the individual classifiers. The weight of an edge $(s, t)$ is defined as the number of times the respective features have occurred together in an individual classifier. Then, all edges with low weights are discarded. In order to find a threshold to prune edges according to their weights, a Gaussian kernel density estimate is fit to the weights of the edges, and the threshold is chosen at the 90th percentile. Nodes that have an appearance frequency higher than the threshold are labeled by their gene names and edges having a higher weight than the threshold are kept in the graph.
 
 For illustration purposes, choosing the regularization parameter is done in a way to maximize the number of genes selected with high confidence, as well as minimizing the number of genes pruned out in the process. It is important to remember that considering the results of the method under different regularization parameters is essential to make sure the selected genes possess a high confidence and are also stable regardless of sampling of the training data set.
-\subsection*{Implementation Details}
+\subsubsection{Implementation Details}
 To compare the performance of our method with other methods, the implementations present in Python \emph{scikit-learn(0.14)} package are taken. In the case of stochastic gradient boosting, the representing class is \emph{GradientBoostingClassifier}, the number of classifiers is set to 100, and to make it sparse and prevent over-fitting, the maximum number of features for splits in trees is set to 5, and the maximum number of layers is set to 2.
 For AdaBoost, \emph{AdaBoostClassifier} is used, which is an implementation of AdaBoost-SAMME~\cite{zhu2009multi}, with weak learner set to \emph{DecisionTreeClassifier} with maximum depth set to 2, and the number of weak classifiers set to 100. Parameters of the two boosting algorithms are chosen by a grid search on their parameter space over all the data sets and selecting the parameter sets which give a robust and stable result over all experiments.
 
@@ -176,22 +187,11 @@ The Gaussian process's correlation function is a squared-exponential, and mutual
 The PPI network used in our analysis is from the Human Protein Reference Database (HPRD)~\cite{peri2003development}. Almost all edges and relationships between proteins that are added to this database are manually extracted from literature by biologists, hence it has a lower rate of edges included in the database for which there is no evidence in the literature.
 
 
-\section*{Results and discussion}
-\subsection*{Performance comparison}
-The performance of the method was compared with that of two ensemble methods, AdaBoost and stochastic gradient boosting, as well as an SVM with linear kernel, and an SVM with an RBF kernel. We also included our implementation of the NICK method~\cite{Lavi2012}.
-We randomly partitioned the data into training and test sets with $80\%$ of the data for training and $20\%$ of the data for testing. To compare the performance of the different methods, Area Under the receiver operating characteristic Curve (AUC)~\cite{egan1975signal} was calculated on the test set over the decision values returned by the methods on the individual samples. The process was repeated 100 times to reduce random effects.
-As seen in Fig.~\ref{fig:performance-summary}, overall performances of all methods are comparable. In some cases a single SVM works better, in some other cases ensemble algorithms give a better performance. However, in most cases an improvement in performance is observed by adding individual learners to the model, with the greatest gains due to the first few individual learners added to the model. 
-
-
-\begin{figure*}[!tpb]
-\centerline{\includegraphics[angle=270,width=15.7cm]{figs/rat/figs/performance}}
-\caption{\textbf{Performance Summary (AUC)} Each box shows a $25$--$75\%$ interval, as well as the median, which is shown as a horizontal line in each box.}\label{fig:performance-summary}
-\end{figure*}
-
-\subsection*{Interpretability of Predictions}
+\subsection{Results and discussion}
+\subsubsection{Interpretability of Predictions}
 Here we present the results of running the method on the TCGA-LAML gene expression data set.
 
-\subsubsection*{Visualization of  Features Important for a Particular Test Sample:}
+\textbf{Visualization of  Features Important for a Particular Test Sample:}
 Having a model trained on the data, and given a test sample, it is possible to infer and visualize which individual classifier(s) is (are) influencing the prediction most. To this end, individual learners as well as the features they use are visualized as in Fig.~\ref{fig:sample-model}(a). 
 In this figure, nodes with labels starting with ``\emph{L\_}'' represent individual classifiers, and other nodes are labeled with their respective gene name. The color of the node shows its confidence compared to other nodes; the darker the node, the higher the confidence. In the case of a gene, it is the confidence or reliability of the feature ($c_f$), and in the case of an individual classifier, it is the overall estimated confidence ($c_{l_i}$). Edges show which classifier is using which genes in its decision function. The shape of a node represents the individual classifier they belong to.
 
@@ -209,9 +209,11 @@ To get a better overview of the individual features that were chosen by the clas
 Most of the features chosen by any of the classifiers (colored nodes) are not connected to any other chosen feature. It is known that there is in many cases a correlation between expression value of the genes whose corresponding proteins interact~\cite{jansen2002relating}.
 Therefore, a regularized model will only choose a subset of the correlated features. This explains the observation that features selected by a single model can be distant from each other on a PPI network; but if multiple disjoint sparse models are fit to the data, their selected features might happen to be close to each other on the PPI network (e.g., node TPT1 and node EEF1A1 in Fig.~\ref{fig:sample-model}(b)).
 
+It is worth noting that these plots are the result of analyzing one single given test sample. Therefore in practice, these interpretations can be used for each patient and if useful, influence the treatment that the oncologist prescribe for the patient.
 
-\subsubsection*{Visualization of Important Global Features:}
-As explained in Section 2.4, a graph is created from model structures of all 100 random training partitions, and then it is pruned to keep only high confidence nodes and edges.
+
+\textbf{Visualization of Important Global Features:}
+As explained in Section~\ref{sec:visualization-of-model-predictions}, a graph is created from model structures of all 100 random training partitions, and then it is pruned to keep only high confidence nodes and edges.
 The density estimation of the graph edge weights and the pruned graph are plotted in Fig.~\ref{fig:summary-network} where the nodes with labels are the ones that are not pruned. The nodes in this figure that do not have any label, are the ones with frequency lower than the corresponding threshold. Among the features considered to be important were features that had previously been linked to leukemia such as SH3KBP1~\cite{Adelaide2010}.
 
 \begin{figure*}[!htpb]
@@ -225,9 +227,22 @@ The density estimation of the graph edge weights and the pruned graph are plotte
 
 What was more intriguing to see was that four out of the seven important features of the TCGA-LAML gene expression data set contained ribosomal proteins (when using the risk group label). For a long time ribosomes were just considered machines that perform an unbiased translation of genes from mRNA to amino acid sequences, but this view has recently been challenged~\cite{Xue2012}. One new hypothesis is that the ribosome introduces an additional regulatory layer. Therefore, it could very well be that mutations in ribosomal proteins can lead to a misregulation of expression levels of important genes and ultimately to the development of cancer (in this case leukemia). One of the ribosomal proteins we found was RPL23A. It has been shown that loss of RPL23A can impede growth and lead to morphological abnormalities in Arabidopsis Thaliana~\cite{Xue2012}. Therefore, a mutation in RPL23A might also have severe effects in humans. A missense mutation in RPL23A was recently found in patients having Diamond-Blackfan anemia, which is an inherited form of pure red cell aplasia (related to leukemia)~\cite{Gazda2012}. Note that the model for LAML has low performance for the regularization value chosen. Nevertheless, the features shown here are also the ones with the highest confidence for models learnt with less regularization (with several other additional features). The models with less regularization show similar performance to the other methods shown in Fig.~\ref{fig:performance-summary}
 
-\section*{Conclusions}
+\subsubsection{Performance comparison}
+The performance of the method was compared with that of two ensemble methods, AdaBoost and stochastic gradient boosting, as well as an SVM with linear kernel, and an SVM with an RBF kernel. We also included our implementation of the NICK method~\cite{Lavi2012}.
+We randomly partitioned the data into training and test sets with $80\%$ of the data for training and $20\%$ of the data for testing. To compare the performance of the different methods, Area Under the receiver operating characteristic Curve (AUC)~\cite{egan1975signal} was calculated on the test set over the decision values returned by the methods on the individual samples. The process was repeated 100 times to reduce random effects.
+As seen in Fig.~\ref{fig:performance-summary}, overall performances of all methods are comparable. In some cases a single SVM works better, in some other cases ensemble algorithms give a better performance. However, in most cases an improvement in performance is observed by adding individual learners to the model, with the greatest gains due to the first few individual learners added to the model. 
 
-Machine learning has become more and more popular in many real world scenarios for making sense of large collections of facts. Differences between the data used for training the method and new data for which the label should be predicted can limit the performance of prediction methods on those data. In this work we introduced a method that estimates these potential partial biases and incorporates them into the prediction function. We applied it to gene expression and DNA methylation measurements from cancer patients. Our method has state-of-the-art performance on many different prediction tasks. Furthermore, we show how to make sense of the predictions. Visualizing the important genes can lead to new biological insights, as shown for the TCGA-LAML data set with the risk group label. Instead of mapping the genes to PPI networks, one could also think of mapping them to signaling pathways~\cite{Kanehisa2014}.
+
+\begin{landscape}
+\begin{figure*}[!th]
+\centerline{\includegraphics[angle=270,width=15.7cm]{figs/rat/figs/performance}}
+\caption{\textbf{Performance Summary (AUC)} Each box shows a $25$--$75\%$ interval, as well as the median, which is shown as a horizontal line in each box.}\label{fig:performance-summary}
+\end{figure*}
+\end{landscape}
+
+\subsection{Conclusions}
+
+Machine learning has become more and more popular in many real world scenarios for making sense of large collections of facts. Differences between the data used for training the method and new data for which the label should be predicted can limit the performance of prediction methods on those data. In this work we introduced a method that estimates these potential partial biases and incorporates them into the prediction function. We applied it to gene expression and DNA methylation measurements from cancer patients. Our method has state-of-the-art performance on many different prediction tasks. Furthermore, we show how to make sense of the predictions. Visualizing the important genes can lead to new biological insights, as shown for the TCGA-LAML data set with the risk group label. Instead of mapping the genes to PPI networks, they can be mapped to signaling pathways~\cite{Kanehisa2014}.
 Recently, a study showed that most published signatures are not significantly more associated with cancer outcome than random signatures~\cite{Venet2011}. One of the reasons for this finding is that the data comes from slightly different underlying hidden data distributions. Since our new method estimates this bias and corrects for it by up-weighting the classifiers that have higher confidence, we expect that it should be less susceptible to such differences in the data.
 
 \section{Raccoon}
