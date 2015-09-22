@@ -62,13 +62,155 @@ The optimization algorithm finds a $\beta$ that minimizes the loss function in F
 \subsection{Empirical Risk Minimization}
 We need to minimize the risk of the error of the predictor~\cite[p.~20]{thenatureofstatisticallearningtheory}.
 
-\subsection{Kernel Methods}
+\subsection{Support Vector Machines}
+Support vector machines (SVM) can be used both for regression and classification tasks~\cite{svm2, svr1}. As a classifier, SVM finds an optimal hyperplane to separate data points in the feature space by maximizing the hyperplane's margin to the nearest point. Therefore given a test data point, its side with regard to the hyperplane determines its class. As a regressor however, SVM finds an optimal hyperplane to interpolate given data points by minimizing the hyperplane's distance from data points.
+
+Formally speaking, given data-set $\mathcal{D}$ of $n$ data points:
+
+\begin{align}
+  \mathcal{D}={(\mathbf{x}_i, y_i) | \mathbf{x}_i \in \mathbb{R}^p, y_i \in {-1, 1}}_{i=1}^{n}
+\end{align}
+
+where $\mathbf{x}_i$ is a real vector of length $p$, and $y_i$ is either $1$ or $-1$. A $p$-dimensional hyperplane, characterized by its normal vector $\mathbf{w}$ and its intercept $\mathbf{b}$, is the set of points $\mathbf{x}$ that fit in Formula~\ref{frm:hyperplane}.
+
+\begin{align}
+  \mathbf{w} . \mathbf{x} - b = 0
+  \label{frm:hyperplane}
+\end{align}
+
+Now consider two hyperplanes on both sides of the abovementioned hyperplane as formulated bellow:
+
+\begin{align}
+  \mathbf{w} . \mathbf{x} - b &= 1 \nonumber \\
+  \mathbf{w} . \mathbf{x} - b &= -1
+\end{align}
+
+The distance between each of these hyperplanes and the on in the middle is $\frac{1}{\parallel \mathbf{w} \parallel}$. Therefore the distance between the two of them is $\frac{2}{\parallel \mathbf{w} \parallel}$. For now we assume the data is linearly separable in its feature space, i.e. there exists a hyperplane that separates the data into two classes without error. Such a hyperplane satisfies the following constraint:
+
+\begin{align}
+  y_i (\mathbf{w} . \mathbf{x}_i - b)\geq 1 \text{ for all } 1 \leq i \leq n
+\end{align}
+
+An optimal hyperplane is one such that it maximizes the margin; hence formulated as Formula~\ref{frm:svm2}. An illustration of the optimal solution is presented in Fig.~\ref{fig:svm-hyperplane}.
+
+\begin{align}
+  &\arg\max_{(\mathbf{w},b)}\frac{1}{\|\mathbf{w}\|} \nonumber \\
+  &\text{s.t.} \nonumber \\
+  &y_i (\mathbf{w} . \mathbf{x}_i - b)\geq 1 \text{ for all } 1 \leq i \leq n
+  \label{frm:svm2}
+\end{align}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/background/Svm_max_sep_hyperplane_with_margin}
+  \caption{Illustration of the optimal hyperplane in a support vector machine model, for a 2-dimensional data.}
+  \label{fig:svm-hyperplane}
+\end{figure}
+
+However, for an easier optimization and mathematical convenience, the above optimization problem is usually formulated as Formula~\ref{frm:svm1} which has the same solution as $\mathbf{w}$ and $b$.
+
+\begin{align}
+  &\arg\min_{(\mathbf{w},b)}\frac{1}{2}\|\mathbf{w}\|^2 \nonumber \\
+  &\text{s.t.} \nonumber \\
+  &y_i (\mathbf{w} . \mathbf{x}_i - b)\geq 1 \text{ for all } 1 \leq i \leq n
+  \label{frm:svm1}
+\end{align}
+
+which can be written as Formula~\ref{frm:svm3} after introducing Karush-Kuhn-Tucker (KKT) multipliers~\cite{kkt-orig}.
+
+\begin{align}
+  &\arg\min_{\mathbf{w},b } \max_{\boldsymbol{\alpha}} \left\{ \frac{1}{2}\|\mathbf{w}\|^2 - \sum_{i=1}^{n}{\alpha_i[y_i(\mathbf{w}\cdot \mathbf{x_i} - b)-1]} \right\} \nonumber \\
+  &\text{s.t.} \nonumber \\
+  &\alpha_i \geq 0 \text{ for } 1 \leq i \leq n \nonumber \\
+  \label{frm:svm3}
+\end{align}
+
+Multipliers $\alpha_i$ will be $0$ for each $\mathbf{x}_i$ that does not lie on either of the marginal hyperplanes. For example in Figure~\ref{fig:svm-hyperplane}, $\alpha_i$ is non-zero for only three of the data points; the ones that are exactly on either of the marginal lines. The corresponding $\mathbf{x}_i$ for which $\alpha_i$ is non-zero, are \emph{support vectors}.
+
+It can be shown that Formula~\ref{frm:svm-dual1} is a dual of the optimization problem defined in Formula~\ref{frm:svm3}~\cite[TODO:chapter]{learning-with-kernels}.
+
+\begin{align}
+  &\arg\max_{\boldsymbol{\alpha}}\left\{\sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i, j} \alpha_i \alpha_j y_i y_j \mathbf{x}_i^T \mathbf{x}_j\right\} \nonumber \\
+  &\text{s.t.} \nonumber \\
+  &\alpha_i \geq 0 \text{ for } 1 \leq i \leq n \nonumber \\
+  &\sum_{i=1}^{n}\alpha_i y_i = 0
+  \label{frm:svm-dual1}
+\end{align}
+
+Now assume the following notations and definitions:
+
+\begin{align}
+  \phi(\mathbf{x}) &:= \mathbf{x} \nonumber \\
+  \langle \mathbf{x}_i, \mathbf{x}_j \rangle &:= \mathbf{x}_i^T \mathbf{x}_j \nonumber \\
+  k(\mathbf{x}_i, \mathbf{x}_j) &:= \langle \phi(\mathbf{x}_i), \phi(\mathbf{x}_j) \rangle
+  \label{frm:svm-ktrick1}
+\end{align}
+
+Putting function $k$ in Formula~\ref{frm:svm-dual1}, the SVM's optimization problem can be written as:
+
+\begin{align}
+  &\arg\max_{\boldsymbol{\alpha}}\left\{\sum_{i=1}^n \alpha_i - \frac{1}{2}\sum_{i, j} \alpha_i \alpha_j y_i y_j k(\mathbf{x}_i, \mathbf{x}_j)\right\} \nonumber \\
+  &\text{s.t.} \nonumber \\
+  &\alpha_i \geq 0 \text{ for } 1 \leq i \leq n \nonumber \\
+  &\sum_{i=1}^{n}\alpha_i y_i = 0
+  \label{frm:svm-dual2}
+\end{align}
+
+The identity function used in Formula~\ref{frm:svm-ktrick1} is not the only option. We can transform the data into another feature space using a different $\phi(.)$, and then use dot-product in that space. This is useful for cases that the data is not linearly separable in its original feature space, but linearly separable using a non-linear transformation.
+
+Using Mercer's theorem~\cite{mercer-theorem} and its corollary Mercer's condition, it can be shown that any function $k$ satisfying the following condition can be used as a \emph{kernel} in Formula~\ref{frm:svm-dual2}~\cite[TODO:chapter]{learning-with-kernels}.
+
+\begin{align}
+  \forall \mathcal{D}, \forall c_i, c_j \in \mathbb{R}: \sum_{i=1}^n\sum_{j=1}^n k(\mathbf{x}_i, \mathbf{x}_j) c_i c_j \geq 0
+  \label{frm:positive-definite}
+\end{align}
+
+Arguably, other than dot-product, the most famous kernel function $k$ satisfying the above condition is the \emph{Gaussian kernel}, also known as the \emph{radial basis function (RBF) kernel}:
+
+\begin{align}
+  &k(\mathbf{x_i}, \mathbf{x_j}) = \exp\left(-\frac{||\mathbf{x_i} - \mathbf{x_j}||^2}{2\sigma^2}\right) \nonumber \\
+  &\sigma \in \mathbb{R}
+  \label{frm:rbf-kernel1}
+\end{align}
+
+Many implementations use a different formulation which uses a different parametrization, using $\gamma=\frac{1}{2\sigma^2}$:
+
+\begin{align}
+  &k(\mathbf{x_i}, \mathbf{x_j}) = \exp\left(-\gamma||\mathbf{x_i} - \mathbf{x_j}||^2\right) \nonumber \\
+  &\gamma \in \mathbb{R}^+
+  \label{frm:rbf-kernel2}
+\end{align}
 
 \subsection{Gaussian Processes}
 
 \subsection{Boosting and Ensemble Methods}
 For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
 
-\section{K Best Shortest Paths}
+\section{K Shortest Paths}
+A graph $G$ is a set of vertices (nodes) $V$, and a set of edges $E=\left\{(v_i, v_j) | v_i, v_j \in V\right\}$ that connect vertices in $V$. A graph can be directed or undirected. In directed graphs, edges have direction, i.e. edge $(s, t)$ is different than the edge $(t, s)$. In other words, the following list shows the possible sets of edges regarding vertices $s$ and $t$ in a directed graph:
+
+\begin{align}
+  E &= \{\} \nonumber \\
+  E &= \{(s, t)\} \nonumber \\
+  E &= \{(t, s)\} \nonumber \\
+  E &= \{(s, t), (t, s)\}
+\end{align}
+
+In an undirected graph however, edges $(s, t)$ and $(t, s)$ are identical, and the can in fact be represented as a set ${s, t}$ instead of an ordered pair.
+
+Graphs can also be weighted or not. If a graph $G$ is weighted, then there is a weight assigned to each edge of the graph. We use $w_{s,t}$ to note the weight of the edge $(s,t)$. In undirected graphs, $w_{s, t}$ is always the same as $w_{t, s}$.
+
+\emph{The shortest path problem} is to find a path between two vertices $s$ and $t$ such that the total weight of the path is the minimum. In unweighted graphs, the weight of each edge is considered to be $1$. Figure~\ref{fig:shortest-path1} highlights the shortest path between vertices $A$ and $F$ on the given weighted directed graph.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.5\textwidth]{figs/background/Shortest_path_with_direct_weights}
+  \caption{A given weighted directed graph and the highlighted shortest path between vertices $A$ and $F$.}
+  \label{fig:shortest-path1}
+\end{figure}
+
+Some prominent algorithms to solve the shortest path problem are Dijkstra's~\cite{dijkstra}, Bellman-Ford~\cite{bellman-ford}, and Floyd-Warshall~\cite{floyd-warshall} algorithms. Dijkstra's algorithm applies to the single-source shortest path problem on graphs with non-negative weight values with time complexity $O(|E| + |V| \log |V|)$~\cite{fredman1987fibonacci}, whereas Bellman-Ford algorithm works on graphs with also negative weights having time complexity $O(|V| |E|)$. Floyd-Warshall algorithm, on the other hand, applies to all pairs shortest path problem, i.e. it finds shortest paths between all pairs of vertices, on graphs with negative and non-negative weight values and its time complexity is $O(|V|^3)$.
+
+
 
 \section{Lymphoma}
