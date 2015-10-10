@@ -3,6 +3,37 @@
 \section{Machine Learning}
 Machine learning techniques are used to extract information from data, or make some predictions about the data. This chapter briefly explains methods and techniques used in, or required to understand the proceeding chapters.
 
+We can recognize two groups of learning problems: supervised and unsupervised learning. Supervised learning deals with data sets that are in the form of a set of input and outputs, and the task at hand is to predict the output using the input~\cite[TODO: chapter]{statistical-learning}. Classification and regression are supervised learning problems. Unsupervised learning, on the contrary, deals with data sets which are in the form of a set of data points, and no output is given. Clustering the most studied unsupervised learning problem~\cite[TODO: chapter]{statistical-learning}.
+
+\subsection{Empirical Risk Minimization}
+As mentioned above, supervised learning deals with predicting an output $y_i \in Y$ given an input $x_i \in X$. The task is to find a function $f(.)$ which best predicts the output, given any possible input. Because in practice we have access to a limited given data set, the best we can do is to find a function that best predicts the output given any input in the data set.
+
+We can formulate finding the best function $f(.)$, as finding a function that has the minimum loss over the data. Therefore we need a loss function which is defined as $L(x, y, f(x))$, with $x$ the input, $y$ the desired output, and $f(x)$ the predicted output. The loss value has to be in $[0, \infty)$, and $L(x, y, y) = 0$~\cite[p. 62]{learning-with-kernels}. The empirical risk function is then defined as~\cite[p. 67]{learning-with-kernels}:
+
+  \begin{align}
+    R_{emp}[f] := \frac{1}{m}\sum_{i = 1}^{m} L(x_i, y_i, f(x_i))
+  \end{align}
+  
+Now let $\mathcal{F}$ be the function space available to choose $f(.)$ from it. The best function is one which minimizes the risk function~\cite[p. 67]{learning-with-kernels}:
+
+\begin{align}
+  \arg \min_{f \in \mathcal{F}} R_{emp}[f] = \arg \min_{f \in \mathcal{F}} \frac{1}{m}\sum_{i = 1}^{m} L(x_i, y_i, f(x_i))
+\end{align}
+
+But there is a problem with the above formulation, if the function space $\mathcal{F}$ is rich enough to fit to the given data too well. Imagine a function that returns $y_i$ for each $x_i$ in the training set, and $0$ otherwise. This function clearly has a minimum loss of $0$, but does not generalize on unseen data. This is called overfitting in machine learning. One way to fix this issue is to regularize the loss function in some way, and give preference to functions $f(.)$ with lower complexity, or smoother functions. This is referred to as regularized empirical risk minimization~\cite[Ch. 4.1]{learning-with-kernels}, or structural risk minimization~\cite[Ch. 4.1]{thenatureofstatisticallearningtheory}. Assume $\Omega(f)$ is a penalty assigned to function $f(.)$; then the regularized empirical risk is formulated as:
+
+\begin{align}
+  R_{emp}[f] := \frac{1}{m}\sum_{i = 1}^{m} L(x_i, y_i, f(x_i)) + \lambda \Omega(f)
+\end{align}
+
+Parameter $\lambda$ is the regularization term and we estimate it, among other among other parameters, using cross validation~\ref{chap:cross-validation}.
+%We need to minimize the risk of the error of the predictor~\cite[p.~20]{thenatureofstatisticallearningtheory}.
+
+\subsection{Cross Validation}
+\label{chap:cross-validation}
+
+
+  
 \subsection{Feature Selection}
 Feature selection is the task of selecting important features to the problem at hand. It becomes particularly a hard task when the number of features in the data is of a higher magnitude compared to the number of given samples. Table~\ref{tab:sample-sample-size} shows an example number of samples vs. number of features in a typical data. One of the challenges when dealing with such a large number of features is that if enough number of features have a probability distribution independent of the outcome, some of them might falsely seem correlated with the outcome. Another obstacle comes from the fact that our features are not independent and they function in complex networks. As a result, features should be considered in groups, which is a combinatorial and intractable problem.
 
@@ -58,9 +89,6 @@ The optimization algorithm finds a $\beta$ that minimizes the loss function in F
   &E(X, Y) + \alpha \parallel \beta \parallel_1 = \parallel Y - X \beta \parallel_2 + \alpha \parallel \beta \parallel_1
   \label{frm:regularized}
 \end{align}
-
-\subsection{Empirical Risk Minimization}
-We need to minimize the risk of the error of the predictor~\cite[p.~20]{thenatureofstatisticallearningtheory}.
 
 \subsection{Support Vector Machines}
 Support vector machines (SVM) can be used both for regression and classification tasks~\cite{svm2, svr1}. As a classifier, SVM finds an optimal hyperplane to separate data points in the feature space by maximizing the hyperplane's margin to the nearest point. Therefore given a test data point, its side with regard to the hyperplane determines its class. As a regressor however, SVM finds an optimal hyperplane to interpolate given data points by minimizing the hyperplane's distance from data points.
@@ -253,5 +281,5 @@ To overcome this challenge each path $p$, roughly speaking, is replaced by a hea
 
 Finding $k$ smallest nodes in a min-heap costs $k\log k$, which can be further improved by Frederickson's technique~\cite{frederickson1993optimal}, and hence the time complexity of the Eppstein's algorithm~\cite[Lemma 7]{eppstein1998finding}.
 
-
+Although Eppstein's algorithm has the best know worst-case time complexity, it can be shown that in practice we can achieve faster running times by constructing some parts of the algorithm's intermediate structures as they're needed. In 2003 V{\'\i}ctor M. Jim{\'e}nez and Andr{\'e}s Marzal published the modified version of the algorithm and a more detailed explanation of the Eppstein's algorithm~\cite{jimenez2003lazy}.
 \section{Lymphoma}
