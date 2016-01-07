@@ -6,6 +6,7 @@ Machine learning techniques are used to extract information from data, or make s
 We can recognize two groups of learning problems: supervised and unsupervised learning. Supervised learning deals with data sets that are in the form of a set of input and outputs, and the task at hand is to predict the output using the input~\cite[TODO: chapter]{statistical-learning}. Classification and regression are supervised learning problems. Unsupervised learning, on the contrary, deals with data sets which are in the form of a set of data points, and no output is given. Clustering the most studied unsupervised learning problem~\cite[TODO: chapter]{statistical-learning}.
 
 \subsection{Empirical Risk Minimization}
+\label{chap:empirical-risk-minimization}
 As mentioned above, supervised learning deals with predicting an output $y_i \in Y$ given an input $x_i \in X$. The task is to find a function $f(.)$ which best predicts the output, given any possible input. Because in practice we have access to a limited given data set, the best we can do is to find a function that best predicts the output given any input in the data set.
 
 We can formulate finding the best function $f(.)$, as finding a function that has the minimum loss over the data. Therefore we need a loss function which is defined as $L(x, y, f(x))$, with $x$ the input, $y$ the desired output, and $f(x)$ the predicted output. The loss value has to be in $[0, \infty)$, and $L(x, y, y) = 0$~\cite[p. 62]{learning-with-kernels}. The empirical risk function is then defined as~\cite[p. 67]{learning-with-kernels}:
@@ -26,13 +27,16 @@ But there is a problem with the above formulation, if the function space $\mathc
   R_{emp}[f] := \frac{1}{m}\sum_{i = 1}^{m} L(x_i, y_i, f(x_i)) + \lambda \Omega(f)
 \end{align}
 
-Parameter $\lambda$ is the regularization term and we estimate it, among other among other parameters, using cross validation~\ref{chap:cross-validation}.
-%We need to minimize the risk of the error of the predictor~\cite[p.~20]{thenatureofstatisticallearningtheory}.
+Parameter $\lambda$ is the regularization term and we estimate it, among other among other parameters, using cross validation.
 
 \subsection{Cross Validation}
 \label{chap:cross-validation}
 
+Cross validation is a technique used in method selection and performance estimation. In cross validation we divide the given training data into $k$ folds, set aside one of those $k$ folds, train the model on $k - 1$ remaining sections, and test the performance of the model on the set aside part of the data. Then repeat this process for all $k$ folds to assess the overall performance of the method. A special case of $k$-fold cross validation is leave-one-out in which $k=n$, the number of samples. Leave-one-out cross validation is computationally intensive for relatively large number of samples. A popular $k$ is 10, which is shown to have lower variance than leave-one-out method, and it has a low bias~\cite{statistical-learning}. 
 
+There are also some variations to the simple $k$-fold cross validation scheme. One way is to repeat the $k$-fold system multiple times with a random shuffle of the data before each $k$-fold test, and calculate the estimated error using the repeated test. Another variation is to randomly partition the data into train and test partitions several times and use these sets to estimate the performance of the method.
+
+The latter two variations are shown to give better estimates of the true error of the method compared to bootstrap and a single $10$-fold scheme~\cite{kim2009estimating, efron1994introduction}. Because repeating a $k$-fold scheme can be computationally intensive depending on the method being tested, we sometimes use a repeated random partitioning of the data in our work. In some even more computationally intensive cases, we have limited our analysis to a single $k$-fold to select methods.
   
 \subsection{Feature Selection}
 Feature selection is the task of selecting important features to the problem at hand. It becomes particularly a hard task when the number of features in the data is of a higher magnitude compared to the number of given samples. Table~\ref{tab:sample-sample-size} shows an example number of samples vs. number of features in a typical data. One of the challenges when dealing with such a large number of features is that if enough number of features have a probability distribution independent of the outcome, some of them might falsely seem correlated with the outcome. Another obstacle comes from the fact that our features are not independent and they function in complex networks. As a result, features should be considered in groups, which is a combinatorial and intractable problem.
@@ -55,7 +59,7 @@ Feature selection is the task of selecting important features to the problem at 
 We have used correlation~\cite{correlation}, mutual information~\cite{mutual-information}, and $l_1$-regularized methods~\cite{l1-regularized} as techniques to select features.
 
 \subsection{Classification}
-Classification is the problem of putting data into different classes~\cite{statistical-learning}. During the training phase, the matrix $X_{samples \times features}$ is given as the input and $y_{samples}$ as the desired output. The vector $y$ has values from a discrete set. If the set has only two distinct values, the problem is called a binary classification.
+Classification is the problem of putting data into different classes~\cite[TODO: chapter]{statistical-learning}. During the training phase, the matrix $X_{samples \times features}$ is given as the input and $y_{samples}$ as the desired output. The vector $y$ has values from a discrete set. If the set has only two distinct values, the problem is called a binary classification.
 
 Logistic regression~\cite{logistic-regression1,logistic-regression2}, Support Vector Machines (SVM)~\cite{svm1,svm2}, and decision trees~\cite[TODO:chapter]{statistical-learning} are examples of classification methods.
 
