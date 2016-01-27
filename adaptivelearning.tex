@@ -14,12 +14,102 @@ Here we talk about adaptive and interpretable methods.
 
 \section{RatBoost}
 \subsection{Background}
-Over the past few decades, biology has become more targeted to individual cells, and has transformed into a high throughput research field, both in terms of the number of different measurement techniques, and the amount of variables measured by each technique (e.g., from Sanger sequencing to deep sequencing), and is more and more targeted to individual cells~\cite{Shapiro2013}. This has led to an unprecedented growth of biological information. Consequently, techniques that can help researchers find important insights into the data are becoming increasingly important.
+Over the past few decades, biology has transformed into a high throughput research field, both in terms of the number of different measurement techniques as well as the amount of variables measured by each technique (e.g., from Sanger sequencing to deep sequencing), and is more and more targeted to individual cells~\cite{Shapiro2013}. This has led to an unprecedented growth of biological information. Consequently, techniques that can help researchers find important insights into the data are becoming increasingly important.
 Predicting survival of cancer patients based on measurements from
-microarray experiments has been a field of great interest, but there is often very little overlap between the important genes or biomarkers identified by different studies~\cite{Ein-Dor2005}. Several reasons have been suggested to explain these findings (e.g., heterogeneity of cancer samples or insufficient sample size). Attempts have been made to incorporate additional information from other sources, such as protein-protein interaction (PPI) networks, to make the predictions more robust~\cite{Chuang2007}. One of the latest approaches has integrated network and expression data by introducing a network-induced classification kernel (NICK)~\cite{Lavi2012}. Although this method exhibits state-of-the-art performance, determining the variables leading to the method's performance is not straightforward. Furthermore, many of these methods assume that all data is drawn from the same unknown underlying distribution. However this might not be the case for all measured genes in heterogeneous cancer samples.
+microarray experiments has been a field of great interest, but there
+is often very little overlap between the important genes or biomarkers
+identified by different studies~\cite{Ein-Dor2005}. Several reasons
+have been suggested to explain these findings (e.g., heterogeneity of
+cancer samples or insufficient sample size). Attempts have been made
+to incorporate additional information from other sources, such as
+protein-protein interaction (PPI) networks, to make the predictions
+more robust~\cite{Chuang2007}. One of the latest approaches integrates
+network and expression data by introducing a network-induced
+classification kernel (NICK)~\cite{Lavi2012}. Although this method
+exhibits state-of-the-art performance, the way it penalizes genes that
+are connected to not-predictive genes can result in selection of
+isolated features as important features for prediction. We observed
+this bias of the method towards isolated nodes on additional
+experiments on synthesized data as shown in Section \ref{sec:NICK}. Another issue is that in PPI networks, genes or proteins, which
+have been known to researchers longer and are well-known, are studied
+more and therefore have more edges connected to them; whereas less
+well-known genes and proteins are in sparser areas of the
+network. This bias might further affect the judgment of methods like
+NICK that use a PPI networks as an input. Consequently, we rely on the
+fact that such networks exist between genes and proteins, but we do
+not take them as input. If
+there is a dependence between input features, which is the case in
+many biological settings, our method can benefit from this
+effect. Otherwise, it is reduced to a standard ensemble method.
+Furthermore, a central assumption underlying many methods is that all data are drawn from the same unknown underlying distribution. This may not be the case, especially for heterogeneous cancer samples, and in particular not for all measured genes.
 
-In this work, we introduce a method that is aware of this potential bias. We utilize an estimate of the differences between observed and predicted values, during the generation of the final prediction method. Hence, we introduce a set of sparse classifiers based on $L1$-SVMs~\cite{bradley1998feature}, where each set of features used by one classifier is disjoint from the selected feature set of any other classifier. Furthermore, for each feature chosen by one of the classifiers, we introduce a regression model that uses additional features and is based on Gaussian process regression. These regression models are then used to estimate how predictable the features of each classifier are for each test sample, using other features of the test sample itself. This information is then used to find a confidence weighting of the classifiers, i.e. up-weighting classifiers with high confidence and down-weighting classifiers with lower confidence, for each test sample. Schapire and Singer have shown that incorporating confidences of classifiers can improve the performance of an ensemble method~\cite{adaboost99improved}. However, in their setting, confidences of classifiers are estimated using the training data and are thus fixed for all test samples, whereas in our setting, we estimate confidences of individual classifiers per given test sample.
+In this work, we introduce a method that is aware of this potential bias and utilizes an estimate of the differences during the generation of the final prediction method. For this, we introduce a set of sparse classifiers based on $L1$-SVMs~\cite{bradley1998feature}, where each set of features used by one classifier is disjoint from the selected feature set of any other classifier. Furthermore, for each feature chosen by one of the classifiers, we introduce a regression model that uses additional features and is based on Gaussian process regression. These regression models are then used to estimate how predictable the features of each classifier are for each test sample. This information can then be used to find a confidence weighting of the classifiers, i.e. up-weighting classifiers with high confidence and down-weighting classifiers with lower confidence, for each test sample. Schapire and Singer show that incorporating confidences of classifiers can improve the performance of an ensemble method~\cite{adaboost99improved}. However, in their setting, confidences of classifiers are estimated using the training data and are thus fixed for all test samples, whereas in our setting, we estimate confidences of individual classifiers per given test sample. Another related work includes mixture of experts, in which the model trains a set of neural networks and uses a gating network to set the weights of the networks~\cite{jacobs1991adaptive}. One issue with their method is that neural networks with lower performance will not be optimized as much as networks with better performance on training data since the gate module down-weights the error propagated to them. Also training of the gating network is interconnected with the neural network experts and afftects training of those modules. Our method, in contrast, trains each module independently using all training samples, and their reliability does not affect how they are trained. Bayesian hierarchical mixtures of experts takes a more similar approach, but the method is complex, and it has a high time complexity to train the architecture of the hierarchy~\cite{bishop2002bayesian}.
+
 We show that this method exhibits state-of-the-art performance for different cancer types, with gene expression or methylation data sets as the input. Since the weighting of the classifiers is customized for each test sample, the estimated confidences can offer insights into the specific characteristics of each individual's cancer. To facilitate interpretation of the model, we then create a visualization of the important genes found through this analysis for each test sample. Additionally, we show how the important genes of the training set can be found using our learning method and cross validation.
+
+Our idea might resemble ensemble feature selection, which involves
+aggregating multiple feature scores from several scoring
+mechanisms. These scoring mechanisms vary from being several different
+methods, to being the same method applied to different parts of the data such as a random cross validation scheme~\cite{saeys2008robust}. This idea has been studied further by other researchers and they introduced two different methods to aggregate scores from different models. They use an ensemble of support vector machines which on its own has been used to select features in a given data set in other works~\cite{guyon2002gene}. Although we use an ensemble of support vector machines, our goal is not to give a ranking to features of the data set, rather to find multiple parsimonious gene sets that are predictive of the outcome on their own, and use all of them in parallel to predict the outcome. 
+
+Similar to this approach, in another work, iRDA uses a different approach and can report multiple parsimonious gene sets~\cite{lai2015irda}. One significant difference between iRDA and our work is that we have an embedded prediction approach using these sets, which iRDA lacks. Furthermore, gene sets are somehow ordered in iRDA according to their "strength", and within each set, redundant genes are removed. In our model redundant genes can be included in two different ways. One is within different individual learners. For example, if genes $g_1$ and $g_2$ are both strong but redundant, individual learner 1 might include $g_1$, and individual learner 2 might include $g_2$. Also, if there are more redundant or related genes in the gene pool, they will be used to estimate how reliable $g_1$ and $g_2$ are. Therefore instead of dismissing them, we exploit the fact that they exist. 
+
+Related to sorting genes and testing for significance of a reported gene set, Gene Set Enrichment Analysis (GSEA) and its modifications are a commonly used tool~\cite{shi2007gene, subramanian2005gene}. GSEA based methods rank genes depending on how much they relate to the outcome. The choice of relationship is rather free and can vary from Pearson correlation to mutual information. Then for a given gene set, a p-value is calculated by estimating how often a random gene set appears before the given set on the list. There have been several modifications and improvements to the method~\cite{nam2008gene, dopazo2006functional}. Although it is true that GSEA is used to assess the relevance or importance of a given set to the outcome, we need to remember that a particular gene set might consist of genes that are not necessarily important on their own, but are predictive once considered together. Our method does not consider genes individually whereas GSEA does to sort the genes in the first place. Therefore we believe GSEA based methods are not suitable to assess how well our method performs.
+
+\subsubsection{Analysis of NICK}
+\label{sec:NICK}
+Lavi, et al. modified the standard SVM kernel as shown in Formula \ref{frm:nick1}~\cite{Lavi2012}:
+
+            \begin{align}
+              &\min_{\mathbf{w}, w_0}\left\{\frac{1}{2}\|\mathbf{w}\|^2 + \frac{1}{2}\beta\sum_{(j,k)\in E}(w_j-w_k)^2\right\} \nonumber \\
+              \text{s.t.:} & \nonumber \\
+              &\forall i \in \{1,\cdots,n\} : (\mathbf{w}\mathbf{x}_i+w_0)y_i\geq 1
+            \label{frm:nick1}
+            \end{align}
+          
+\noindent Dual Problem:
+            \begin{align*}
+              &\max_\alpha\left\{\sum_{i=1}^n\alpha_i-\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j y_i y_j (\mathbf{x}_i^T\mathbf{L})(\mathbf{L}^T\mathbf{x}_j)\right\}\\
+              &\mathbf{L}\mathbf{L}^T=(\mathbf{I}+\beta \mathbf{B})^{-1}\\
+              \text{s.t.: }&\\
+              &\forall i \in \{1,\cdots,n\}: \sum_{i=1}^n\alpha_iy_i=0\\
+              &\forall i \in \{1,\cdots,n\}: \alpha_i \geq 0 \\
+              &\text{Laplacian matrix:}\\  & \mathbf{B} = \mathbf{D} - \mathbf{A}
+            \end{align*}
+
+\noindent Dual to Primal:
+            
+            $\mathbf{w} = (\mathbf{I} + \beta \mathbf{B})^{-1} \sum_{i = 1}^n \alpha_i y_i \mathbf{x}_i$ \\
+
+\noindent Our approach is summarized as:
+
+        \begin{itemize}
+          \item Reverse engineer the learned machine to extract important genes after using the network information.
+          \item Solve SVM problem for original and transformed data.
+          \item Calculate $\mathbf{w}$ for both models.
+          \item Compute for each pair of nodes, for each model: \\
+              $Score(i, j) = \frac{|w_i| + |w_j|}{2} \times e^{-max\left(d_G(i, j), 1\right)}$
+          \item Report pairs with highest scores for both trained models.
+        \end{itemize}
+
+        \begin{figure}[!ht]
+          \centering
+          \includegraphics[width=.8\textwidth]{figs/nick/synthesized-1slide}
+          \label{fig:1}
+          \caption{{\color{blue}Blue}: random gene, {\color{orange}Orange}: Signal node being a member of a pathway of signal nodes, {\color{yellow}Yellow}: A lonely signal node}
+        \end{figure}
+
+        \noindent Fig. \ref{fig:1} shows an example of our random network. We select values of coresponding genes for nodes as follows:
+        \begin{itemize}
+        \item Signal nodes (genes):
+          $ f(n) = \left\{ 
+          \begin{array}{l l}
+            N(-\mu, 1) & \quad \text{if $n$ is in class $1$}\\
+            N(\mu, 1) & \quad \text{if $n$ is in class $2$}
+          \end{array} \right.$
+        \item Random nodes (non-informative genes): $f(n) = N(0, 1) $
+        \end{itemize}
+
 
 \subsection{Methods}
 \subsubsection{Materials}
@@ -69,7 +159,7 @@ The model starts with no individual classifier and an empty set of excluded feat
 \textbf{Combining Classifiers by Estimating Confidences of Individual Predictors:}
 Given a set of classifiers, the question is how to combine them to come up with a joint prediction value for each test sample for which we want to predict the output label. The intuition behind combining the classifiers is to put more weight on classifiers that use features whose behavior is similar to the training data. This is motivated by the fact that some parts of the test data might behave very differently to the training data, meaning that a classifier using these features should have lower performance than a classifier using features that are distributed similarly to the training data. Therefore we need to evaluate the reliability of the input features of each individual classifier. In scenarios like gene expression or methylation analysis, we usually have many input features. Furthermore, many features are correlated and statistically dependent. The idea of our new method is to build separate prediction models for each feature of each classifier. These prediction models can then be used to obtain a confidence for the feature in a given test sample. These confidences can then be combined for each classifier to give a weighting of the classifiers for the given test sample.
 To evaluate an observed feature $f$, we try to choose a few statistically dependent features, and fit a model to predict $f$. 
-To find these features, first the estimated mutual information of all other features with feature $f$ is calculated~\cite{reshef2011detecting}. Then, features having mutual information value within the top $5\%$ or the 5 features with highest mutual information with $f$ (if the top $5\%$ features consist of less than 5 features), are selected as predictors of $f$.
+To find these features, first the estimated maximal information coefficient (MIC) of all other features with feature $f$ is calculated~\cite{reshef2011detecting}. Then, features having MIC value within the top $5\%$ or the 5 features with highest MIC with $f$ (if the top $5\%$ features consist of less than 5 features), are selected as predictors of $f$.
 Given a test sample, the closer the predicted value of $f$ is to the observed value, the more reliable it is. To quantify this, we need to not only know the predicted value of the feature, but also a confidence interval for that prediction. This can be achieved using Gaussian processes, which give the mean and variance of the posterior probability under the condition of observed values for selected features. A weighted average of these values gives us the overall reliability of the features of an individual classifier. A schematic view of the trained classifier is shown in Fig.~\ref{fig:ratboost-schema}.
 
 \begin{figure}[!ht]
@@ -85,7 +175,7 @@ More formally speaking, define $X$ to be the set of input samples, $X_s$ to be t
 Also $\mu_{g_f(X_s)}$ and $\sigma_{g_f(X_s)}$ are the mean and standard deviation of the posterior probability given by Gaussian process $g_f$ under the condition of observing values of features in $\Phi_f$, 
 and $\mu_{l_i}$ and $\sigma_{l_i}$ are respectively the expected mean and standard deviation of the decision value of classifier $l_i$. Here $F$ is the cumulative distribution function of a standard normal distribution.
 
-The training phase of the model is shown in Fig.~\ref{fig:train}, in which, $N$ is the number of individual learners to be included in the model, $\Phi_l$ is the union over all $\Phi_{l_i}$ and $X_{-\Phi_l}$ is the input $X$ after discarding all features of the set $\Phi_l$. TOP is the function which selects the maximum of the top $5$ and top $5\%$ features $f'$ of all features ordered by mutual information with feature $f$.
+The training phase of the model is shown in Fig.~\ref{fig:train}, in which, $N$ is the number of individual learners to be included in the model, $\Phi_l$ is the union over all $\Phi_{l_i}$ and $X_{-\Phi_l}$ is the input $X$ after discarding all features of the set $\Phi_l$. TOP is the function which selects the maximum of the top $5$ and top $5\%$ features $f'$ of all features ordered by MIC with feature $f$.
 
 \tikzstyle{block} = [rectangle, draw, 
     text width=5em, text centered, rounded corners, minimum height=2em]
@@ -182,7 +272,7 @@ To compare the performance of our method with other methods, the implementations
 For AdaBoost, \emph{AdaBoostClassifier} is used, which is an implementation of AdaBoost-SAMME~\cite{zhu2009multi}, with weak learner set to \emph{DecisionTreeClassifier} with maximum depth set to 2, and the number of weak classifiers set to 100. Parameters of the two boosting algorithms are chosen by a grid search on their parameter space over all the data sets and selecting the parameter sets which give a robust and stable result over all experiments.
 
 As an SVM, $\nu$-SVM with $\nu = 0.25$ is used, once with a linear kernel, and once with an RBF kernel; $\gamma$ parameter of the RBF kernel is set to $\textrm{(num of features)}^{-1}$. The $\nu$ parameter is set to the maximum value for which the optimization function is solvable with \emph{libsvm} for all analyzed data sets~\cite{CC01a}. Smaller values cause the SVM to overfit to the data and not generalize well.
-The Gaussian process's correlation function is a squared-exponential, and mutual information is estimated using \emph{minepy} package~\cite{albanese2013minerva}.
+The Gaussian process's correlation function is a squared-exponential, and MIC is estimated using \emph{minepy} package~\cite{albanese2013minerva}.
 
 The PPI network used in our analysis is from the Human Protein Reference Database (HPRD)~\cite{peri2003development}. Almost all edges and relationships between proteins that are added to this database are manually extracted from literature by biologists, hence it has a lower rate of edges included in the database for which there is no evidence in the literature.
 
@@ -225,12 +315,19 @@ The density estimation of the graph edge weights and the pruned graph are plotte
   \label{fig:summary-network}
 \end{figure*}
 
-What was more intriguing to see was that four out of the seven important features of the TCGA-LAML gene expression data set contained ribosomal proteins (when using the risk group label). For a long time ribosomes were just considered machines that perform an unbiased translation of genes from mRNA to amino acid sequences, but this view has recently been challenged~\cite{Xue2012}. One new hypothesis is that the ribosome introduces an additional regulatory layer. Therefore, it could very well be that mutations in ribosomal proteins can lead to a misregulation of expression levels of important genes and ultimately to the development of cancer (in this case leukemia). One of the ribosomal proteins we found was RPL23A. It has been shown that loss of RPL23A can impede growth and lead to morphological abnormalities in Arabidopsis Thaliana~\cite{Xue2012}. Therefore, a mutation in RPL23A might also have severe effects in humans. A missense mutation in RPL23A was recently found in patients having Diamond-Blackfan anemia, which is an inherited form of pure red cell aplasia (related to leukemia)~\cite{Gazda2012}. Note that the model for LAML has low performance for the regularization value chosen. Nevertheless, the features shown here are also the ones with the highest confidence for models learnt with less regularization (with several other additional features). The models with less regularization show similar performance to the other methods shown in Fig.~\ref{fig:performance-summary}
+What was more intriguing to see was that four out of the seven important features of the TCGA-LAML gene expression data set contained ribosomal proteins when using the risk group label, i.e. RPL37A, RPS20, RPS3A, and RPL23A. For a long time ribosomes were just considered machines that perform an unbiased translation of genes from mRNA to amino acid sequences, but this view has recently been challenged~\cite{Xue2012}. One new hypothesis is that the ribosome introduces an additional regulatory layer. Therefore, it could very well be that mutations in ribosomal proteins can lead to a misregulation of expression levels of important genes and ultimately to the development of cancer (in this case leukemia). One of the ribosomal proteins we found was RPL23A. It has been shown that loss of RPL23A can impede growth and lead to morphological abnormalities in Arabidopsis Thaliana~\cite{Xue2012}. Therefore, a mutation in RPL23A might also have severe effects in humans. A missense mutation in RPL23A was recently found in patients having Diamond-Blackfan anemia, which is an inherited form of pure red cell aplasia (related to leukemia)~\cite{Gazda2012}. Note that the model for LAML has low performance for the regularization value chosen. Nevertheless, the features shown here are also the ones with the highest confidence for models learnt with less regularization (with several other additional features). The models with less regularization show similar performance to the other methods shown in Fig.~\ref{fig:performance-summary}
 
 \subsubsection{Performance comparison}
 The performance of the method was compared with that of two ensemble methods, AdaBoost and stochastic gradient boosting, as well as an SVM with linear kernel, and an SVM with an RBF kernel. We also included our implementation of the NICK method~\cite{Lavi2012}.
 We randomly partitioned the data into training and test sets with $80\%$ of the data for training and $20\%$ of the data for testing. To compare the performance of the different methods, Area Under the receiver operating characteristic Curve (AUC)~\cite{egan1975signal} was calculated on the test set over the decision values returned by the methods on the individual samples. The process was repeated 100 times to reduce random effects.
 As seen in Fig.~\ref{fig:performance-summary}, overall performances of all methods are comparable. In some cases a single SVM works better, in some other cases ensemble algorithms give a better performance. However, in most cases an improvement in performance is observed by adding individual learners to the model, with the greatest gains due to the first few individual learners added to the model. 
+In two cases, TCGA-LAML/Vital status and TCGA-LAML/Risk Group, our
+reported performance measures are significantly lower than other
+methods. This, however, comes from the fact that we have enforced
+extreme sparsity measures. The performance of the method increases and
+reaches the other methods' performance levels if this constraint is
+relaxed, as reported in supplementary 1. 
+We enforced those sparsity measures for all models to avoid over-fitting. Optimizing the sparsity constraint via cross-validation would have been computationally expensive, which is why we preferred to be conservative. Had we optimized the sparsity constraint, we would have still been able to find the significant features while having similar performance as the other methods.
 
 
 \begin{landscape}
@@ -242,7 +339,25 @@ As seen in Fig.~\ref{fig:performance-summary}, overall performances of all metho
 
 \subsection{Conclusions}
 
-Machine learning has become more and more popular in many real world scenarios for making sense of large collections of facts. Differences between the data used for training the method and new data for which the label should be predicted can limit the performance of prediction methods on those data. In this work we introduced a method that estimates these potential partial biases and incorporates them into the prediction function. We applied it to gene expression and DNA methylation measurements from cancer patients. Our method has state-of-the-art performance on many different prediction tasks. Furthermore, we show how to make sense of the predictions. Visualizing the important genes can lead to new biological insights, as shown for the TCGA-LAML data set with the risk group label. Instead of mapping the genes to PPI networks, they can be mapped to signaling pathways~\cite{Kanehisa2014}.
+Machine learning has become more and more popular in many real world scenarios for making sense of large collections of facts. Differences between the data used for training the method and new data for which the label should be predicted can limit the performance of prediction methods on those data. In this work we introduced a method that estimates these potential partial biases and incorporates them into the prediction function. We applied it to gene expression and DNA methylation measurements from cancer patients. Our method has state-of-the-art performance on many different prediction tasks. Furthermore, we show how to make sense of the predictions. Visualizing the important genes can lead to new biological insights, as shown for the TCGA-LAML data set with the risk group label. Instead of mapping the genes to PPI networks, one could also think of mapping them to signaling pathways~\cite{Kanehisa2014}.
+
 Recently, a study showed that most published signatures are not significantly more associated with cancer outcome than random signatures~\cite{Venet2011}. One of the reasons for this finding is that the data comes from slightly different underlying hidden data distributions. Since our new method estimates this bias and corrects for it by up-weighting the classifiers that have higher confidence, we expect that it should be less susceptible to such differences in the data.
+
+In this work we designed and developed a method that besides being a predictive model, it can be used for two different purposes. It can be used as an exploratory method to reveal potential features used in future studies; and it can be used to different underlying causes of the same disease and with its interpretability help oncologists to choose the treatment accordingly.
+
+We would like to point out that the applicability of our method is not limited to cancer outcome prediction, and it can apply to many more scenarios. The method assumes that the data has enough features to select from, and that there are related features to those selected ones that can be used to estimate their reliability. These are conditions that almost all biological data satisfy, hence the method can be applied to them.
+
+The method also works as a skeleton whose components can be easily
+substituted. For example, by changing the classifier used in
+individual learners to a multi-class classifier, the method would work
+on multi-class problems. For the sake of simplicity and without loss
+of generality we performed the evaluations only on binary
+classification problems. Also, due to the structure of our model, one possible approach would be to use a method such as iRDA and use those gene sets as features of individual learners. Whether this approach leads to better results or not requires further research.
+Also, the combination of maximal information coefficient and Gaussian
+processes is not the only feasible option, and they can be replaced
+with other faster methods if the time complexity of the method is of
+any concern. Some of these alternatives are already available on the
+\emph{github} repository of the method.
+
 
 \section{Raccoon}
