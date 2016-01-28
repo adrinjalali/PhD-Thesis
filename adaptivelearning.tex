@@ -58,7 +58,7 @@ Related to sorting genes and testing for significance of a reported gene set, Ge
 
 \subsubsection{Analysis of NICK}
 \label{sec:NICK}
-Lavi, et al. modified the standard SVM kernel as shown in Formula \ref{frm:nick1}~\cite{Lavi2012}:
+Lavi, et al. modified the standard SVM formulation, which is shown in Formula \ref{frm:svm1}, as shown in Formula \ref{frm:nick1}~\cite{Lavi2012}. This formulation adds a penalty function to penalize weight differences if their corresponding features are connected in the given graph. The intuition is that if features are connected in the network, their weight should be somehow similar.
 
             \begin{align}
               &\min_{\mathbf{w}, w_0}\left\{\frac{1}{2}\|\mathbf{w}\|^2 + \frac{1}{2}\beta\sum_{(j,k)\in E}(w_j-w_k)^2\right\} \nonumber \\
@@ -67,48 +67,375 @@ Lavi, et al. modified the standard SVM kernel as shown in Formula \ref{frm:nick1
             \label{frm:nick1}
             \end{align}
           
-\noindent Dual Problem:
-            \begin{align*}
-              &\max_\alpha\left\{\sum_{i=1}^n\alpha_i-\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j y_i y_j (\mathbf{x}_i^T\mathbf{L})(\mathbf{L}^T\mathbf{x}_j)\right\}\\
-              &\mathbf{L}\mathbf{L}^T=(\mathbf{I}+\beta \mathbf{B})^{-1}\\
-              \text{s.t.: }&\\
-              &\forall i \in \{1,\cdots,n\}: \sum_{i=1}^n\alpha_iy_i=0\\
-              &\forall i \in \{1,\cdots,n\}: \alpha_i \geq 0 \\
-              &\text{Laplacian matrix:}\\  & \mathbf{B} = \mathbf{D} - \mathbf{A}
-            \end{align*}
+In the above formulation, $E$ is the set of edges of the given network. They also show how to derive the dual of the above optimization problem as shown in Formula \ref{frm:nick2}:
+\begin{align}
+  &\max_\alpha\left\{\sum_{i=1}^n\alpha_i-\frac{1}{2}\sum_{i=1}^n\sum_{j=1}^n\alpha_i\alpha_j y_i y_j (\mathbf{x}_i^T\mathbf{L})(\mathbf{L}^T\mathbf{x}_j)\right\} \nonumber \\
+  &\mathbf{L}\mathbf{L}^T=(\mathbf{I}+\beta \mathbf{B})^{-1} \nonumber \\
+  \text{s.t.: }& \nonumber \\
+  &\forall i \in \{1,\cdots,n\}: \sum_{i=1}^n\alpha_iy_i=0\nonumber \\
+  &\forall i \in \{1,\cdots,n\}: \alpha_i \geq 0 \nonumber \\
+  &\text{Laplacian matrix:} \nonumber \\
+  & \mathbf{B} = \mathbf{D} - \mathbf{A}
+  \label{frm:nick2}
+\end{align}
 
-\noindent Dual to Primal:
-            
-            $\mathbf{w} = (\mathbf{I} + \beta \mathbf{B})^{-1} \sum_{i = 1}^n \alpha_i y_i \mathbf{x}_i$ \\
+In Formula \ref{frm:nick2}, $\mathbf{D}$ is a diagonal matrix having degrees of nodes on its main diagonal, $\mathbf{A}$ is the adjacency matrix, and $\mathbf{B}$ is called the graph Laplacian matrix. The benefit of the above formulation is that the input vectors can be transformed using the matrix $\mathbf{L}$, which itself comes from the Cholesky decomposition of the matrix $(\mathbf{I} + \beta \mathbf{B})^{-1}$. The parameter $\beta$ in both Formulea \ref{frm:nick1} and \ref{frm:nick2} sets how much we penalize weight differences for connected vertices.
 
-\noindent Our approach is summarized as:
+After training the model on the data using the above formulation, we can calculate back the vector $\mathbf{w}$ using Formula \ref{frm:nick-reverse}. We use the vector $\mathbf{w}$ to investigate which nodes and pairs of nodes are given a relatively high value compared to other features.
 
-        \begin{itemize}
-          \item Reverse engineer the learned machine to extract important genes after using the network information.
-          \item Solve SVM problem for original and transformed data.
-          \item Calculate $\mathbf{w}$ for both models.
-          \item Compute for each pair of nodes, for each model: \\
-              $Score(i, j) = \frac{|w_i| + |w_j|}{2} \times e^{-max\left(d_G(i, j), 1\right)}$
-          \item Report pairs with highest scores for both trained models.
-        \end{itemize}
+\begin{align}
+  \mathbf{w} = (\mathbf{I} + \beta \mathbf{B})^{-1} \sum_{i = 1}^n \alpha_i y_i \mathbf{x}_i
+  \label{frm:nick-reverse}
+\end{align}
 
-        \begin{figure}[!ht]
-          \centering
-          \includegraphics[width=.8\textwidth]{figs/nick/synthesized-1slide}
-          \label{fig:1}
-          \caption{{\color{blue}Blue}: random gene, {\color{orange}Orange}: Signal node being a member of a pathway of signal nodes, {\color{yellow}Yellow}: A lonely signal node}
-        \end{figure}
+We then use calculated feature weights in the vector $\mathbf{w}$ of both normal and modified SVM (NICK) to show which feature pairs are selected as important in the model, as shown step by step bellow. Please note that NICK transforms the data using the matrix $\mathbf{L}$, and then solves a normal SVM on the transformed data, and therefore in the following whenever we refer to \emph{transformed data}, that means NICK method.
 
-        \noindent Fig. \ref{fig:1} shows an example of our random network. We select values of coresponding genes for nodes as follows:
-        \begin{itemize}
-        \item Signal nodes (genes):
-          $ f(n) = \left\{ 
-          \begin{array}{l l}
-            N(-\mu, 1) & \quad \text{if $n$ is in class $1$}\\
-            N(\mu, 1) & \quad \text{if $n$ is in class $2$}
-          \end{array} \right.$
-        \item Random nodes (non-informative genes): $f(n) = N(0, 1) $
-        \end{itemize}
+\begin{enumerate}
+\item Solve SVM problem for original and transformed data.
+\item Calculate $\mathbf{w}$ for both models.
+\item Compute for each pair of nodes, for each model: \\
+  \begin{align}
+    Score(i, j) = \frac{|w_i| + |w_j|}{2} \times e^{-max\left(d_G(i, j), 1\right)}
+    \label{frm:nick-score}
+  \end{align}
+\item Report pairs with highest scores for both trained models.
+\end{enumerate}
+
+In order to evaluate the method, we need to synthesize some data because in the real data it is not clear which features are the true discriminating features. For this purpose, we randomly generate a graph, and assign nodes to three different classes. Nodes in this graph represent genes/features in the data set. Each feature is a random variable sampled from a Gaussian distribution. If the node is independent of the target class, it gets its value from a Gaussian distribution regardless of the target class. If the feature is selected as a \emph{signal} node, then it takes its value from two different Gaussian distributions that differ in their mean, depending on the target class of the sample. Some of these signal features are connected only to random features, and some are connected to other signal nodes. We call connected signal features a \emph{pathway}. The generated graph and an example of selected feature nodes are shown in Figure \ref{fig:syn-1slide}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=\textwidth]{figs/nick/synthesized-1slide}
+  \caption{{\color{blue}Blue}: random gene, {\color{orange}Orange}: Signal node being a member of a pathway of signal nodes, {\color{yellow}Yellow}: A lonely signal node}
+  \label{fig:syn-1slide}
+\end{figure}
+
+To generate our synthesized data set, for each data point, and each feature of that data point, we first assign a class to that data point, and according to the assigned class, we sample from the corresponding distribution, according to the following functions:
+
+\begin{itemize}
+\item Signal nodes (genes):
+  $ f(n) = \left\{ 
+  \begin{array}{l l}
+    N(-\mu, 1) & \quad \text{if $n$ is in class $1$}\\
+    N(\mu, 1) & \quad \text{if $n$ is in class $2$}
+  \end{array} \right.$
+\item Random nodes (non-signal genes): $f(n) = N(0, 1)$
+\end{itemize}
+
+We perform three experiments. Each experiment uses the same graph structure, but has a different set of signal nodes. First we put \emph{pathway} nodes on the boundaries of the graph, then we move one \emph{pathway} deep into the graph structure, and in the last experiment all \emph{pathway} nodes are inside the graph structure. These three scenarios are shown in Figures \ref{fig:nick-easy}, \ref{fig:nick-medium}, and \ref{fig:nick-hard} accordingly.
+
+\begin{figure}
+  \subfigure[Corresponding network]{
+    \includegraphics[width=\textwidth]{figs/nick/synthesized-easy}
+  }
+  \subfigure[Discovered nodes (no NICK)]{
+    \begin{tabular}{| c c || c c |}
+      \hline
+      \toprule
+      \multicolumn{4}{c}{Original} \\ 
+      \midrule \hline
+      \boz X196   &  \boz X196  &
+      X53   &  X53  \\ \hline
+      X233   &  X233   &
+      X39   &  X39  \\ \hline
+      \ghool X88   &  \ghool X88  &
+      \boz X196   &  \boz X133  \\ \hline
+      \boz X116   &  \boz X116  &
+      X127   &  X127  \\ \hline
+      X197   &  X197  &
+      X127   &  X148  \\ \hline
+      X148   &  X148  &
+      \boz X150   &  \boz X150  \\ \hline
+      X148   &  X273  &
+      \boz X116   &  \boz X133  \\ \hline
+      X160   &  X160  &
+      \ghool X96   &  \ghool X96  \\ \hline
+      X95   &  X95  &
+      X273   &  X273  \\ \hline
+      \ghool X88   &  X115  &
+      X40   &  X40  \\ \hline
+      X53   &  X8  &
+      X53   &  X164  \\ \hline
+      X195   &  X195  &
+      X56   &  X56  \\ \hline
+    \end{tabular}
+  }
+  \subfigure[Discovered nodes (NICK)]{
+    \begin{tabular}{| c c || c c |}
+      \hline
+      \toprule
+      \multicolumn{4}{c}{Transformed} \\ 
+      \midrule \hline
+      \boz X196   &  \boz X196  &
+      X233   &  X233  \\ \hline
+      \boz X196   &  \boz X133  &
+      \boz X133   &  \boz X133  \\ \hline
+      \boz X133   &  \boz X116  &
+      \boz X116   &  \boz X116  \\ \hline
+      X95   &  X95  &
+      \boz X240   &  \boz X240  \\ \hline
+      X39   &  X39  &
+      \boz X240   &  \boz X243  \\ \hline
+      X59   &  X59  &
+      X106   &  X106  \\ \hline
+      \boz X243   &  \boz X243  &
+      X106   &  X168  \\ \hline
+      X114   &  X114  &
+      X168   &  X168  \\ \hline
+      \boz X243   &  \boz X150  &
+      X56   &  X56  \\ \hline
+      X39   &  X47  &
+      X298   &  X298  \\ \hline
+      \boz X150   &  \boz X150  &
+      X247   &  X247  \\ \hline
+      \boz X125   &  \boz X125  &
+      X83   &  X83  \\ \hline
+    \end{tabular}
+  }
+  \subfigure[Performance measures]{
+    \centering
+    \begin{tabular}{| c c |}
+      \hline
+      AUC (Original): & 60.6 \\ 
+      AUC (Transformed): & 62.4 \\
+      wc p-value (paired): & 5.669e-09 \\ \hline
+    \end{tabular}
+  }
+  \caption{An easy example: here all signal pathways are on the border of the network.}
+  \label{fig:nick-easy}
+\end{figure}
+
+Figure \ref{fig:nick-easy}(b, c) presents node pairs with highest assigned scores as calculated in Formula \ref{frm:nick-score}, comparing normal SVM and NICK. Orange and yellow colored cells are pathway and lonely signal nodes in the graph accordingly. This experiment shows discovers signal gene pairs more effectively than a normal SVM, using the graph structure.
+
+\begin{figure}
+  \subfigure[Corresponding network]{
+    \includegraphics[width=\textwidth]{figs/nick/synthesized-medium}
+  }
+  \subfigure[Discovered nodes (no NICK)]{
+    \begin{tabular}{| c c || c c |}
+      \hline
+      \toprule
+      \multicolumn{4}{c}{Original} \\ 
+      \midrule \hline
+      \boz X190   &  \boz X190 &
+      X104   &  X104  \\ \hline
+      X233   &  X233  &
+      \boz X190   &  \boz X272  \\ \hline
+      X277   &  X277  &
+      \ghool X88   &  \ghool X88  \\ \hline
+      \boz X190   &  X127  &
+      X165   &  X165  \\ \hline
+      \boz X272   &  \boz X272 &
+      \boz X272   &  \boz X22  \\ \hline
+      X106   &  X106  &
+      X165   &  \ghool X96  \\ \hline
+      \boz X150   &  \boz X150  &
+      X250   &  X250  \\ \hline
+      \ghool X88   &  X215  &
+      \boz X22   &  \boz X22  \\ \hline
+      X51   &  X51  &
+      X28   &  X28  \\ \hline
+      X73   &  X73  &
+      X35   &  X35  \\ \hline
+      X162   &  X162  &
+      \boz X113   &  \boz X113  \\ \hline
+      X112   &  X112  &
+      X277   &  X102  \\ \hline
+    \end{tabular}
+  }
+  \subfigure[Discovered nodes (NICK)]{
+    \begin{tabular}{| c c || c c |}
+      \hline
+      \toprule
+      \multicolumn{4}{c}{Transformed} \\ 
+      \midrule \hline
+      X233   &  X233  &
+      \boz X190   &  \boz X190  \\ \hline
+      X112   &  X112  &
+      \boz X240   &  \boz X240  \\ \hline
+      \boz X190   &  \boz X272 &
+      \boz X240   &  \boz X243  \\ \hline
+      X86   &  X86  &
+      \boz X243   &  \boz X243  \\ \hline
+      \boz X243   &  \boz X150 &
+      \boz X190   &  X127  \\ \hline
+      \boz X150   &  \boz X150  &
+      \boz X272   &  \boz X272  \\ \hline
+      X246   &  X246  &
+      X298   &  X298  \\ \hline
+      X106   &  X106  &
+      \boz X125   &  \boz X125  \\ \hline
+      X35   &  X35  &
+      \boz X125   &  \boz X82  \\ \hline
+      X247   &  X247  &
+      \boz X272   &  X69  \\ \hline
+      \boz X272   &  \boz X22 &
+      \boz X82   &  \boz X82  \\ \hline
+      X100   &  X100  &
+      \ghool X257   &  \ghool X257  \\ \hline
+    \end{tabular}
+  }
+  \subfigure[Performance measures]{
+    \centering
+    \begin{tabular}{| c c |}
+      \hline
+      AUC (Original): & 60.1 \\ 
+      AUC (Transformed): & 61.5 \\ 
+      wc p-value (paired): & 1.383e-06 \\ \hline
+    \end{tabular}
+  }
+  \caption{A medium example: here some signal pathways are on the border of the network.}
+  \label{fig:nick-medium}
+\end{figure}
+
+Figure \ref{fig:nick-medium} shows the experiment, in which one of the pathways is located inside the network. As illustrated in Figure \ref{fig:nick-medium}(b, c), NICK method mostly chooses the pathway nodes located on the boundaries of the network.
+
+\begin{figure}
+  \subfigure[Corresponding network]{
+    \includegraphics[width=\textwidth]{figs/nick/synthesized-hard}
+  }
+  \subfigure[Discovered nodes (no NICK)]{
+    \begin{tabular}{| c c || c c |}
+      \hline
+      \toprule
+      \multicolumn{4}{c}{Original} \\ 
+      \midrule \hline
+      \boz X190   &  \boz X190  &
+      X101   &  X101  \\ \hline
+      X233   &  X233  &
+      \boz X190   &  \boz X272  \\ \hline
+      \ghool X88   &  \ghool X88  &
+      X297   &  X297  \\ \hline
+      \boz X190   &  X127  &
+      X93   &  X93  \\ \hline
+      X26   &  X26  &
+      \boz X138   &  \boz X138  \\ \hline
+      \boz X272   &  \boz X272 &
+      \boz X272   &  \boz X22  \\ \hline
+      X101   &  X41  &
+      X123   &  X123  \\ \hline
+      \boz X22   &  \boz X22 &
+      X101   &  X198  \\ \hline
+      X146   &  X146  &
+      \boz X228   &  \boz X228  \\ \hline
+      X278   &  X278  &
+      X72   &  X72  \\ \hline
+      \ghool X88   &  X115 &
+      \ghool X96   &  \ghool X96  \\ \hline
+      \boz X148   &  \boz X148 &
+      X112   &  X112  \\ \hline
+    \end{tabular}
+  }
+  \subfigure[Discovered nodes (NICK)]{
+    \begin{tabular}{| c c || c c |}
+      \hline
+      \toprule
+      \multicolumn{4}{c}{Transformed} \\ 
+      \midrule \hline
+      X233   &  X233  &
+      \boz X190   &  \boz X190  \\ \hline
+      X112   &  X112  &
+      \boz X190   &  \boz X272  \\ \hline
+      X86   &  X86  &
+      \boz X190   &  X127  \\ \hline
+      \boz X272   &  \boz X272 &
+      \boz X272   &  X205  \\ \hline
+      X205   &  X205  &
+      X146   &  X146  \\ \hline
+      X146   &  X68  &
+      X68   &  X68  \\ \hline
+      X298   &  X298  &
+      \boz X272   &  \boz X22  \\ \hline
+      X90   &  X90  &
+      X127   &  X127  \\ \hline
+      X100   &  X100  &
+      \boz X272   &  X69  \\ \hline
+      X297   &  X297  &
+      X72   &  X72  \\ \hline
+      X127   &  \boz X148 &
+      X155   &  X155  \\ \hline
+      X247   &  X247  &
+      X196   &  X196  \\ \hline
+    \end{tabular}
+  }
+  \subfigure[Performance measures]{
+    \centering
+    \begin{tabular}{| c c |}
+      \hline
+      AUC (Original): & 60.2 \\ 
+      AUC (Transformed): & 62.5 \\ 
+      wc p-value (paired): & 8.151e-13 \\ \hline
+    \end{tabular}
+  }
+  \caption{A hard example: here none of the signal pathways are on the border of the network.}
+  \label{fig:nick-hard}
+\end{figure}
+
+Figure \ref{fig:nick-hard} illustrates the fact that non-signal features down-weight and penalize signal features when connected to them. In this example, a normal SVM detects more signal nodes than NICK.
+
+\begin{figure}[!ht]
+  \centering
+  \subfigure[Discovered nodes (no NICK)]{
+    \begin{tabular}{| c c |}
+      \hline
+      \toprule
+      \multicolumn{2}{c}{Original} \\ 
+      \midrule \hline
+      \cellcolor[gray]{0.8} Node & \cellcolor[gray]{0.8} Degree \\ \hline
+      85453  &  12 \\ \hline 
+      6605  &  98 \\ \hline 
+      56886  &  26 \\ \hline 
+      10640  &  16 \\ \hline 
+      8817  &  152 \\ \hline 
+      56894  &  28 \\ \hline 
+      5733  &  150 \\ \hline 
+      57758  &  8 \\ \hline 
+      7532  &  86 \\ \hline 
+      51  &  172 \\ \hline 
+      7566  &  16 \\ \hline 
+      3267  &  56 \\ \hline 
+      89953  &  4 \\ \hline 
+      5713  &  126 \\ \hline 
+      5193  &  32 \\ \hline 
+      5365  &  70 \\ \hline 
+      10874  &  132 \\ \hline 
+      5982  &  172 \\ \hline 
+      92140  &  20 \\ \hline 
+      332  &  328 \\ \hline 
+    \end{tabular}
+  }
+  \subfigure[Discovered nodes (NICK)]{
+      \begin{tabular}{| c c |}
+        \hline
+        \toprule
+        \multicolumn{2}{c}{NICK} \\ 
+        \midrule \hline
+        \cellcolor[gray]{0.8} Node & \cellcolor[gray]{0.8} Degree \\ \hline
+        9917  &  0 \\ \hline 
+        84279  &  0 \\ \hline 
+        197370  &  0 \\ \hline 
+        51143  &  0 \\ \hline 
+        58475  &  0 \\ \hline 
+        55585  &  0 \\ \hline 
+        25949  &  0 \\ \hline 
+        54892  &  0 \\ \hline 
+        126695  &  0 \\ \hline 
+        57168  &  0 \\ \hline 
+        10456  &  0 \\ \hline 
+        148223  &  0 \\ \hline 
+        9742  &  0 \\ \hline 
+        253558  &  0 \\ \hline 
+        342527  &  0 \\ \hline 
+        10175  &  0 \\ \hline 
+        83930  &  0 \\ \hline 
+        57035  &  0 \\ \hline 
+        145482  &  0 \\ \hline 
+        57465  &  0 \\ \hline 
+      \end{tabular}
+  }
+  \caption{Comparison of selected nodes on van 't veer data [1] using NICK and a normal SVM.}
+  \label{tbl:nick-realdata}
+\end{figure}
 
 
 \subsection{Methods}

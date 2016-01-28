@@ -9,9 +9,17 @@
 \usepackage{quotchap}
 \usepackage{csquotes}
 \usepackage{tikz}
+\usepackage{booktabs}
 \usetikzlibrary{shapes,arrows}
 \usetikzlibrary{calc}
 \usetikzlibrary{fit,positioning}
+
+\usepackage{colortbl}
+\usepackage{xcolor}
+\definecolor{pathwaynode}{RGB}{255,150,50}
+\definecolor{independentnode}{RGB}{255,255,50}
+\newcommand{\boz}{\cellcolor{pathwaynode}}
+\newcommand{\ghool}{\cellcolor{independentnode}}
 
 \title{A bunch of random studies on cancer}
 \author{Adrin Jalali}
@@ -27,19 +35,19 @@
 % ...
 
 \mainmatter
-%\include{introduction}
+\include{introduction}
 
-%\include{background}
+\include{background}
 
-%\include{fcs}
+\include{fcs}
 
 \include{adaptivelearning}
 
-%\include{conclusion}
+\include{conclusion}
 
 \appendix
-%\chapter{RchyOptimyx Appendix}
-%\include{rchy-appendix}
+\chapter{RchyOptimyx Appendix}
+\include{rchy-appendix}
 
 %\backmatter
 %\chapter{Last note}
