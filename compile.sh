@@ -2,7 +2,7 @@
 if [ "$1" == "complete" ]
 then
     xelatex main.tex
-    bibtex main.aux
+    bibtex main
     xelatex main.tex
 fi
 

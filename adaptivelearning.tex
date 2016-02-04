@@ -433,9 +433,13 @@ Figure \ref{fig:nick-hard} illustrates the fact that non-signal features down-we
         57465  &  0 \\ \hline 
       \end{tabular}
   }
-  \caption{Comparison of selected nodes on van 't veer data [1] using NICK and a normal SVM.}
+  \caption{Comparison of selected nodes on Van 't Veer data \cite{van2002gene} using NICK and a normal SVM.}
   \label{tbl:nick-realdata}
 \end{figure}
+
+We used the network provided in \cite{barabasi2004network} for NICK to classify Van 't Veer data \cite{van2002gene}. As expected, we realize that NICK prefers nodes outside the network to the nodes that are deep into the given network. This is shown in Figure \ref{tbl:nick-realdata}, comparing preferred nodes in a normal SVM and NICK. The first column is gene ID, and the second is its corresponding degree in the given graph.
+
+These experiments all together, show how such a modification in SVM optimization problem gives a bias towards genes that are not \emph{hubs}. This is problematic considering many of those hubs in the network are partially, if not mostly, hubs due to the fact that they were discovered earlier and investigated the most. Therefore those are the most well-known genes, which in many cases happen to be biologically most relevant genes. A method such as NICK tends to penalized them because they are connected to many genes that are irrelevant to the disease in study. This experiment is our motivation to use the fact that such a biological network exists, but not to use it directly in our method.
 
 
 \subsection{Methods}
