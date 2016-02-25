@@ -54,7 +54,7 @@ $\mathbf{M}(c_i)$ is the observed value of marker $\mathbf{M}$ for cell $c_i$. I
 
 \begin{figure}[!ht]
   \centering
-  \includegraphics[width=.6\textwidth]{figs/flowtype/pops}
+  %\includegraphics[width=.6\textwidth]{figs/flowtype/pops}
   \caption{Population identification}
   \label{fig:flowtype-pops}
 \end{figure}
@@ -685,3 +685,17 @@ This would not have been possible with only two partitions for each of CD45 and 
 
 
 \section{Lymphoma Diagnosis Quality Checking}
+\subsection{Introduction}
+We have designed and developed two methods flowType and RchyOptimyx in previous articles~\cite{Aghaeepour2012, Aghaeepour2012a, o2014enhanced}. The flowType method extracts cell populations as features from flow cytometry data, and then, a method such as ROC-AUC scores those features. Finally RchyOptimyx summarizes and visualizes important cell populations of the data.
+
+Here our goal is to extend the method and create a framework for diagnosis quality checking purposes. We first categorize the given samples into two groups according to their diagnosed label; then for each sample, we train our model using all samples except the selected one, and check how much our model agrees with the given diagnosis label. At the end, we report the difference between the given labels and our predicted labels, and the most difference between their predicted label and given label are candidates for further investigation by pathologists.
+\subsection{Materials and Methods}
+\subsubsection{Flow Cytometry Data}
+Our data consists of cohorts of patients, each cohort having multiple tubes. Markers for each tube are consistent in each individual cohort but not across cohorts. Therefore we have analyzed each cohort independent of other cohorts.
+
+Here we mention tube counts and their corresponding markers. In this manuscript, we use markers and dimensions interchangeably.
+
+\subsubsection{Cell Population Identification and Preprocessing}
+We assume each marker divides cells into two populations, positive and negative. For each marker, a k-means clustering method automatically clusters cells into two groups. The group with a higher value of the corresponding marker is our positive, and the other group is our negative populations with regard to the marker. A threshold right in the middle of the two groups determines the two corresponding populations.
+
+Then flowType counts the number of cells for each possible population considering determined thresholds. We then normalize these cell counts dividing them by total cell count to derive percentage of cells in each area. Having $M$ markers, we detect $3^M$ cell populations, and put them in a row, one row for each sample. At the end we normalize each column of the resulting matrix by estimating each column's mean and standard deviation, and transform it into a standard normal distribution.
