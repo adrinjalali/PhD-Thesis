@@ -698,4 +698,20 @@ Here we mention tube counts and their corresponding markers. In this manuscript,
 \subsubsection{Cell Population Identification and Preprocessing}
 We assume each marker divides cells into two populations, positive and negative. For each marker, a k-means clustering method automatically clusters cells into two groups. The group with a higher value of the corresponding marker is our positive, and the other group is our negative populations with regard to the marker. A threshold right in the middle of the two groups determines the two corresponding populations.
 
-Then flowType counts the number of cells for each possible population considering determined thresholds. We then normalize these cell counts dividing them by total cell count to derive percentage of cells in each area. Having $M$ markers, we detect $3^M$ cell populations, and put them in a row, one row for each sample. At the end we normalize each column of the resulting matrix by estimating each column's mean and standard deviation, and transform it into a standard normal distribution.
+Then flowType counts the number of cells for each possible population considering determined thresholds. We then normalize these cell counts dividing them by total cell count to derive percentage of cells in each area. Having $M$ markers, we detect $3^M$ cell populations, and put them in a row, one row for each sample. At the end we normalize each column of the resulting matrix by estimating each column's mean ($\mu_i$) and standard deviation ($\sigma_i$), and then transform its values ($x$) according to Formula~\ref{frm:fcs-normal-transform}:
+
+\begin{align}
+  x^t := \frac{x - \mu_i}{\sigma_i}
+  \label{frm:fcs-normal-transform}
+\end{align}
+
+For the purpose of diagnosis, we are interested mostly in cell populations that on average have more than only a few cells per sample. Therefore we discard cell populations which have a median value less than $0.05\%$ of total cell count. Such data preprocessing results in a matrix for each tube. Each sample corresponds to one row in each of these matrices.
+
+\subsubsection{Sample Classification}
+The next phase of the pipeline is to classify samples using the preprocessed data. Assume we have $t$ tubes, and a support vector machine is our method. Training a model for each tube results in $t$ support vector machines, each giving a classification for the given sample. We repeat this process using $k$ different methods, resulting in $t \times k$ models in total. This process gives us $t \times k$ predictions. If a prediction agrees with the given sample label, we call it a match. Samples with the least match count are our candidates for further investigation.
+
+\subsubsection{Interpretation and Visualization}
+A support vector machine with a linear kernel, uses a linear combination of input features to classify samples. Because we transformed and normalized input features before training our models, it is possible to directly interpret feature weights assigned by the model as importance of features.
+
+Using a leave-one-out cross-validation scheme over $n$ samples, means we have $n$ different trained models for each tube, given a specific method. Therefore for every tube, we have $n$ different feature weights. We take the absolute value of the average feature weights over these $n$ models as our final feature score. RchyOptimyx then uses these feature scores to visualize features with higher weights.
+
