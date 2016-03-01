@@ -6,9 +6,10 @@ then
     xelatex main.tex
 fi
 
-xelatex main.tex
-
 if [ "$1" == "show" ]
 then
-    evince main.pdf &
+    evince main.pdf & exit
 fi
+
+xelatex main.tex
+
