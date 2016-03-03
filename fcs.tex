@@ -54,7 +54,7 @@ $\mathbf{M}(c_i)$ is the observed value of marker $\mathbf{M}$ for cell $c_i$. I
 
 \begin{figure}[!ht]
   \centering
-  %\includegraphics[width=.6\textwidth]{figs/flowtype/pops}
+  \includegraphics[width=.6\textwidth]{figs/flowtype/pops}
   \caption{Population identification}
   \label{fig:flowtype-pops}
 \end{figure}
@@ -691,9 +691,36 @@ We have designed and developed two methods flowType and RchyOptimyx in previous 
 Here our goal is to extend the method and create a framework for diagnosis quality checking purposes. We first categorize the given samples into two groups according to their diagnosed label; then for each sample, we train our model using all samples except the selected one, and check how much our model agrees with the given diagnosis label. At the end, we report the difference between the given labels and our predicted labels, and the most difference between their predicted label and given label are candidates for further investigation by pathologists.
 \subsection{Materials and Methods}
 \subsubsection{Flow Cytometry Data}
-Our data consists of cohorts of patients, each cohort having multiple tubes. Markers for each tube are consistent in each individual cohort but not across cohorts. Therefore we have analyzed each cohort independent of other cohorts.
+Our data consists of two cohorts consisting Diffuse large B-cell lymphoma (DLBCL) and Follicular Lymphoma (FL) patients. Table~\ref{tbl:fcs-qa-cohorts} shows a summary of the two cohorts.
 
-Here we mention tube counts and their corresponding markers. In this manuscript, we use markers and dimensions interchangeably.
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{crrr}
+    Cohort & FL & DLBCL & Sum \\ \hline
+    A & 49 & 22 & 71 \\
+    B & ?? & ?? & ??
+  \end{tabular}
+  \caption{Cohorts A and B in numbers}
+  \label{tbl:fcs-qa-cohorts}
+\end{table}
+
+Each cohort consists of three 8-color flow cytometry tubes. We include forward and side scatter values to the analysis, and treat them as markers. Therefore each tube gives us a $10$ dimensional data for each patient. Table~\ref{tbl:fcs-qa-markers} presents markers on each tube for both cohorts A and B.
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{rlm{7cm}}
+    Cohort & Tube & Markers \\ \hline
+    & Tube 1 & FS, SS, polyKappa, polyLambda, CD5, CD10, CD11c, CD20, CD3, CD19 \\
+    A & Tube 2 & FS, SS, FMC-7, CD103, CD5, CD38, CD23, CD25, CD19, CD3 \\
+    & Tube 3 & FS, SS, CD57, CD7, CD5, CD2, CD56, CD8, CD3, CD4 \\ \hline
+     & Tube 1 &  \\
+    B & Tube 2 &  \\
+     & Tube 3 &  \\
+  \end{tabular}
+  \caption{Combination of markers in three tubes on each cohort. FS: Forward Scatter, SS: Side Scatter}
+  \label{tbl:fcs-qa-markers}
+\end{table}
+
 
 \subsubsection{Cell Population Identification and Preprocessing}
 We assume each marker divides cells into two populations, positive and negative. For each marker, a k-means clustering method automatically clusters cells into two groups. The group with a higher value of the corresponding marker is our positive, and the other group is our negative populations with regard to the marker. A threshold right in the middle of the two groups determines the two corresponding populations.
@@ -712,30 +739,55 @@ The next phase of the pipeline is to classify samples using the preprocessed dat
 
 \begin{table}[!ht]
   \centering
-  \begin{tabular}{|l|l|c|c|c|c|c|}
-    \hline
-    Sample ID & Diagnosis Label & \multicolumn{5}{c|}{Match Count} \\ \hline
-    & & Total & GDB & SVM & $l2$-SVM & $l1$-SVM \\ \hline
-    1 & FL & low & low & low & low & low \\ \hline
-    2 & DLBCL & low & low & low & low & low \\ \hline
-    3 & FL & high & high & high & high & high \\ \hline
-    4 & DLBCL & high & high & high & high & high \\ \hline
+  \begin{tabular}{llccccc}
+    & & \multicolumn{5}{c}{Match Count} \\ \cline{3-7}
+    Sample ID & Diagnosis Label & Total & GDB & SVM & $l1$-SVM & $l2$-SVM \\ \hline
+    F09-0628 & DLBCL & 2 & 0 & 1 & 1 & 0 \\
+    F09-1578 & FL & 3 & 0 & 1 & 1 & 1 \\
+    F09-1471 & DLBCL & 10 & 2 & 2 & 3 & 3 \\
+    F09-0591 & FL & 12 & 3 & 3 & 3 & 3 
   \end{tabular}
-  \caption{Match Count Table}
+  \caption{Match Count Table - the higher the match count, the more the sample follows the normal pattern.}
   \label{fig:fcs-qa-matchcount}
 \end{table}
 
 \subsubsection{Interpretation and Visualization}
 A support vector machine with a linear kernel, uses a linear combination of input features to classify samples. Because we transformed and normalized input features before training our models, it is possible to directly interpret feature weights assigned by the model as importance of features.
 
-Using a leave-one-out cross-validation scheme over $n$ samples, means we have $n$ different trained models for each tube, given a specific method. Therefore for every tube, we have $n$ different feature weights. We take the absolute value of the average feature weights over these $n$ models as our final feature score. RchyOptimyx then uses these feature scores to visualize features with higher scores. Figure~\ref{fig:fcs-qa-rchy} shows 
+Using a leave-one-out cross-validation scheme over $n$ samples, means we have $n$ different trained models for each tube, given a specific method. Therefore for every tube, we have $n$ different feature weights. We take the absolute value of the average feature weights over these $n$ models as our final feature score. RchyOptimyx then uses these feature scores to visualize features with higher scores. Figures~\ref{fig:fcs-qa-rchy1} and ~\ref{fig:fcs-qa-rchy2} show our analysis on cohorts A and B respectively.
+
+\begin{figure}[!ht]
+  \subfigure[Tube 1]{
+    \includegraphics[width=.5\textwidth]{figs/fcs-qa/tube1}
+    }
+  \subfigure[Tube 2]{
+    \includegraphics[width=.5\textwidth]{figs/fcs-qa/tube2}
+    }
+  \subfigure[Tube 3]{
+    \includegraphics[width=.5\textwidth]{figs/fcs-qa/tube3}
+    }
+  \caption{RchyOptimyx analysis cohort A}
+  \label{fig:fcs-qa-rchy1}
+\end{figure}
 
 \begin{figure}[!ht]
   %\includegraphics{}
-  \caption{RchyOptimyx analysis}
-  \label{fig:fcs-qa-rchy}
+  \caption{RchyOptimyx analysis cohort B}
+  \label{fig:fcs-qa-rchy2}
 \end{figure}
 
+After analyzing each tube using RchyOptimyx, we choose an immunophenotype and visualize its corresponding cells for samples mentioned in Figure~\ref{fig:fcs-qa-matchcount}. Figures~\ref{fig:fcs-qa-cells1} and \ref{fig:fcs-qa-cells2} present corresponding cells for selected immunophenotypes in cohorts A and B, respectively.
 
-After analyzing each tube using RchyOptimyx, we choose an immunophenotype to visualize in samples mentioned in Figure~\ref{fig:fcs-qa-matchcount}.
+\begin{figure}[!ht]
+  %\includegraphics{}
+  \caption{Immunophenotypes cohort A}
+  \label{fig:fcs-qa-cells1}
+\end{figure}
+
+\begin{figure}[!ht]
+  %\includegraphics{}
+  \caption{Immunophenotypes cohort B}
+  \label{fig:fcs-qa-cells2}
+\end{figure}
+
 
