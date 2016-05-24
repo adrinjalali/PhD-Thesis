@@ -690,5 +690,43 @@ with other faster methods if the time complexity of the method is of
 any concern. Some of these alternatives are already available on the
 \emph{github} repository of the method.
 
+\subsection{Enhancements and Parameter Selection}
+In order to withdraw the hassle of parameter setting from our method, we utilize a nested cross-validation scheme to automatically search for and find best parameters for a given data-set. A nested cross-validation scheme tests the method with different parameters several times, and therefore the method must be fast enough for it to be feasible. As a result, we modified and enhanced the method.
+
+Before we fix the computational bottleneck, we need to review our method's modules and their parameters. On the highest level, we have the number of weak learners. We use nested cross-validation at this level, to select the best number of weak learners for the given data-set. The next parameter on a lower level, is the complexity of each weak learner and correspondingly their number of selected features. At this stage, we choose the best parameter again using another nested cross-validation. The main parameter on the lowest level is the complexity of our feature confidence estimators. This is where we have the most computationally intensive task, i.e. computing MICs.
+
+The reason we compute all these MISs is that Gaussian Processes in their normal setting, having as many features as we have, overfit to the data, and therefore a pre-selected small subset of features is what we feed to each Gaussian Process to prevent this overfitting. But another way of reducing the complexity of a GP is to use a covariance function such as squared exponential with automatic relevance determination (ARD) covariance function~\cite{gaussian-processes}, which we decided against after observing its running time.
+
+Now consider the following as a module: given a feature $f_i$, compute all relevant MICs, select features according to them, and feed them to a GP. We can replace it with the following: using a nested cross-validation scheme, find the best parameters of a fast method to predict $f_i$ using other features. We use an C-SVM regression model with a linear kernel and the parameter C is set according to a nested cross-validation scheme.
+
+We tested the above modified method on a Sequence-based Gene Expression (EXP-S) Lymphoma data-set\footnote{\url{https://icgc.org/icgc/cgp/64/345/53049}}~\cite{richter2012recurrent}, separating Diffuse large B-cell lymphoma (DLBCL) samples from Follicular lymphoma (FL) samples. This data-set is hereafter referred to as ICGC-Lymphoma. Table~\ref{tbl:ratboost2-icgc-lymphoma-dataset} shows data-set's sample counts and Table~\ref{tbl:ratboost2-performance} shows the resulting performance measures in terms of average precision recall score for the same data-set. 
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{rc}
+    Diffuse large B-cell lymphoma & 39 \\
+    Follicular lymphoma & 40 \\
+    Total Count & 79 \\
+  \end{tabular}
+  \caption{ICGC-Lymphoma in numbers.}
+  \label{tbl:ratboost2-icgc-lymphoma-dataset}
+\end{table}
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{rl}
+    Method Name & APRS (mean $\pm 2 \times$ std) \\ \hline
+    RatBoost & $0.953 \pm 0.087$ \\
+    Gradient Boosting Classifier & $0.944 \pm 0.152$ \\
+    Adaboost & $0.886 \pm 0.21$ \\
+%    Raccoon & $0.947 \pm 0.0943$ \\
+%    Raccoon static & $0.932 \pm 0.132$ \\
+    SVM & $0.867 \pm 0.212$ \\ \hline
+  \end{tabular}
+  \caption{Average Precision Recall Scores (APRS) for ICGC-Lymphoma data-set. Estimated confidence intervals come from a 50 stratified shuffle split with $80\%$ train and $20\%$ test samples.}
+  \label{tbl:ratboost2-performance}
+\end{table}
+
+The result of the above changes is available in the same repository on \emph{github}.
 
 \section{Raccoon}
