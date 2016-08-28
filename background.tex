@@ -220,7 +220,7 @@ Many implementations use a different formulation which uses a different parametr
 \subsection{Boosting and Ensemble Methods}
 For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
 
-\section{Graphs}
+\section{Shortest Path Algortihms for Graphs}
 A graph $G$ is a set of vertices (nodes) $V$, and a set of edges $E=\left\{(v_i, v_j) | v_i, v_j \in V\right\}$ that connect vertices in $V$. A graph can be directed or undirected. In directed graphs, edges have direction, i.e. edge $(s, t)$ is different than the edge $(t, s)$. In other words, the following list shows the possible sets of edges regarding vertices $s$ and $t$ in a directed graph:
 
 \begin{align}
@@ -230,13 +230,13 @@ A graph $G$ is a set of vertices (nodes) $V$, and a set of edges $E=\left\{(v_i,
   E &= \{(s, t), (t, s)\}
 \end{align}
 
-In an undirected graph however, edges $(s, t)$ and $(t, s)$ are identical, and the can in fact be represented as a set ${s, t}$ instead of an ordered pair.
+In an undirected graph however, edges $(s, t)$ and $(t, s)$ are identical, and can in fact be represented as a set ${s, t}$ instead of an ordered pair.
 
-Graphs can also be weighted or not. If a graph $G$ is weighted, then there is a weight assigned to each edge of the graph. We use $w_{s,t}$ to note the weight of the edge $(s,t)$. In undirected graphs, $w_{s, t}$ is always the same as $w_{t, s}$. Sometimes the weight of an edge is referred to as the length of an edge and noted as $l_{s,t}$ depending on the context in the literature.
-A graph $G$ is connected if there is at least one path between every given two vertices on the graph.
+Graphs can also be weighted or not. If a graph $G$ is weighted, then there is a weight assigned to each edge of the graph. We use $w_{s,t}$ to note the weight of the edge $(s,t)$. In undirected graphs, $w_{s, t}$ is always the same as $w_{t, s}$. Sometimes the weight of an edge is referred to as the length of an edge and noted as $l_{s,t}$ depending on the context in the literature. A sequence of $n$ nodes $(v_1, v_2,\ldots,v_n) \in V^n$ define a path $p$ of length $n$ if for every consecutive nodes $v_i$ and $v_{i+1}$, $(v_i, v_{i+1})$ is an edge in the graph. The weight or the length of a given path is the sum over the corresponding weights/lengths of its edges.
+An undirected graph $G$ is connected if there is at least one path between every given two vertices on the graph.
 
 \subsection{The Shortest Path Problem}
-\emph{The shortest path problem} is to find a path between two vertices $s$ and $t$ such that the total weight of the path is the minimum. In unweighted graphs, the weight of each edge is considered to be $1$. Figure~\ref{fig:shortest-path1} highlights the shortest path between vertices $A$ and $F$ on the given weighted directed graph.
+\emph{The shortest path problem} is to find a path between two vertices $s$ and $t$ such that the total weight of the path is the minimum among all possible paths between the two nodes. In unweighted graphs, the weight of each edge is considered to be $1$. Figure~\ref{fig:shortest-path1} highlights the shortest path between vertices $A$ and $F$ on the given weighted directed graph.
 
 \begin{figure}[!ht]
   \centering
@@ -245,17 +245,25 @@ A graph $G$ is connected if there is at least one path between every given two v
   \label{fig:shortest-path1}
 \end{figure}
 
-Some prominent algorithms to solve the shortest path problem are Dijkstra's~\cite{dijkstra}, Bellman-Ford~\cite{bellman-ford}, and Floyd-Warshall~\cite{floyd-warshall} algorithms. Dijkstra's algorithm applies to the single-source shortest path problem on graphs with non-negative weight values with time complexity $O(|E| + |V| \log |V|)$~\cite{fredman1987fibonacci}, whereas Bellman-Ford algorithm works on graphs with also negative weights having time complexity $O(|V| |E|)$. Floyd-Warshall algorithm, on the other hand, applies to all pairs shortest path problem, i.e. it finds shortest paths between all pairs of vertices, on graphs with negative and non-negative weight values and its time complexity is $O(|V|^3)$.
+Some prominent algorithms to solve the shortest path problem are Dijkstra's~\cite{dijkstra}, Bellman-Ford~\cite{bellman-ford}, and Floyd-Warshall~\cite{floyd-warshall} algorithms. Dijkstra's algorithm applies to the single-source shortest path problem on graphs with non-negative weight values with time complexity $O(|E| + |V| \log |V|)$~\cite{fredman1987fibonacci}, whereas Bellman-Ford algorithm works on graphs with also negative weights having time complexity $O(|V| |E|)$. Floyd-Warshall algorithm, on the other hand, applies to all pairs shortest path problem, i.e. it finds shortest paths between all pairs of vertices, on graphs with negative and non-negative weight values and its time complexity is $O(|V|^3)$. The big $O$ notation defines an asymptotically upper bound of a function up to a constant factor. Formula \ref{frm:bkg:big-O} formally defines the notation \cite{thomas2001introduction}. An undirected graph $G$ is connected if there is at least one path between every given two vertices on the graph.
+
+\begin{align}
+  f(x) = O(g(x)) \iff \exists k > 0 \exists n_0 \forall n > n_0 |f(n)| \leq k|g(n)|
+  \label{frm:bkg:big-O}
+\end{align}
+
 
 \subsection{The $k$ Shortest Path Problem}
-\emph{The $k$ shortest path problem} is to find not only one, but $k$ paths from $s$ to $t$ such that their corresponding total weight is the least $k$ among all distinct possible paths from $s$ to $t$. Two settings of the problem are due to whether or not allowing loops in the paths. For the case when the goal is to find $k$ best shortest paths from a single source to all other nodes, Jin Y. Yen published an algorithm of the time complexity $O(k |V|(|E|+|V|\log|V|))$ in 1971 for the loopless setting which still has the best available time complexity available~\cite{yen1971finding}. It is possible to achieve better worst case time complexity if we let loops in the paths. In 1998 Eppstein came up with an algorithm with $O(|E| + |V|\log|V| + |V| k)$ time complexity, and $O(|E| + |V|\log|V| + k)$ if the problem is reduced to the single source single destination case~\cite{eppstein1998finding}. There has been improvements to the Eppstein's algorithm, but the worst case time complexity has not been improved.
+\emph{The $k$ shortest path problem} is to find the $k$ paths from $s$ to $t$ with minimum weight among all distinct possible paths from $s$ to $t$. Two settings of the problem are due to whether or not allowing loops in the paths. For the case when the goal is to find $k$ best shortest paths from a single source to all other nodes, Jin Y. Yen published an algorithm of the time complexity $O(k |V|(|E|+|V|\log|V|))$ in 1971 for the loopless setting which still has the best available time complexity available~\cite{yen1971finding}. It is possible to achieve better worst case time complexity if we allow loops in the paths. In 1998 Eppstein came up with an algorithm with $O(|E| + |V|\log|V| + |V| k)$ time complexity, and $O(|E| + |V|\log|V| + k)$ if the problem is reduced to the single source single destination case~\cite{eppstein1998finding}. There has been improvements to Eppstein's algorithm, but the worst case time complexity has not been improved.
 
-In our case, the graph is a directed acyclic graph (DAG), i.e. there are no loops in the graph. Therefore despite we require paths to be loopless, Eppstein's algorithm is sufficient and gives desirable paths. Here we give an intuitive overview of the algorithm and postpone our use case in detail to Chapter~\ref{sec:fcs}.
+In our case, the graph is a directed acyclic graph (DAG), i.e. there are no directed loops in the graph. Therefore despite we require paths to be loopless, Eppstein's algorithm is sufficient and gives desirable paths.
+Intuitively, the algorithm starts with the shortest path between $s$ and $t$, and in each iteration it finds the next shortest path by modifying a part of the previous path. This is achieved by storing a tree of all shortest paths to the destination $t$, then calculating the cost of jumping from one shortest path to another one using edges that are not a part of that tree (called sidetracks), and at the end picking the sidetrack edges with the least costs.
+Here we give an overview of the algorithm and postpone our use case in detail to Chapter~\ref{sec:fcs}.
 
 First we need to introduce some concepts and notations, and for the sake of easier reference to the original work, we keep the notation as the work done by Eppstein.
 Assume the problem is to find the $k$ shortest paths from $s$ to $t$ on a connected directed graph $G$. Then consider the following:
 \begin{itemize}
-\item $T$: a single destination shortest path tree and $t$ be its destination, i.e. $T$ includes all vertices of $G$ and a shortest path from each node to $t$.
+\item $T$: a single destination shortest path tree with destination $t$, i.e. $T$ includes all vertices of $G$ and a shortest path from each node to $t$.
 \item $d(v_i, v_j)$: the weight of a shortest path from $v_i$ to $v_j$, or in other words the distance between the two vertices.
 \item $head(e), tail(e)$: if $e$ is $(v_i, v_j)$, $head$ and $tail$ of $e$ are $v_i$ and $v_j$ respectively.
 \item $l(e)$: weight or length of edge $e$.
@@ -267,16 +275,16 @@ Assume the problem is to find the $k$ shortest paths from $s$ to $t$ on a connec
 
 If the edge $e$ is not a part of $T$, it is a \emph{sidetrack} and the cost of including it in a path to $t$ is non-negative~\cite[Lemma 1]{eppstein1998finding}.
 
-A key point to understanding the algorithm is the way paths are represented. A path $p$ from $s$ to $t$ can be represented by the list of \emph{sidetrack} edges it includes. If the path $p$ includes only one \emph{sidetrack} edge $(v_i, v_j)$, it means the path is the shortest path from $s$ to $v_i$, then the edge $(v_i, v_j)$, and then the shortest path from $v_j$ to $t$. The set $sidetracks(p)$ includes all edges in $p$ that are not in the shortest path tree $T$, i.e. they are in $G - T$.
+A key point to understanding the algorithm is the way paths are represented. A path $p$ from $s$ to $t$ can be represented by the list of \emph{sidetrack} edges it includes. If the path $p$ includes only one \emph{sidetrack} edge $(v_i, v_j)$, it means the path is the shortest path from $s$ to $v_i$, then the edge $(v_i, v_j)$, and then the shortest path from $v_j$ to $t$. The set $sidetracks(p)$ includes all edges in $p$ that are not in the shortest path tree $T$, i.e. they are in $G - T$. The graph $G - T$ is defined as the graph $G$ minus edges that are present in the graph $T$.
 
 To calculate the length of the path $p$ we have~\cite[Lemma 2]{eppstein1998finding}:
 \begin{align}
   l(p) = d(s, t) + \sum_{e \in sidetracks(p)} \delta(e)
 \end{align}
 
-Let $S = sidetracks(p)$ to be the sequence of edges of $p$ that are in $G - T$. Then we define $path(S)$ to be the path $p$. We also define $prefix(S)$ to be the sequence of edges in $S$ except the last one. Therefore $prefix(S)$ can define a path as $prefpath(p) = path(prefix(S))$.
+Given a path $p$, let $S = sidetracks(p)$ be the sequence of edges of $p$ that are in $G - T$. We also define $path(S)$ as the function calculating the path $p$ from a given $S$. Next, we define $prefix(S)$ to be the sequence of edges in $S$ except the last one. Therefore $prefix(S)$ can define a path as $prefpath(p) := path(prefix(S))$.
 
-Next we have: if the path $p$ is from $s$ to $t$ in $G$ and has a nonempty $sidetracks(p)$, then $l(p) \geq l(prefpath(p)$~\cite[Lemma 3]{eppstein1998finding}. As a corollary of Lemma 2 and 3 we can construct a natural tree of paths which is also a heap style tree. It is a tree in a way that each node is a path $p$, and it has all possible paths $p'$ for which $prefpath(p') = path(p)$. It is also a heap style tree in a way that the length of a parent node is less than or equal to all its children.
+Next we have: if the path $p$ is from $s$ to $t$ in $G$ and has a nonempty $sidetracks(p)$, then $l(p) \geq l(prefpath(p))$~\cite[Lemma 3]{eppstein1998finding}. Please note that $sidetracks(p)$ has to be nonempty or else $prefix(S)$ and hence $prefpath(p)$ is undefined. As a corollary of Lemma 2 and 3 we can construct a natural tree of paths which is also a heap style tree. It is a tree in a way that each node is a path $p$, and it has all possible paths $p'$ for which $prefpath(p') = path(p)$. It is also a heap style tree in a way that the length of a parent node is less than or equal to all its children.
 
 To overcome this challenge each path $p$, roughly speaking, is replaced by a heap of the edges that have tails on the path from $head(lastedge(p))$ to $t$ and ordered by $\delta(e)$. Then using two intermediate directed acyclic graphs $D(G)$~\cite[Lemma 4]{eppstein1998finding} and $P(G)$~\cite[Lemma 5]{eppstein1998finding}, a heap $H(G)$~\cite[Lemma 6]{eppstein1998finding} is constructed with the following properties:
 \begin{itemize}
@@ -287,5 +295,5 @@ To overcome this challenge each path $p$, roughly speaking, is replaced by a hea
 
 Finding $k$ smallest nodes in a min-heap costs $k\log k$, which can be further improved by Frederickson's technique~\cite{frederickson1993optimal}, and hence the time complexity of the Eppstein's algorithm~\cite[Lemma 7]{eppstein1998finding}.
 
-Although Eppstein's algorithm has the best know worst-case time complexity, it can be shown that in practice we can achieve faster running times by constructing some parts of the algorithm's intermediate structures as they're needed. In 2003 V{\'\i}ctor M. Jim{\'e}nez and Andr{\'e}s Marzal published the modified version of the algorithm and a more detailed explanation of the Eppstein's algorithm~\cite{jimenez2003lazy}.
+Although Eppstein's algorithm has the best know worst-case time complexity, it can be shown that in practice we can achieve faster running times by constructing some parts of the algorithm's intermediate structures as they're needed. In 2003 V{\'\i}ctor M. Jim{\'e}nez and Andr{\'e}s Marzal published the modified version of the algorithm and a more detailed explanation of Eppstein's algorithm~\cite{jimenez2003lazy}.
 \section{Lymphoma}
