@@ -526,7 +526,7 @@ The training phase of the model is shown in Fig.~\ref{fig:train}, in which, $N$ 
   \path [line] (up_phi) -- (inc_i);
 
   \node [block, below of=inc_i, node distance = 5em] (f) {\footnotesize $f \in \Phi_{l_i}$};
-  \node [block, below of=f, text width = 13em, node distance = 5em] (phi_f) {\footnotesize$\Phi_f \leftarrow \text{TOP}\left\{ \left( f', \text{MI}\left(f,f'\right)\right) \right\} $};
+  \node [block, below of=f, text width = 13em, node distance = 5em] (phi_f) {\footnotesize$\Phi_f \leftarrow \text{TOP}\left\{ \left( f', \text{MIC}\left(f,f'\right)\right) \right\} $};
   \node [block, below of=phi_f, text width=10em] (g_f) {\footnotesize $g_f \leftarrow \text{GP}(X_{\Phi_f}, f)$};
   \path [line] (phi_f) -- (g_f);
 
@@ -695,9 +695,9 @@ In order to withdraw the hassle of parameter setting from our method, we utilize
 
 Before we fix the computational bottleneck, we need to review our method's modules and their parameters. On the highest level, we have the number of weak learners. We use nested cross-validation at this level, to select the best number of weak learners for the given data-set. The next parameter on a lower level, is the complexity of each weak learner and correspondingly their number of selected features. At this stage, we choose the best parameter again using another nested cross-validation. The main parameter on the lowest level is the complexity of our feature confidence estimators. This is where we have the most computationally intensive task, i.e. computing MICs.
 
-The reason we compute all these MISs is that Gaussian Processes in their normal setting, having as many features as we have, overfit to the data, and therefore a pre-selected small subset of features is what we feed to each Gaussian Process to prevent this overfitting. But another way of reducing the complexity of a GP is to use a covariance function such as squared exponential with automatic relevance determination (ARD) covariance function~\cite{gaussian-processes}, which we decided against after observing its running time.
+The reason we compute all these MICs in the original RatBoost approach (see Fig.~\ref{fig:train}) is that Gaussian Processes in their normal setting, having as many features as we have, overfit to the data, and therefore a pre-selected small subset of features is what we feed to each Gaussian Process to prevent this overfitting. Although another way of reducing the complexity of a GP is to use a covariance function such as squared exponential with the automatic relevance determination (ARD) covariance function~\cite{gaussian-processes}, the increased running time caused by the covariance function made it impractical in our setting.
 
-Now consider the following as a module: given a feature $f_i$, compute all relevant MICs, select features according to them, and feed them to a GP. We can replace it with the following: using a nested cross-validation scheme, find the best parameters of a fast method to predict $f_i$ using other features. We use an C-SVM regression model with a linear kernel and the parameter C is set according to a nested cross-validation scheme.
+Now consider the following as a module: given a feature $f_i$, compute all relevant MICs, select features according to them, and feed them to a GP. We can replace it with the following: using a nested cross-validation scheme, find the best parameters of a fast method to predict $f_i$ using other features. We use a C-SVM regression model with a linear kernel and the parameter C is set according to a nested cross-validation scheme.
 
 We tested the above modified method on a Sequence-based Gene Expression (EXP-S) Lymphoma data-set\footnote{\url{https://icgc.org/icgc/cgp/64/345/53049}}~\cite{richter2012recurrent}, separating Diffuse large B-cell lymphoma (DLBCL) samples from Follicular lymphoma (FL) samples. This data-set is hereafter referred to as ICGC-Lymphoma. Table~\ref{tbl:ratboost2-icgc-lymphoma-dataset} shows data-set's sample counts and Table~\ref{tbl:ratboost2-performance} shows the resulting performance measures in terms of average precision recall score for the same data-set. 
 
