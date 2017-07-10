@@ -3,7 +3,7 @@
 \section{Machine Learning}
 Machine learning techniques are used to extract information from data, or make some predictions about the data. This chapter briefly explains methods and techniques used in, or required to understand the proceeding chapters.
 
-We can recognize two groups of learning problems: supervised and unsupervised learning. Supervised learning deals with data sets that are in the form of a set of input and outputs, and the task at hand is to predict the output using the input~\cite[TODO: chapter]{statistical-learning}. Classification and regression are supervised learning problems. Unsupervised learning, on the contrary, deals with data sets which are in the form of a set of data points, and no output is given. Clustering the most studied unsupervised learning problem~\cite[TODO: chapter]{statistical-learning}.
+We can recognize two groups of learning problems: supervised and unsupervised learning. Supervised learning deals with data sets that are in the form of a set of input and outputs, and the task at hand is to predict the output using the input~\cite[Ch. 2]{statistical-learning},~\cite[Ch. 1]{murphy2012machine}. Classification and regression are supervised learning problems. Unsupervised learning, on the contrary, deals with data sets which are in the form of a set of data points, and no output is given. Clustering the most studied unsupervised learning problem~\cite[Ch. 14]{statistical-learning}~\cite[Ch. 1]{murphy2012machine}.
 
 \subsection{Empirical Risk Minimization}
 \label{chap:empirical-risk-minimization}
@@ -33,7 +33,7 @@ Parameter $\lambda$ is the regularization term and we estimate it, among other a
 \subsection{Cross Validation}
 \label{chap:cross-validation}
 
-Cross validation is a technique used in method selection and performance estimation. In cross validation we divide the given training data into $k$ folds, set aside one of those $k$ folds, train the model on $k - 1$ remaining sections, and test the performance of the model on the set aside part of the data. Then repeat this process for all $k$ folds to assess the overall performance of the method. A special case of $k$-fold cross validation is leave-one-out in which $k=n$, the number of samples. Leave-one-out cross validation is computationally intensive for relatively large number of samples. A popular $k$ is 10, which is shown to have lower variance than leave-one-out method, and it has a low bias~\cite{statistical-learning}. 
+Cross validation is a technique used in method selection and performance estimation. In cross validation we divide the given training data into $k$ folds, set aside one of those $k$ folds, train the model on $k - 1$ remaining sections, and test the performance of the model on the set aside part of the data. Then repeat this process for all $k$ folds to assess the overall performance of the method. A special case of $k$-fold cross validation is leave-one-out in which $k=n$, the number of samples. Leave-one-out cross validation is computationally intensive for relatively large number of samples. A popular $k$ is 10, which is shown to have lower variance than leave-one-out method, and it has a low bias~\cite[Ch. 7]{statistical-learning}. 
 
 There are also some variations to the simple $k$-fold cross validation scheme. One way is to repeat the $k$-fold system multiple times with a random shuffle of the data before each $k$-fold test, and calculate the estimated error using the repeated test. Another variation is to randomly partition the data into train and test partitions several times and use these sets to estimate the performance of the method.
 
@@ -60,14 +60,14 @@ Feature selection is the task of selecting important features to the problem at 
 We have used correlation~\cite{correlation}, mutual information~\cite{mutual-information}, and $l_1$-regularized methods~\cite{l1-regularized} as techniques to select features.
 
 \subsection{Classification}
-Classification is the problem of putting data into different classes~\cite[TODO: chapter]{statistical-learning}. During the training phase, the matrix $X_{samples \times features}$ is given as the input and $y_{samples}$ as the desired output. The vector $y$ has values from a discrete set. If the set has only two distinct values, the problem is called a binary classification.
+Classification is the problem of putting data into different classes~\cite[Ch. 1]{statistical-learning}. During the training phase, the matrix $X_{samples \times features}$ is given as the input and $y_{samples}$ as the desired output. The vector $y$ has values from a discrete set. If the set has only two distinct values, the problem is called a binary classification.
 
-Logistic regression~\cite{logistic-regression1,logistic-regression2}, Support Vector Machines (SVM)~\cite{svm1,svm2}, and decision trees~\cite[TODO:chapter]{statistical-learning} are examples of classification methods.
+Logistic regression~\cite{logistic-regression1,logistic-regression2}, Support Vector Machines (SVM)~\cite{svm1,svm2}, and decision trees~\cite[Ch. 9]{statistical-learning} are examples of classification methods.
 
 \subsection{Regression}
-In statistics, predicting a continues output value given an input data is called regression~\cite[TODO:chapter]{statistical-learning}. Regression and classification differ in their desired output type. In regression the output is continues in contrast to classification in which the output is a discrete value.
+In statistics, predicting a continues output value given an input data is called regression~\cite[Ch. 1]{statistical-learning}. Regression and classification differ in their desired output type. In regression the output is continues in contrast to classification in which the output is a discrete value.
 
-Linear regression~\cite[TODO:chapter]{statistical-learning}, Gaussian processes~\cite{gaussian-processes}, and kernel based regression~\cite[Ch. 9]{learning-with-kernels} are some available methods here.
+Linear regression~\cite[Ch. 3]{statistical-learning}, Gaussian processes~\cite{gaussian-processes}, and kernel based regression~\cite[Ch. 9]{learning-with-kernels} are some available methods here.
 
 \subsection{Regularization}
 Building a machine to predict the outcome with a good performance on the training set is easy if the number of features in the data is large enough compared to the number of samples, even if features are drawn from a random background probability distribution independent of the outcome. But the trained machine will perform poorly on the unseen test samples. This phenomenon is called overfitting. One way to prevent overfitting is to select potential features before training a selected model.
@@ -226,14 +226,14 @@ In real-world applications data-sets are often not linearly separable, \emph{i.e
   \label{frm:svm-slack}
 \end{align}
 
-A formula similar to Formula~\ref{frm:bkg:emp-regularized} can be derived from Formula~\ref{frm:svm-slack} as shown in Formula~\ref{frm:bkg:svm-lambda-l2}~\cite[TODO: Ch.]{statistical-learning}~\cite{hastie2004entire}.
+A formula similar to Formula~\ref{frm:bkg:emp-regularized} can be derived from Formula~\ref{frm:svm-slack} as shown in Formula~\ref{frm:bkg:svm-lambda-l2}~\cite[Ch. 12]{statistical-learning}~\cite{hastie2004entire}.
 
 \begin{align}
   \arg\min_{(\mathbf{w},b)}\sum_{i=1}^{n}[1-y_i(\mathbf{w}x_i - b)] + \frac{\lambda}{2}\|\mathbf{w}\|_2^2
   \label{frm:bkg:svm-lambda-l2}
 \end{align}
 
-Note that parameter $C$ in Formula~\ref{frm:svm-slack} corresponds to $\frac{1}{\lambda}$ in Formula~\ref{frm:bkg:svm-lambda-l2}. The corresponding penalty function of Formula~\ref{frm:bkg:emp-regularized} in Formula~\ref{frm:bkg:svm-lambda-l2} is the $l^2$-norm of the vector $\mathbf{w}$. Similar to methods sucks as \emph{lasso}~\cite[TODO: Ch.]{statistical-learning} this penalty function can be replaced with the $l^1$-norm of the vector $\mathbf{w}$ shown in Formula~\ref{frm:bkg:svm-lambda-l1}~\cite{zhu20041}.
+Note that parameter $C$ in Formula~\ref{frm:svm-slack} corresponds to $\frac{1}{\lambda}$ in Formula~\ref{frm:bkg:svm-lambda-l2}. The corresponding penalty function of Formula~\ref{frm:bkg:emp-regularized} in Formula~\ref{frm:bkg:svm-lambda-l2} is the $l^2$-norm of the vector $\mathbf{w}$. Similar to methods such as \emph{lasso}~\cite[Ch. 3]{statistical-learning} this penalty function can be replaced with the $l^1$-norm of the vector $\mathbf{w}$ shown in Formula~\ref{frm:bkg:svm-lambda-l1}~\cite{zhu20041}.
 
 \begin{align}
   \arg\min_{(\mathbf{w},b)}\sum_{i=1}^{n}[1-y_i(\mathbf{w}x_i - b)] + \frac{\lambda}{2}\|\mathbf{w}\|_1^2
@@ -243,6 +243,19 @@ Note that parameter $C$ in Formula~\ref{frm:svm-slack} corresponds to $\frac{1}{
 It is important to note that the algorithm to solve the above optimization problem does not involve the kernel trick~\cite{zhu20041}, which means we cannot use similarity measures that require transforming data into spaces we cannot compute, such as the RBF kernels which has a corresponding infinite dimensional representing feature space~\cite[Ch. 2.3]{learning-with-kernels}. In order to use the $l^1$-norm regularized SVM with such kernels, an approximation of the feature space can be used to transform the data first, and then apply the above optimization problem on the transformed data~\cite{rahimi2007random}.
 
 \subsection{Gaussian Processes}
+Given a regression or a classification problem, one approach is to find the most likely function among the functions we consider reasonable for our problem. For instance, a linear regression assumes the underlying function explaining the data is linear, and tries to find one by looking at the data which is most probable to be the real underlying function. Another example are support vector machines for a classification problem, which try to find the best separating hyperplane, i.e. a linear function, and assume that function explains the data the best.
+
+An alternative approach is to consider all available functions at the same time, and assign a probability to each function according to how well they explain the data. To illustrate the idea better, assume we have a family of functions as our prior (Figure~\ref{fig:bkg:gp-intro}(a)  ), and then we observe a few values from the underlying function. If the data is noiseless, only those functions passing all of our observations can be considered (Figure~\ref{fig:bkg:gp-intro}(b)). Considering all those functions, we can calculate a posterior mean and variance for each unobserved value as shown in Figure~\ref{fig:bkg:gp-intro}(c)~\cite{gaussian-processes}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=1\textwidth]{figs/background/Gaussian_Process_Regression}
+  \caption[(a) Samples from prior family of functions, (b) samples from posterior family of functions, and (c) predicted mean and variance]{(a) Samples from prior family of functions, (b) samples from posterior family of functions, and (c) predicted mean and variance\protect\footnotemark.}
+  \label{fig:bkg:gp-intro}
+\end{figure}
+\footnotetext{Image by Cdipaolo96 (\url{https://en.wikipedia.org/wiki/Gaussian_process}) licensed under CC BY-SA 4.0.}
+
+Gaussian processes are particularly useful if are interested in the posterior variance of the prediction as well as the mean which is the case as explained in section~\ref{chap:ratboost-chapter}.
 
 \subsection{Boosting and Ensemble Methods}
 For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
@@ -323,4 +336,50 @@ To overcome this challenge each path $p$, roughly speaking, is replaced by a hea
 Finding $k$ smallest nodes in a min-heap costs $k\log k$, which can be further improved by Frederickson's technique~\cite{frederickson1993optimal}, and hence the time complexity of the Eppstein's algorithm~\cite[Lemma 7]{eppstein1998finding}.
 
 Although Eppstein's algorithm has the best know worst-case time complexity, it can be shown that in practice we can achieve faster running times by constructing some parts of the algorithm's intermediate structures as they're needed. In 2003 V{\'\i}ctor M. Jim{\'e}nez and Andr{\'e}s Marzal published the modified version of the algorithm and a more detailed explanation of Eppstein's algorithm~\cite{jimenez2003lazy}.
-\section{Lymphoma}
+
+\section{Cancer}
+In order to understand cancer, we need some basics of cellular molecular biology, most importantly the central dogma of molecular biology. The central dogma deals with three types of molecules: Deoxyribonucleic acid (DNA), Ribonucleic acid (RNA), and protein. The flow of information between these three types of molecules is depicted in Figure~\ref{fig:bkg:central-dogma}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.5\textwidth]{figs/background/Centraldogma_nodetails}
+  \caption{Flow of information in biological cells. Blue arrows show the usual flow, and the red arrows show the flow in some special cases.}
+  \label{fig:bkg:central-dogma}
+\end{figure}
+
+Although most of the explanations in this section apply to all cellular organisms, for the sake of simplicity we focus on multicellular eukariotic organisms, i.e. we assume cells have a nucleus and organisms have organs. For an extensive explanation of these topics refer to \emph{"Molecular Biology of the Cell, alberts, et al."}\cite{the-cell}.
+
+\subsection{Deoxyribonucleic acid (DNA)}
+DNA molecules are polymers, mostly made of four different unit types called nucleotides: pyrimidines (thymine (T), cytosine (C)) and purines (adenine (A) and guanine (G)). DNA is usually in the form of a double stranded helix, and the two strands complement each other, i.e. \emph{T} complements \emph{A} and \emph{C} complements \emph{G} (Figure~\ref{fig:bkg:dna-basic}).
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figs/background/simplified_DNA_Structure_Key_Labelled_pn_NoBB}
+  \caption{DNA double helix and base pairs\protect\footnotemark.}
+  \label{fig:bkg:dna-basic}
+\end{figure}
+\footnotetext{Image by Zephyris (\url{https://en.wikipedia.org/wiki/DNA}) licensed under CC BY-SA 3.0}
+
+DNA is the genetic code that is carried on from cell to cell, and generation to generation. All the cells in an organism have the same genetic material. TODO: Chromosome, methylation, hystones, DNA length. In computational biology we usually think of DNAs as long strings with \emph{T, C, G, A} as characters. But it is important to remember that for each given string, there is a complement attached to it.
+
+\subsection{Ribonucleic acid (RNA)}
+RNA molecules are polymers like DNA, but they carry uracil (U) instead of thymine (T). They are much shorted polymers compared to usual DNAs. There are different types of RNAs with different functions and messenger RNAs (mRNA) are the ones we are interested in, in the context of the central dogma. We can think of RNAs as strings of \emph{U, C, G, A} (TODO: ref to rna).
+
+mRNAs are constructed in a process called \emph{transcription} by reading a part of a strand of the DNA and constructing its complement nucleotide by nucleotide, except whenever whenever a thymine (T) is required, instead an uracil (U) is used. This process is shown by a dark blue arrow from DNA to RNA in Figure~\ref{fig:bkg:central-dogma} (TODO: ref to transcription).
+
+\subsection{Protein}
+Proteins are polymers made of amino acids. There are 20 different amino acids in humans. Proteins form and perform most of structures and functions in cells. Enzymes and cell membrane are two examples of molecules and structures mostly made of proteins.
+
+A process called translation, translates mRNA strands into protein strands. In this process, a ribosome complex gets attached to the start codon near (usually AUG) the beginning of the mRNA, and then the mRNA strand is decoded codon by codon by tRNAs. A tRNA is a small RNA molecule which can attach to one codon on one side, and has an amino acid on the other side of it. This process is continued until an stop codon (UAA, UAG, or UGA) is reached. Figure~\ref{fig:bkg:translation} illustrates a simplified version of this process. Translation is shown as a dark blue arrow from RNA to protein in Figure~\ref{fig:bkg:central-dogma}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figs/background/640px-Ribosome_mRNA_translation_en}
+  \caption{A ribosome translating an mRNA with the help of tRNAs.}
+  \label{fig:bkg:translation}
+\end{figure}
+
+\subsection{Pathways}
+
+\subsection{Lymphoma}
+

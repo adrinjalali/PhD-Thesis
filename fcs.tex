@@ -4,9 +4,9 @@
 Here we talk about flow cytometry data, how we analyze and visualize it; and how we use that analysis alongside with some machine learning tools to classify samples into cancer subtypes.
 
 \section{Flow Cytometry}
-Flow cytometry is a technology that allows measurement of biomarkers inside and outside cells on a single cell basis~\cite{flow-cytometry}. The technology can also sort and separate certain cells according to a given criterion~\cite{flow-cytometry-sorting}.
+Flow cytometry is a technology that allows measurement of biomarkers inside and outside cells on a single cell basis~\cite{jaroszeski1999fundamentals}. The technology can also sort and separate certain cells according to a given criterion~\cite{flow-cytometry-sorting, jaroszeski1999fundamentals}.
 
-Cell preparation in flow cytometry involves suspension of the cells in a liquid containing biomarker reagents. Reagents are marked antibodies that can be detected by the laser beams in the flow cytometer machine~\cite{flow-cytometry-cell-preparation}. The antibodies are usually marked with a fluorescent label. Each fluorescent marker has a corresponding peak excitation and emission wavelength which can be detected using lasers or lamps available on the flow cytometer machine. The combination of markers has to be chosen such that their corresponding wavelengths have minimal overlap; otherwise they cannot be distinguished from one another due to interference between them.
+Cell preparation in flow cytometry involves suspension of the cells in a liquid containing biomarker reagents. These biomarkers are antibodies which usually attach to proteins on the surface of cells' surface. Some markers can penetrate the cell's membrane and attach to a protein inside the cell, and are called intracellular markers. They tend to be more expensive than surface markers and often result in cell death, therefore they are not as commonly used as surface markers. Reagents are marked antibodies that can be detected by the laser beams in the flow cytometer machine~\cite{flow-cytometry-cell-preparation}. The antibodies are usually marked with a fluorescent label. Each fluorescent marker has a corresponding peak excitation and emission wavelength which can be detected using lasers or lamps available on the flow cytometer machine. The combination of markers has to be chosen such that their corresponding wavelengths have minimal overlap; otherwise they cannot be distinguished from one another due to interference between them.
 
 In a flow cytometer cells flow in a liquid stream one by one, where a lamps or laser beams in conjunction with sensors measure the intensity of reflected light from the cells. These measurements can be in linear or logarithmic space~\cite{practical-flow-cytometry-book}. The measured values depend on the light intensity projected onto cells which can be tuned by changing the voltage of the lasers or lamps. Different wavelengths correspond to different markers, but they might overlap. When the tail of the emission spectrum of a marker overlaps with the main part of the emission spectrum of another marker, it is called spillover as shown in Fig.~\ref{fig:flow-cytometry-spillover}~\cite{flow-cytometry-compensation}.
 
@@ -25,6 +25,29 @@ Compensating for spillover requires a spillover matrix ($SM$). $SP_{i,j}$ shows 
   \label{fig:flow-cytometry-spillover}
 \end{figure}
 
+Different cell types express different proteins on their surface and inside them. As a result, we can use flow cytometry to detect and sort different cell types. Table~\ref{tbl:fcs:usual-markers} lists some of the usual markers used to identify different immune cells, which are relevant to the rest of this chapter. Neither the list of proteins nor the list of cells expressing them is complete, for a more exhaustive list the reader is referred to \emph{Janeways's Immunobiology}~\cite{murphy2016janeway}.
+
+\begin{table}
+	\begin{tabular}{c|c}
+	Marker & Cell types \\ \hline
+	CD2 & T cell, natural killer (NK) cell \\
+	CD3 & T cell \\
+	CD4 & T helper cell, monocyte, macrophage, dendritic cell \\
+	CD5 & T cell \\
+	CD7 & Thymocite, mature T cell \\
+	CD8 & Thymocite, cytotoxic T cell, natural killer cell, dendritic cell \\
+	CD19 & B cell \\
+	CD20 & B cell \\
+	CD27 & T cell \\
+	CD28 & naive T cell \\
+	CD33 & myeloid \\
+	CCR5 & T cell \\
+	CCR7 & several lymphoid tissues
+	\end{tabular}
+	\caption{Some common markers and cells expressing those proteins.}
+	\label{tbl:fcs:usual-markers}
+\end{table}
+
 \section{Data Preprocessing and Challenges}
 Transformation and spillover compensation are the two main phases of raw flow cytometry data preprocessing.
 
@@ -42,6 +65,7 @@ Manual gating of cells across several samples is a labor intensive and time cons
 The rest of this chapter first explains how we extract features from flow cytometry data using flowType~\cite{Aghaeepour2012}. Then we show how RchyOtimyx uses the outcome of flowType to summarize and visualize gating strategies~\cite{Aghaeepour2012a}. Then an improvement to both functionality and performance of both packages, as well as a pipeline using both methods are presented.
 
 \subsection{Cell Population Identification: flowType}
+\label{sec:fcs:flowType}
 Assume there is a threshold corresponding to each marker/dimension for a given flow cytometry data. For a given marker $\mathbf{M}$ and the threshold $t$, cells are divided into two groups regarding the threshold as shown in Formula ~\ref{frm:flowtype-pops}.
 
 \begin{align}
@@ -686,9 +710,11 @@ This would not have been possible with only two partitions for each of CD45 and 
 
 \section{Lymphoma Diagnosis Quality Checking}
 \subsection{Introduction}
-We have designed and developed two methods flowType and RchyOptimyx in previous articles~\cite{Aghaeepour2012, Aghaeepour2012a, o2014enhanced}. The flowType method extracts cell populations as features from flow cytometry data, and then, a method such as ROC-AUC scores those features. Finally RchyOptimyx summarizes and visualizes important cell populations of the data.
+We have designed and developed two methods flowType and RchyOptimyx in this chapter.
+%previous articles~\cite{Aghaeepour2012, Aghaeepour2012a, o2014enhanced}.
+The flowType method extracts cell populations as features from flow cytometry data, and then, a method such as ROC-AUC scores those features. Finally RchyOptimyx summarizes and visualizes important cell populations of the data.
 
-Here our goal is to extend the method and create a framework for diagnosis quality checking purposes, \emph{i.e.} to report samples that might be misdiagnosed or require further investigation. For this, we first categorize the given samples into two groups according to their diagnosed label; then for each sample, we train our model using all samples except the selected one, and check how much our model agrees with the given diagnosis label, \emph{i.e.} leave one out cross validation scheme. At the end, we report the difference between the given labels and our predicted labels, and samples with the most difference between their predicted label and given label are candidates for further investigation by the pathologist/oncologist.
+Here our goal is to extend the method and create a framework for diagnosis quality checking purposes, \emph{i.e.} to report samples that might be misdiagnosed or require further investigation. For this, we first categorize the given samples into two groups according to their diagnosed label; then for each sample, we train our model using all samples except the selected one, and check how much our model agrees with the given diagnosis label. This scheme is also known as leave one out cross validation. At the end, we report the difference between the given labels and our predicted labels, and samples with the most difference between their predicted label and given label are candidates for further investigation by the pathologist/oncologist.
 \subsection{Materials and Methods}
 \subsubsection{Flow Cytometry Data}
 Our data consists of two cohorts both including Diffuse large B-cell lymphoma (DLBCL) and Follicular Lymphoma (FL) patients. Table~\ref{tbl:fcs-qa-cohorts} shows a summary of the two cohorts.
@@ -704,7 +730,7 @@ Our data consists of two cohorts both including Diffuse large B-cell lymphoma (D
   \label{tbl:fcs-qa-cohorts}
 \end{table}
 
-Each cohort consists of three 8-color flow cytometry tubes. We include forward and side scatter values to the analysis, and treat them as biomarkers. Therefore each tube gives us a $10$ dimensional data for each patient. Table~\ref{tbl:fcs-qa-markers} presents markers on each tube for both cohorts A and B.
+The samples of each cohort were analyzed using three sets of 8 markers in three different tubes using an 8-color capable flow cytometry machine. We include forward and side scatter values to the analysis, and treat them as biomarkers. Therefore each tube gives us a $10$ dimensional vector for each patient. Table~\ref{tbl:fcs-qa-markers} presents markers on each tube for both cohorts A and B.
 
 \begin{table}[!ht]
   \centering
@@ -723,30 +749,54 @@ Each cohort consists of three 8-color flow cytometry tubes. We include forward a
 
 
 \subsubsection{Cell Population Identification and Preprocessing}
-We assume each marker divides cells into two populations, positive and negative. For each marker, a k-means clustering method automatically clusters cells into two groups. The group with a higher value of the corresponding marker is our positive, and the other group is our negative populations with regard to the marker. A threshold right in the middle of the two groups determines the two corresponding populations. For example if $CD4$ is the marker, then $CD4^-$ and $CD4^+$ represent cells bellow and above the threshold respectively.
+In this phase, we first identify cell populations on a single marker level using k-means clustering method. Then we use flowType to identify cell populations using all marker combinations. Then, after filtering out very rare cell populations, we construct a matrix in which each row corresponds to a sample and each column corresponds to a cell population. At the end we normalize each column of the constructed data matrix.
 
-Then flowType counts the number of cells for each possible population considering determined thresholds. As the next step, we then normalize these cell counts dividing them by total cell count to derive proportion of cells in each area. Having $M$ markers, we detect $3^M$ cell populations~\cite{Aghaeepour2012a}, and put them in a row, one row for each sample. At the end we normalize each column of the resulting matrix by estimating each column's mean ($\mu_i$) and standard deviation ($\sigma_i$), and then transform its values ($x$) according to Formula~\ref{frm:fcs-normal-transform}:
+We assume each marker divides cells into two populations, positive and negative. For each marker, a k-means clustering method with $k = 2$ automatically clusters cells into two groups. The group with a higher value of the corresponding marker is our positive, and the other group is our negative population with regard to the marker. A threshold right in the middle of the two groups with the same euclidean distance from the two cluster centers, determines the two corresponding populations. For example, if $CD4$ is the marker, then $CD4^-$ and $CD4^+$ represent cells bellow and above the threshold respectively.
+
+Then flowType counts the number of cells for each possible population considering determined thresholds. As the next step, we then normalize these cell counts dividing them by total cell count to derive proportion of cells in each area. Having $M$ markers, we detect $3^M$ cell populations (section~\ref{sec:fcs:flowType}), and put them in a matrix, having one row per sample and $3^M$ columns corresponding to the cell populations. At the end we normalize each column of the resulting matrix by estimating each column's mean ($\mu_i$) and standard deviation ($\sigma_i$), and then transform its values ($x$) according to Formula~\ref{frm:fcs-normal-transform}:
 
 \begin{align}
   x^t := \frac{x - \mu_i}{\sigma_i}
   \label{frm:fcs-normal-transform}
 \end{align}
 
-For the purpose of diagnosis, we are interested mostly in cell populations that on average have more than only a few cells per sample. Therefore we discard cell populations which have a median value less than $0.05\%$ of total cell count. Such a preprocessing of the data results in a matrix for each tube. Each sample corresponds to one row in each of these matrices.
+For the purpose of diagnosis, we are interested mostly in cell populations that on average have more than only a few cells per sample. Therefore we discard cell populations which have a median value less than $0.05\%$ of total cell count. We performed this preprocessing for each tube leading to three matrices.
 
 \subsubsection{Sample Classification}
-We compare classification performance of several methods, which include support vector machines in three variants, gradient boosting classifier~\cite{friedman2002stochastic}, and a method which performed well in a previous benchmark competition, hereafter referred to as \emph{team21}\footnote{\url{http://www.ehu.eus/biologiacomputacional/team21_vilar}}~\cite{Aghaeepour2013Critical}. Table~\ref{tbl:fcs-qa-performances} presents a performance comparison between the abovementioned methods for our two cohorts.
+We compare classification performance of several methods, which include support vector machines in three variants (section~\ref{sec:svms}), gradient boosting classifier~\cite{friedman2002stochastic}, and a method which performed well in a previous benchmark competition, hereafter referred to as \emph{team21}\footnote{\url{http://www.ehu.eus/biologiacomputacional/team21_vilar}}~\cite{Aghaeepour2013Critical}. 
+
+In order to assess the performance of the above methods, we perform a leave one out cross validation on the data. This strategy leaves one sample out at a time, trains the model on the rest of the data, and then records the output of the trained model on the sample which was left out. Having $N$ samples, this process is repeated $N$ times. These recorded values are used to measure the overall performance of methods and to find samples which are valued for further investigations, as explained later.
+
+Except for method \emph{team21}, we need to find the appropriate hyperparameters for the other models. These are the parameters which we have to define before starting the training process. For each method, we find the best set of hyperparameters using a $10$-fold cross validation; hence a nested cross 
+validation scheme. Table~\ref{tbl:fcs-qa:hyperparameters} lists the search space of these parameters for their corresponding method.
 
 \begin{table}[!ht]
   \centering
-  \begin{tabular}{rcc}
-     & \multicolumn{2}{c}{ROC AUC} \\ \cline{2-3}
-    Method & Cohort A & Cohort B \\ \hline
-    team21 & 0.5 & ? \\
-    Gradient Boosting Classifier & 0.84 & ? \\
-    SVM & 0.76 & ? \\
-    $l1$-SVM-linear & 0.84 & ? \\
-    $l2$-SVM-linear & 0.83 & ?
+  \begin{tabular}{rrl}
+    Method & Parameter & Range \\ \hline \rule{0pt}{2.4ex}
+    & max used features & ${5, 10, 15}$  \\
+    Gradient Boosting Classifier & max tree depth & ${1, 2, 3}$ \\
+    & estimator count & ${5, 20, 50, 100, 200}$ \\ \hline \rule{0pt}{2.4ex}
+    & $C$ & $2^{-10:10}$ \\
+    $l2$-SVM & kernels & rbf, linear \\
+	& $gamma$ (rbf kernel only) & $2^{-10:10}$ \\ \hline \rule{0pt}{2.4ex}
+    $l1$-SVM linear kernel & $C$ & $2^{-10:10}$ \\ \hline \rule{0pt}{2.4ex}
+    $l2$-SVM linear kernel & $C$ & $2^{-10:10}$ \\
+  \end{tabular}
+  \caption{Variable hyperparameters for each method and their corresponding range.}
+  \label{tbl:fcs-qa:hyperparameters}
+\end{table}
+
+
+\begin{table}[!ht]
+  \centering
+  \begin{tabular}{rc}
+    Method & ROC AUC \\ \hline
+    team21 & 0.5  \\
+    Gradient Boosting Classifier & 0.84  \\
+    $l2$-SVM & 0.76 \\
+    $l1$-SVM linear kernel & 0.84  \\
+    $l2$-SVM linear kernel & 0.83
   \end{tabular}
   \caption{Method Performances - SVM: Support Vector Machine, $\{l1, l2\}$-SVM-linear: SVMs with a linear kernel which are penalized using an $l1$ or an $l2$ term respectively.}
   \label{tbl:fcs-qa-performances}
@@ -754,7 +804,12 @@ We compare classification performance of several methods, which include support 
 
 As shown in Table~\ref{tbl:fcs-qa-performances}, Gradient Boosting Classifier, $l1$-SVM-linear, and $l2$-SVM-linear all have comparable performances. Among these three methods, we choose $l2$-SVM-linear for the next steps for two reasons: proper handling of imbalanced data, and interpretability of its coefficient vector as features' importance. We choose $l2$-SVM-linear over $l1$-SVM-linear because $l1$ penalized SVM tends to be very sparse, meaning that it chooses only a few features as predictors. This results in usually choosing features that correspond to fewer cells and ignoring more abondant cell populations.
 
-Now we compute the difference between the output of the $l2$-SVM-linear method, and the desired output, \emph{i.e.} $-1$ and $1$. Note that the models' outputs are real values, and the sign of the output determines the predicted class. Since the SVM's output shows the distance of the input from its decision boundaries, and the further away the input sample from the boundary, the more confident the model is in its decision, the output can be interpreted as the model's confidence. Therefore we use the real values not only to find samples that are simply mis-classified, but also to sort them according to the models' confidence. As a result, a good candidate sample to be investigated is one which is mis-classified and that the model is confident in its classification. Table~\ref{fig:fcs-qa-matchcount} show a few entries of the resulting table. The first three entries show an example of samples our method has mis-classified, and the last two entries are two samples for which our method agrees with their reported diagnosis.
+Now we compute the difference between the output of the $l2$-SVM-linear method, and the desired output, \emph{i.e.} $-1$ and $1$. Note that the models' outputs are real values, and the sign of the output determines the predicted class. Since the SVM's output shows the distance of the input from its decision boundaries, and the further away the input sample from the boundary, the more confident the model is in its decision, the output can be interpreted as the model's confidence. But there is a catch: these values are computed using different models, and different scaling factors in these models means that the calculated real values cannot be directly compared between models. To fix this issue, we normalize decision values using the mean and variance of the outputs of the models on their corresponding training data. Now we can use the real values not only to find samples that are simply misclassified, but also to sort them according to the models' confidence. As a result, a good candidate sample to be investigated is one which is misclassified and that the model is confident in its classification. 
+
+\subsubsection{Handling Tubes}
+Oncologists usually design the combination of markers in each tube such that each tube focuses on a different category of cell types or disease cubclasses. Therefore we treat tubes separately and train our models on each tube. Then we take the average output of the models on each tube and take the resulting value as the final prediction for the given sample.
+
+Table~\ref{fig:fcs-qa-matchcount} show a few entries of the resulting table. The first three entries show an example of samples our method has misclassified, and the last two entries are two samples for which our method agrees with their reported diagnosis.
 
 \begin{table}[!ht]
   \centering
@@ -774,7 +829,7 @@ Now we compute the difference between the output of the $l2$-SVM-linear method, 
 \subsubsection{Interpretation and Visualization}
 A support vector machine with a linear kernel, uses a linear combination of input features to classify samples. Because we transformed and normalized input features before training our models, it is possible to directly interpret feature weights assigned by the model as importance of features.
 
-Using a leave-one-out cross-validation scheme over $n$ samples, means we have $n$ different trained models for each tube, given a specific method. Therefore for every tube, we have $n$ different feature weights. We take the absolute value of the average feature weights over these $n$ models as our final feature score. RchyOptimyx then uses these feature scores to visualize features with higher scores. Figures~\ref{fig:fcs-qa-rchy1} and ~\ref{fig:fcs-qa-rchy2} show our analysis on cohorts A and B respectively. TODO: any interpretation?
+Using a leave-one-out cross-validation scheme over $n$ samples, means we have $n$ different trained models for each tube, given a specific method. Therefore for every tube, we have $n$ different feature weights. We take the absolute value of the average feature weights over these $n$ models as our final feature score. RchyOptimyx then uses these feature scores to visualize features with higher scores. Figure~\ref{fig:fcs-qa-rchy1} shows the result of this analysis on the cohort.
 
 \begin{figure}[!ht]
   \subfigure[Tube 1]{
@@ -790,23 +845,15 @@ Using a leave-one-out cross-validation scheme over $n$ samples, means we have $n
   \label{fig:fcs-qa-rchy1}
 \end{figure}
 
-\begin{figure}[!ht]
-  \centering
-  %\includegraphics{}
-  TODO
-  \caption{RchyOptimyx analysis cohort B}
-  \label{fig:fcs-qa-rchy2}
-\end{figure}
+Now we present a post-analysis of our method for individual samples. Our goal is to give insight about why our models have misclassified an individual sample. An oncologist/pathologist can use this part of the analysis as a hint for further investigation on the patient, or they can decide the misclassification is due to other errors in the pipeline.
 
-Now we present a post-analysis of our method for individual samples. Our goal is to give insight about why our models have mis-classified an individual sample. An oncologist/pathologist can use this part of the analysis as a hint for further investigation on the patient, or they can decide the mis-classification is due to overfitting or other errors in our models.
-
-As already mentioned, we follow a leave one out cross validation scheme. This means we train a model for each sample $x_i$, using all samples but $x_i$. Let this model be referred to as $M_i$. Then we use coefficient vector of $M_i$ as an indicator of feature significance. Note that this is possible because we have re-scaled and normalized all the features. Now let the set $\mathcal{F}_{i,k}$ be the set of $k$ features with largest absolute values in feature vector of $M_i$. Then for each feature $f_j$ in $\mathcal{F}_{i,k}$:
+As already mentioned, we follow a leave one out cross validation scheme. This means we train a model for each sample $x_i$, using all samples but $x_i$. Let this model be referred to as $M_i$. Then we use we weight vector of $M_i$ as an indicator of feature significance. Now let the set $\mathcal{F}_{i,k}$ be the set of $k$ features with largest absolute values in the weight vector of $M_i$. Then for each feature $f_j$ in $\mathcal{F}_{i,k}$:
 \begin{itemize}
 \item Let $\mathcal{P}_{DLBCL, f_j} := \{P_{f_j, s} | s \in DLBCL\}$
 \item Let $\mathcal{P}_{FL, f_j} := \{P_{f_j, s} | s \in FL\}$
 \end{itemize}
 
-where $P_{f_j, s}$ is the cell count of the corresponding feature $f_j$ for sample $s$, and $DLBCL$ and $FL$ represent DLBCL diagnosed and FL diagnosed samples respectively. Then we draw the density plots corresponding to the two sets $\mathcal{P}_{DLBCL, f_j}$ and $\mathcal{P}_{DLBCL, f_j}$ over each other, and an indicator of where $f_i$ of $M_i$ stands over them. Figure~\ref{fig:fcs-qa-sample-density} shows an example result of this analysis.
+where $P_{f_j, s}$ is the cell count of the corresponding feature $f_j$ for sample $s$, and $DLBCL$ and $FL$ represent DLBCL diagnosed and FL diagnosed samples respectively. Then we draw the density plots corresponding to the two sets $\mathcal{P}_{DLBCL, f_j}$ and $\mathcal{P}_{DLBCL, f_j}$ over each other, and an indicator of where $f_j$ of $M_i$ is shown as a vertical line. Figure~\ref{fig:fcs-qa-sample-density} shows an example result of this analysis.
 
 \begin{figure}[!ht]
   \centering
@@ -815,7 +862,9 @@ where $P_{f_j, s}$ is the cell count of the corresponding feature $f_j$ for samp
   \label{fig:fcs-qa-sample-density}
 \end{figure}
 
-A mis-classification occures when the given sample lays where the opposite class has higher density. For a given mis-classified sample $x_i$, and its corresponding set $F_{i,k}$, we draw the explained plots, and also their corresponding scatter plot of the cell population. Such a process results in plots shown in Figure~\ref{fig:fcs-qa-density-scatter-FL} and~\ref{fig:fcs-qa-density-scatter-DLBCL}. Figure~\ref{fig:fcs-qa-density-scatter-FL} shows the analysis for three cell populations of an FL diagnosed sample. The three cell populations include: $SS^+polyLambda^+CD20^−CD3^+$, $CD103^+CD5^+CD38^−CD23^+CD19^+$, and $FS^+CD7^−CD5^+CD2^+CD3^+CD4^+$. As shown on the left side of these plots, for all the three cell populations, the cell counts of the corresponding cell populations is more evidence for the sample being a DLBCL sample rather than an FL sample. The corresponding cells are shown on the right side of the density plots. Similarly, Figure~\ref{fig:fcs-qa-density-scatter-DLBCL} shows the analysis for a DLBCL diagnosed sample, and three cell populations which result in our model labeling it as FL. These three cell populations are $SS^+polyLambda^−CD5^−CD11c^+CD20^−$, $SS^+FMC−7^+CD103^+CD38^−CD25^+CD19^−$, and $SS^−CD57^+CD7^−CD5^+CD8^+$.
+Whenever there is a misclassification, it means there are features for which, the given sample lays where the opposite class has higher density. For a given misclassified sample $x_i$, and its corresponding set $F_{i,k}$, we draw the explained plots, and also their corresponding scatter plot of the cell population, which is similar to the result of a \emph{manual gating}. Manual gating is a technique in flow-cytometry analysis to identify certain cell populations. It is an iterative process, and at each step the data is plotted using two chosen markers (a 2-D projection of the data), and the cells in a manually chosen area are selected for the next step. This process is often used by oncologists to identify certain cell populations and hence a specific diagnosis. To give the oncologists a familiar representation of our detected cell populations, we provide a scatter plot of them as well.
+
+Such a process results in plots shown in Figure~\ref{fig:fcs-qa-density-scatter-FL} and~\ref{fig:fcs-qa-density-scatter-DLBCL}. Figure~\ref{fig:fcs-qa-density-scatter-FL} shows the analysis for three cell populations of an FL diagnosed sample. The three cell populations include: $SS^+polyLambda^+CD20^−CD3^+$, $CD103^+CD5^+CD38^−CD23^+CD19^+$, and $FS^+CD7^−CD5^+CD2^+CD3^+CD4^+$. As shown on the left side of these plots, for all the three cell populations, the cell counts of the corresponding cell populations is more evidence for the sample being a DLBCL sample rather than an FL sample. The corresponding cells are shown on the right side of the density plots. Similarly, Figure~\ref{fig:fcs-qa-density-scatter-DLBCL} shows the analysis for a DLBCL diagnosed sample, and three cell populations which result in our model labeling it as FL. These three cell populations are $SS^+polyLambda^−CD5^−CD11c^+CD20^−$, $SS^+FMC−7^+CD103^+CD38^−CD25^+CD19^−$, and $SS^−CD57^+CD7^−CD5^+CD8^+$.
 
 \begin{figure}[!ht]
   \centering
