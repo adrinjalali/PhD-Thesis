@@ -809,21 +809,28 @@ Now we compute the difference between the output of the $l2$-SVM-linear method, 
 \subsubsection{Handling Tubes}
 Oncologists usually design the combination of markers in each tube such that each tube focuses on a different category of cell types or disease cubclasses. Therefore we treat tubes separately and train our models on each tube. Then we take the average output of the models on each tube and take the resulting value as the final prediction for the given sample.
 
-Table~\ref{fig:fcs-qa-matchcount} show a few entries of the resulting table. The first three entries show an example of samples our method has misclassified, and the last two entries are two samples for which our method agrees with their reported diagnosis.
+Table~\ref{fig:fcs-qa-matchcount} show a few entries of the resulting table. The first three entries show an example of samples our method has misclassified, and the last two entries are two samples for which our method agrees with their reported diagnosis. Figure~\ref{fig:fcs-qa-predictions-boxplot} shows the distribution of the average normalized prediction values for the two classes.
 
 \begin{table}[!ht]
   \centering
-  \begin{tabular}{llrr}
-    Sample ID & Diagnosis Label & Target Value & Average Predicted Value \\ \hline
-    F09-0939 & FL3 & 1 & -1.16 \\
-    F09-1578 & FL12 & 1 & -1.05 \\
-    F09-0628 & DLBCL & -1 & 0.80 \\
-    F09-0578 & FL12 & 1 & 2.83 \\
-    F09-1471 & DLBCL & -1 & -3.07
+  \begin{tabular}{llll}
+    Sample ID & Diagnosis & Target Value & Average Normalized Predicted Value \\ \hline
+    F09-0939 & FL3 & 1 & -0.81 \\
+    F09-1578 & FL12 & 1 & -0.72 \\
+    F09-0628 & DLBCL & -1 & 0.50 \\
+    F09-0578 & FL12 & 1 & 1.65 \\
+    F09-1471 & DLBCL & -1 & 1.73
   \end{tabular}
   \caption{A sample of prediction values compared to target values. The target value is $-1$ for DLBCL samples and $1$ for FL samples. Average prediction value shows the average output of $l2$-SVM-linear method over three tubes.}
   \label{fig:fcs-qa-matchcount}
 \end{table}
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.6\textwidth]{figs/fcs-qa/predictions_boxplot}
+  \caption{Distribution of average normalized prediction values for the two classes (DLBCL and FL).}
+  \label{fig:fcs-qa-predictions-boxplot}
+\end{figure}
 
 
 \subsubsection{Interpretation and Visualization}
@@ -864,7 +871,9 @@ where $P_{f_j, s}$ is the cell count of the corresponding feature $f_j$ for samp
 
 Whenever there is a misclassification, it means there are features for which, the given sample lays where the opposite class has higher density. For a given misclassified sample $x_i$, and its corresponding set $F_{i,k}$, we draw the explained plots, and also their corresponding scatter plot of the cell population, which is similar to the result of a \emph{manual gating}. Manual gating is a technique in flow-cytometry analysis to identify certain cell populations. It is an iterative process, and at each step the data is plotted using two chosen markers (a 2-D projection of the data), and the cells in a manually chosen area are selected for the next step. This process is often used by oncologists to identify certain cell populations and hence a specific diagnosis. To give the oncologists a familiar representation of our detected cell populations, we provide a scatter plot of them as well.
 
-Such a process results in plots shown in Figure~\ref{fig:fcs-qa-density-scatter-FL} and~\ref{fig:fcs-qa-density-scatter-DLBCL}. Figure~\ref{fig:fcs-qa-density-scatter-FL} shows the analysis for three cell populations of an FL diagnosed sample. The three cell populations include: $SS^+polyLambda^+CD20^−CD3^+$, $CD103^+CD5^+CD38^−CD23^+CD19^+$, and $FS^+CD7^−CD5^+CD2^+CD3^+CD4^+$. As shown on the left side of these plots, for all the three cell populations, the cell counts of the corresponding cell populations is more evidence for the sample being a DLBCL sample rather than an FL sample. The corresponding cells are shown on the right side of the density plots. Similarly, Figure~\ref{fig:fcs-qa-density-scatter-DLBCL} shows the analysis for a DLBCL diagnosed sample, and three cell populations which result in our model labeling it as FL. These three cell populations are $SS^+polyLambda^−CD5^−CD11c^+CD20^−$, $SS^+FMC−7^+CD103^+CD38^−CD25^+CD19^−$, and $SS^−CD57^+CD7^−CD5^+CD8^+$.
+Such a process results in plots shown in Figure~\ref{fig:fcs-qa-density-scatter-FL} and~\ref{fig:fcs-qa-density-scatter-DLBCL}. Figure~\ref{fig:fcs-qa-density-scatter-FL} shows the analysis for three cell populations of an FL diagnosed sample. The three cell populations include: $SS^+polyLambda^+CD20^−CD3^+$, $CD103^+CD5^+CD38^−CD23^+CD19^+$, and $FS^+CD7^−CD5^+CD2^+CD3^+CD4^+$. As shown on the left side of these plots, for all the three cell populations, the cell counts of the corresponding cell populations is more evidence for the sample being a DLBCL sample rather than an FL sample. The corresponding cells are shown on the right side of the density plots. Similarly, Figure~\ref{fig:fcs-qa-density-scatter-DLBCL} shows the analysis for a DLBCL diagnosed sample, and three cell populations which result in our model labeling it as FL. These three cell populations are $SS^+polyLambda^−CD5^−CD11c^+CD20^−$, $SS^+FMC−7^+CD103^+CD38^−CD25^+CD19^−$, and $SS^−CD57^+CD7^−CD5^+CD8^+$. 
+
+TODO: the above paragraph needs to be fixed to show those cell populations are "a" factor, not "the" reason for the misclassification. Also, better caption is needed for the two plots of the paragraph (Figure~\ref{fig:fcs-qa-density-scatter-FL} and~\ref{fig:fcs-qa-density-scatter-DLBCL}).
 
 \begin{figure}[!ht]
   \centering
@@ -886,7 +895,7 @@ Such a process results in plots shown in Figure~\ref{fig:fcs-qa-density-scatter-
   \subfigure[Tube 3 - Cell Population]{
     \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube3_2001220022_pops}
   }
-  \caption{Actual Density-Scatter plots of F09-0939}
+  \caption{Actual Density-Scatter plots of sample F09-0939}
   \label{fig:fcs-qa-density-scatter-FL}
 \end{figure}
 
@@ -910,9 +919,9 @@ Such a process results in plots shown in Figure~\ref{fig:fcs-qa-density-scatter-
   \subfigure[Tube 3 - Cell Population]{
     \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube3_0121200200_pops}
   }
-  \caption{Actual Density-Scatter plots of F09-0628}
+  \caption{Actual Density-Scatter plots of sample F09-0628}
   \label{fig:fcs-qa-density-scatter-DLBCL}
 \end{figure}
 
 \subsection{Summary}
-As mentioned before, we divide cells into two groups according to each biomarker. We have shown in another work that this is not a constraint and cells can be divided into more than two groups if necessary~\cite{o2014enhanced}.
+As mentioned before, we divide cells into two groups according to each biomarker. We have shown in another work that this is not a constraint and cells can be divided into more than two groups if necessary~\cite{o2014enhanced}. TODO: what did I do? what comes out? how is this useful?
