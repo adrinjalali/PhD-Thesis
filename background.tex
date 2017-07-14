@@ -45,7 +45,7 @@ Feature selection is the task of selecting important features to the problem at 
 
 \begin{table}[th!]
   \centering
-  \begin{tabular}{p{3cm} p{3.5cm} p{4cm}}
+  \begin{tabular}{p{.2\textwidth} p{.3\textwidth} p{.38\textwidth}}
     \hline
     \multicolumn{3}{c}{Sample Data} \\
     \cline{1-3}
@@ -262,7 +262,7 @@ Gaussian processes are particularly useful if are interested in the posterior va
 For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
 
 \section{Shortest Path Algortihms for Graphs}
-A graph $G$ is a set of vertices (nodes) $V$, and a set of edges $E=\left\{(v_i, v_j) | v_i, v_j \in V\right\}$ that connect vertices in $V$. A graph can be directed or undirected. In directed graphs, edges have direction, i.e. edge $(s, t)$ is different than the edge $(t, s)$. In other words, the following list shows the possible sets of edges regarding vertices $s$ and $t$ in a directed graph:
+A graph $G$ is a set of vertices (also called nodes) $V$, and a set of edges $E=\left\{(v_i, v_j) | v_i, v_j \in V\right\}$ that connect vertices in $V$. A graph can be directed or undirected. In directed graphs, edges have direction, i.e. edge $(s, t)$ is different than the edge $(t, s)$. In other words, the following list shows the possible sets of edges regarding vertices $s$ and $t$ in a directed graph:
 
 \begin{align}
   E &= \{\} \nonumber \\
@@ -339,7 +339,7 @@ Finding $k$ smallest nodes in a min-heap costs $k\log k$, which can be further i
 Although Eppstein's algorithm has the best know worst-case time complexity, it can be shown that in practice we can achieve faster running times by constructing some parts of the algorithm's intermediate structures as they're needed. In 2003 V{\'\i}ctor M. Jim{\'e}nez and Andr{\'e}s Marzal published the modified version of the algorithm and a more detailed explanation of Eppstein's algorithm~\cite{jimenez2003lazy}.
 
 \section{Cancer}
-In order to understand cancer, we need some basics of cellular molecular biology, most importantly the central dogma of molecular biology. The central dogma deals with three types of molecules: Deoxyribonucleic acid (DNA), Ribonucleic acid (RNA), and protein. The flow of information between these three types of molecules is depicted in Figure~\ref{fig:bkg:central-dogma}.
+In order to understand cancer, we need some basics of cellular molecular biology, most importantly the central dogma of molecular biology which shows how information is transferred and transformed inside cells. The central dogma deals with three types of molecules: Deoxyribonucleic acid (DNA), Ribonucleic acid (RNA), and protein. The flow of information between these three types of molecules is depicted in Figure~\ref{fig:bkg:central-dogma}.
 
 \begin{figure}[!ht]
   \centering
@@ -348,7 +348,7 @@ In order to understand cancer, we need some basics of cellular molecular biology
   \label{fig:bkg:central-dogma}
 \end{figure}
 
-Although most of the explanations in this section apply to all cellular organisms, for the sake of simplicity we focus on multicellular eukariotic organisms, i.e. we assume cells have a nucleus and organisms have organs. For an extensive explanation of these topics refer to \emph{"Molecular Biology of the Cell, alberts, et al."}\cite{the-cell}.
+Although most of the explanations in this section apply to all cellular organisms, for the sake of simplicity we focus on multicellular eukariotic organisms, i.e. we assume cells have a nucleus and organisms have organs. In this section we cover a minimal background required to explain and understand the basics of the biology of cancer. For an extensive explanation of these topics refer to \emph{"Molecular Biology of the Cell, alberts, et al."}\cite{the-cell}.
 
 \subsection{Deoxyribonucleic acid (DNA)}
 DNA molecules are polymers, mostly made of four different unit types called nucleotides: pyrimidines (thymine (T), cytosine (C)) and purines (adenine (A) and guanine (G)). DNA is usually in the form of a double stranded helix, and the two strands complement each other, i.e. \emph{T} complements \emph{A} and \emph{C} complements \emph{G} (Figure~\ref{fig:bkg:dna-basic}).
@@ -366,7 +366,7 @@ DNA is the genetic code that is carried on from cell to cell, and generation to 
 \subsection{Ribonucleic acid (RNA)}
 RNA molecules are polymers like DNA, but they carry uracil (U) instead of thymine (T). They are much shorted polymers compared to usual DNAs. There are different types of RNAs with different functions and messenger RNAs (mRNA) are the ones we are interested in, in the context of the central dogma. We can think of RNAs as strings of \emph{U, C, G, A} (TODO: ref to rna).
 
-mRNAs are constructed in a process called \emph{transcription} by reading a part of a strand of the DNA and constructing its complement nucleotide by nucleotide, except whenever whenever a thymine (T) is required, instead an uracil (U) is used. This process is shown by a dark blue arrow from DNA to RNA in Figure~\ref{fig:bkg:central-dogma} (TODO: ref to transcription).
+mRNAs are constructed in a process called \emph{transcription} by reading a part of a strand of the DNA and constructing its complement nucleotide by nucleotide, except whenever whenever a thymine (T) is required, instead an uracil (U) is used. This process is shown by a dark blue arrow from DNA to RNA in Figure~\ref{fig:bkg:central-dogma} (TODO: ref to transcription). The term \emph{gene expression} refers to the rate at which genes are transcribed and mRNAs are synthesized from them. In other terms, a more active gene has a higher gene expression level.
 
 \subsection{Protein}
 Proteins are polymers made of amino acids. There are 20 different amino acids in humans. Proteins form and perform most of structures and functions in cells. Enzymes and cell membrane are two examples of molecules and structures mostly made of proteins.
@@ -381,6 +381,28 @@ A process called translation, translates mRNA strands into protein strands. In t
 \end{figure}
 
 \subsection{Pathways}
+Cellular processes involve collaboration of several molecules (RNAs and proteins included) in the form of a long chain of reactions. A chain of reactions with a specific goal is called a pathway. Among other things, pathways can result in production of molecule, a change in the cell, activating or deactivating a gene, or make the cell move. A graphical representation of a pathway has molecules as nodes and reactions and dependencies as edges. Figure~\ref{fig:bkg:apoptosis-pathway} shows a graphical representation of the apoptosis pathway which results in programmed cell death, whose significance is explained shortly~\cite{bose2007p53, mott2007mir, lakin1999regulation, xiong2010effects, park2009mir}. As you can see, the same proteins and RNAs are used in different reactions, and reactions are interdependent, i.e. the product of a reaction is a prerequisite of another reaction. It is also important to note that pathways are not mutually exclusive. The same proteins and other molecules may be used in several pathways.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=1\textwidth]{figs/background/apoptosis-pathway}
+  \caption{Apoptosis (programmed cell death) pathway in homo sapiens.\protect\footnotemark}
+  \label{fig:bkg:apoptosis-pathway}
+\end{figure}
+\footnotetext{\url{http://www.wikipathways.org/index.php/Pathway:WP254}}
+
+\subsection{Cell Reproduction}
+A new cell is created only when another cell duplicates, which itself is the result of a delicately ordered set of events and stages. The set of events ending with a cell division is called the cell cycle~\cite[Ch. 17]{the-cell}. Figure~\ref{fig:bkg:cell-cycle} illustrates the cell cycle, giving each phase approximately the time it takes the phase to complete in proportion to the whole cycle. 
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.5\textwidth]{figs/background/470px-Cell_Cycle_2-2}
+  \caption{Cell cycle: \emph{I}: interphase, \emph{M}: mitosis, \emph{$G_0$}: resting, \emph{$G_1$}: gap 1, \emph{S}: DNA Synthesis, \emph{$G_2$}: gap 2.\protect\footnotemark}
+  \label{fig:bkg:cell-cycle}
+\end{figure}
+\footnotetext{Image by Zephyris (\url{https://en.wikipedia.org/wiki/DNA}) licensed under CC BY-SA 3.0}
+
+During the \emph{S} phase (\emph{S} for DNA Synthesis) a complete copy of the cell's DNA is produced. During the \emph{M} phase, first the nucleus is devided into two, i.e. mitosis, then the whole cell divides into two cells, i.e. cytokinesis). For a cell which has an approximately a 24 hour cycle, the \emph{M} phase takes only one hour. $G_1$ and $G_2$ are gaps between the \emph{S} and the \emph{M} phase. During the $G_2$ phase, some processes make sure that the DNA is replicated properly and completely, and the cell is prepared to enter the \emph{M} phase. During $G_1$ phase, the cell grows, and it only enters the \emph{S} phase if the environment and conditions are favourable. $G_1$ may take a long time, and it can also enter the $G_0$ state, or resting state. A cell may stay in $G_0$ for years or even indefinitely until cell death. Human nerve cells, for instance, enter this state early in the body's development and they never duplicate. The switch between different phases are controlled by the cell's cell cycle control system which takes into account the cell's environment using the signals received from the surroundings, and the internal cell conditions using some feedbacks received from the cell's development in different stages. TODO: cell death.
 
 \subsection{Lymphoma}
 

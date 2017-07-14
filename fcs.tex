@@ -182,7 +182,7 @@ illustrated in Supplementary Figure~\ref{r1:HIVClinicalOutcomeComplete}.
   \begin{landscape}
     \begin{figure}[ht]
       \begin{center}
-        \includegraphics[width=13cm, angle=270]{figs/rchy/figs/HIVClinicalOutcomeComplete}
+        \includegraphics[width=\textwidth, angle=270]{figs/rchy/figs/HIVClinicalOutcomeComplete}
       \end{center}
       \caption{A complete cellular hierarchy for prediction of HIV's clinical outcome using KI67$^+$CD4$^-$CCR5$^+$CD127$^-$ T-cells. 
       The color of the nodes indicates the significance of the correlation with clinical outcome (p-value of the logrank test for the Cox proportional hazards model) and the width of each edge (arrow) shows the amount of change in this variable between the respective nodes.
@@ -371,7 +371,7 @@ In this use--case, our goal was to identify cell populations that are affected b
 We used flowType to identify a list of populations that had a high overlap with either the IL3$^+$, BCR$^+$, or LPS$^+$ populations (determined manually - see Fig.~\ref{r1:overlaps}).
 For each cell population, this value was calculated as the difference in its intersection with the IL3$^+$, BCR$^+$, or LPS$^+$ compartments between the stimulated and unstimulated sample.
 For example, for a given cell population CP, the overlap with IL3$^+$ was defined as:
-\begin{equation}\small
+\begin{equation}
   Overlap^{IL3^+}(CP)=\left(\frac{\# \; \mbox{IL3}^+cells \; in \; CP}{\# \; cells \; in \; CP}\right)_{stim}-  \left(\frac{\# \; \mbox{IL3}^+cells \; in \; CP}{\# \; cells \; in \; CP}\right)_{unstim}
 \end{equation}
 
@@ -413,7 +413,7 @@ These results are generally consistent with those reported in the original study
 Here we use RchyOptimyx to demonstrate  an example of the use case of establishing  a simpler combination of markers that can be used to  identify a target population at a desired level of purity. 
 For analysis of the PFC dataset, Ganesan \emph{et al.} used a strict, but potentially redundant definition for naive T-cells, of CD28$^+$CD45RO$^-$CD57$^-$CCR5$^-$CD27$^+$CCR7$^+$, within the CD3$^+$CD14$^-$ compartment \cite{Ganesan2010Immunologic}.
 The purity of a given parent cell population (CP) of  this target was defined as its mean purity for the strictly-defined naive T-cells:
-\begin{equation}\small
+\begin{equation}
   Purity(CP)=\frac{\sum_{All \; Samples}\frac{\# \; CD28^+ CD45RO^- CD57^- CCR5^- CD27^+ CCR7^+ \; cells}{\# \; cells \; in \; CP}}{\# \; Samples}
 \end{equation}
 
