@@ -258,6 +258,8 @@ An alternative approach is to consider all available functions at the same time,
 
 Gaussian processes are particularly useful if are interested in the posterior variance of the prediction as well as the mean which is the case as explained in section~\ref{chap:ratboost-chapter}.
 
+TODO: expand, bishop's book?
+
 \subsection{Boosting and Ensemble Methods}
 For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
 
@@ -369,7 +371,7 @@ RNA molecules are polymers like DNA, but they carry uracil (U) instead of thymin
 mRNAs are constructed in a process called \emph{transcription} by reading a part of a strand of the DNA and constructing its complement nucleotide by nucleotide, except whenever whenever a thymine (T) is required, instead an uracil (U) is used. This process is shown by a dark blue arrow from DNA to RNA in Figure~\ref{fig:bkg:central-dogma} (TODO: ref to transcription). The term \emph{gene expression} refers to the rate at which genes are transcribed and mRNAs are synthesized from them. In other terms, a more active gene has a higher gene expression level.
 
 \subsection{Protein}
-Proteins are polymers made of amino acids. There are 20 different amino acids in humans. Proteins form and perform most of structures and functions in cells. Enzymes and cell membrane are two examples of molecules and structures mostly made of proteins.
+Proteins are polymers made of amino acids. There are 20 different amino acids in humans. Proteins form and perform most of structures and functions in cells. Enzymes and cell membrane, a.k.a. cytoskeleton~\cite[Ch. 16]{the-cell}, are two examples of molecules and structures mostly made of proteins.
 
 A process called translation, translates mRNA strands into protein strands. In this process, a ribosome complex gets attached to the start codon near (usually AUG) the beginning of the mRNA, and then the mRNA strand is decoded codon by codon by tRNAs. A tRNA is a small RNA molecule which can attach to one codon on one side, and has an amino acid on the other side of it. This process is continued until an stop codon (UAA, UAG, or UGA) is reached. Figure~\ref{fig:bkg:translation} illustrates a simplified version of this process. Translation is shown as a dark blue arrow from RNA to protein in Figure~\ref{fig:bkg:central-dogma}.
 
@@ -403,6 +405,9 @@ A new cell is created only when another cell duplicates, which itself is the res
 \footnotetext{Image by Zephyris (\url{https://en.wikipedia.org/wiki/DNA}) licensed under CC BY-SA 3.0}
 
 During the \emph{S} phase (\emph{S} for DNA Synthesis) a complete copy of the cell's DNA is produced. During the \emph{M} phase, first the nucleus is devided into two, i.e. mitosis, then the whole cell divides into two cells, i.e. cytokinesis). For a cell which has an approximately a 24 hour cycle, the \emph{M} phase takes only one hour. $G_1$ and $G_2$ are gaps between the \emph{S} and the \emph{M} phase. During the $G_2$ phase, some processes make sure that the DNA is replicated properly and completely, and the cell is prepared to enter the \emph{M} phase. During $G_1$ phase, the cell grows, and it only enters the \emph{S} phase if the environment and conditions are favourable. $G_1$ may take a long time, and it can also enter the $G_0$ state, or resting state. A cell may stay in $G_0$ for years or even indefinitely until cell death. Human nerve cells, for instance, enter this state early in the body's development and they never duplicate. The switch between different phases are controlled by the cell's cell cycle control system which takes into account the cell's environment using the signals received from the surroundings, and the internal cell conditions using some feedbacks received from the cell's development in different stages. TODO: cell death.
+
+\subsection{Epigenetics}
+
 
 \subsection{Lymphoma}
 

@@ -854,6 +854,8 @@ Using a leave-one-out cross-validation scheme over $n$ samples, means we have $n
 
 Now we present a post-analysis of our method for individual samples. Our goal is to give insight about why our models have misclassified an individual sample. An oncologist/pathologist can use this part of the analysis as a hint for further investigation on the patient, or they can decide the misclassification is due to other errors in the pipeline.
 
+TODO: better motivate the way we read the weights and the plots for the oncologists.
+
 As already mentioned, we follow a leave one out cross validation scheme. This means we train a model for each sample $x_i$, using all samples but $x_i$. Let this model be referred to as $M_i$. Then we use we weight vector of $M_i$ as an indicator of feature significance. Now let the set $\mathcal{F}_{i,k}$ be the set of $k$ features with largest absolute values in the weight vector of $M_i$. Then for each feature $f_j$ in $\mathcal{F}_{i,k}$:
 \begin{itemize}
 \item Let $\mathcal{P}_{DLBCL, f_j} := \{P_{f_j, s} | s \in DLBCL\}$
