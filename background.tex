@@ -1,3 +1,5 @@
+%!TeX spellcheck = en-US
+
 \chapter{Background}
 \label{sec:background}
 
@@ -15,7 +17,7 @@ We can formulate finding the best function $f(.)$, as finding a function that ha
   \begin{align}
     R_{emp}[f] := \frac{1}{m}\sum_{i = 1}^{m} L(x_i, y_i, f(x_i))
   \end{align}
-  
+
 Now let $\mathcal{F}$ be the function space available to choose $f(.)$ from it. The best function is one which minimizes the risk function~\cite[p. 67]{learning-with-kernels}:
 
 \begin{align}
@@ -34,12 +36,12 @@ Parameter $\lambda$ is the regularization term and we estimate it, among other a
 \subsection{Cross Validation}
 \label{chap:cross-validation}
 
-Cross validation is a technique used in method selection and performance estimation. In cross validation we divide the given training data into $k$ folds, set aside one of those $k$ folds, train the model on $k - 1$ remaining sections, and test the performance of the model on the set aside part of the data. Then repeat this process for all $k$ folds to assess the overall performance of the method. A special case of $k$-fold cross validation is leave-one-out in which $k=n$, the number of samples. Leave-one-out cross validation is computationally intensive for relatively large number of samples. A popular $k$ is 10, which is shown to have lower variance than leave-one-out method, and it has a low bias~\cite[Ch. 7]{statistical-learning}. 
+Cross validation is a technique used in method selection and performance estimation. In cross validation we divide the given training data into $k$ folds, set aside one of those $k$ folds, train the model on $k - 1$ remaining sections, and test the performance of the model on the set aside part of the data. Then repeat this process for all $k$ folds to assess the overall performance of the method. A special case of $k$-fold cross validation is leave-one-out in which $k=n$, the number of samples. Leave-one-out cross validation is computationally intensive for relatively large number of samples. A popular $k$ is 10, which is shown to have lower variance than leave-one-out method, and it has a low bias~\cite[Ch. 7]{statistical-learning}.
 
 There are also some variations to the simple $k$-fold cross validation scheme. One way is to repeat the $k$-fold system multiple times with a random shuffle of the data before each $k$-fold test, and calculate the estimated error using the repeated test. Another variation is to randomly partition the data into train and test partitions several times and use these sets to estimate the performance of the method.
 
 The latter two variations are shown to give better estimates of the true error of the method compared to bootstrap and a single $10$-fold scheme~\cite{kim2009estimating, efron1994introduction}. Because repeating a $k$-fold scheme can be computationally intensive depending on the method being tested, we sometimes use a repeated random partitioning of the data in our work. In some even more computationally intensive cases, we have limited our analysis to a single $k$-fold to select methods.
-  
+
 \subsection{Feature Selection}
 Feature selection is the task of selecting important features to the problem at hand. It becomes particularly a hard task when the number of features in the data is of a higher magnitude compared to the number of given samples. Table~\ref{tab:sample-sample-size} shows an example number of samples vs. number of features in a typical data. One of the challenges when dealing with such a large number of features is that if enough number of features have a probability distribution independent of the outcome, some of them might falsely seem correlated with the outcome. Another obstacle comes from the fact that our features are not independent and they function in complex networks. As a result, features should be considered in groups, which is a combinatorial and intractable problem.
 
@@ -256,14 +258,23 @@ An alternative approach is to consider all available functions at the same time,
 \end{figure}
 \footnotetext{Image by Cdipaolo96 (\url{https://en.wikipedia.org/wiki/Gaussian_process}) licensed under CC BY-SA 4.0.}
 
-Gaussian processes are particularly useful if are interested in the posterior variance of the prediction as well as the mean which is the case as explained in section~\ref{chap:ratboost-chapter}.
+Gaussian processes are particularly useful when we are interested in the posterior variance of the prediction as well as the mean which is the case as explained in section~\ref{chap:ratboost-chapter}.
 
+To formulate the above intuition, consider a regression problem, with some observed inputs $x_i$ and corresponding outputs $y_i$. The goal is usually to find the best function $f$ from a given family of functions such as linear functions, for which $y_i = f(x_i)$. Alternatively, we could infer a distribution over functions given the data, i.e. $p(f|\mathbf{X}, \mathbf{y})$, and give predictions for a new input $\mathbf{x}_*$ as shown in formula~\ref{frm:bkg:gp-1}~\cite{murphy2012machine}.
+
+\begin{align}
+  p(y_*|x_*,\mathbf{X}, \mathbf{y}) = \int p(y_*|f, \mathbf{x_*})p(f|\mathbf{X}, \mathbf{y})df
+  \label{frm:bkg:gp-1}
+\end{align}
+
+Fortunately, it turns out given a finite input dataset, predicting the mean and variance of the output given a new input can be done without having to compute the above integral.
 TODO: expand, bishop's book?
+
 
 \subsection{Boosting and Ensemble Methods}
 For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
 
-\section{Shortest Path Algortihms for Graphs}
+\section{Shortest Path Algorithms for Graphs}
 A graph $G$ is a set of vertices (also called nodes) $V$, and a set of edges $E=\left\{(v_i, v_j) | v_i, v_j \in V\right\}$ that connect vertices in $V$. A graph can be directed or undirected. In directed graphs, edges have direction, i.e. edge $(s, t)$ is different than the edge $(t, s)$. In other words, the following list shows the possible sets of edges regarding vertices $s$ and $t$ in a directed graph:
 
 \begin{align}
@@ -363,10 +374,10 @@ DNA molecules are polymers, mostly made of four different unit types called nucl
 \end{figure}
 \footnotetext{Image by Zephyris (\url{https://en.wikipedia.org/wiki/DNA}) licensed under CC BY-SA 3.0}
 
-DNA is the genetic code that is carried on from cell to cell, and generation to generation. All the cells in an organism have the same genetic material. TODO: Chromosome, methylation, hystones, DNA length. In computational biology we usually think of DNAs as long strings with \emph{T, C, G, A} as characters. But it is important to remember that for each given string, there is a complement attached to it.
+DNA is the genetic code that is carried on from cell to cell, and generation to generation. All the cells in an organism have the same genetic material. TODO: Chromosome, methylation, histones, DNA length. In computational biology we usually think of DNAs as long strings with \emph{T, C, G, A} as characters. But it is important to remember that for each given string, there is a complement attached to it.
 
 \subsection{Ribonucleic acid (RNA)}
-RNA molecules are polymers like DNA, but they carry uracil (U) instead of thymine (T). They are much shorted polymers compared to usual DNAs. There are different types of RNAs with different functions and messenger RNAs (mRNA) are the ones we are interested in, in the context of the central dogma. We can think of RNAs as strings of \emph{U, C, G, A} (TODO: ref to rna).
+RNA molecules are polymers like DNA, but they carry uracil (U) instead of thymine (T). They are much shorted polymers compared to usual DNAs. There are different types of RNAs with different functions and messenger RNAs (mRNA) are the ones we are interested in, in the context of the central dogma. We can think of RNAs as strings of \emph{U, C, G, A} (TODO: ref to RNA).
 
 mRNAs are constructed in a process called \emph{transcription} by reading a part of a strand of the DNA and constructing its complement nucleotide by nucleotide, except whenever whenever a thymine (T) is required, instead an uracil (U) is used. This process is shown by a dark blue arrow from DNA to RNA in Figure~\ref{fig:bkg:central-dogma} (TODO: ref to transcription). The term \emph{gene expression} refers to the rate at which genes are transcribed and mRNAs are synthesized from them. In other terms, a more active gene has a higher gene expression level.
 
@@ -394,7 +405,7 @@ Cellular processes involve collaboration of several molecules (RNAs and proteins
 \footnotetext{\url{http://www.wikipathways.org/index.php/Pathway:WP254}}
 
 \subsection{Cell Reproduction}
-A new cell is created only when another cell duplicates, which itself is the result of a delicately ordered set of events and stages. The set of events ending with a cell division is called the cell cycle~\cite[Ch. 17]{the-cell}. Figure~\ref{fig:bkg:cell-cycle} illustrates the cell cycle, giving each phase approximately the time it takes the phase to complete in proportion to the whole cycle. 
+A new cell is created only when another cell duplicates, which itself is the result of a delicately ordered set of events and stages. The set of events ending with a cell division is called the cell cycle~\cite[Ch. 17]{the-cell}. Figure~\ref{fig:bkg:cell-cycle} illustrates the cell cycle, giving each phase approximately the time it takes the phase to complete in proportion to the whole cycle.
 
 \begin{figure}[!ht]
   \centering
@@ -404,10 +415,9 @@ A new cell is created only when another cell duplicates, which itself is the res
 \end{figure}
 \footnotetext{Image by Zephyris (\url{https://en.wikipedia.org/wiki/DNA}) licensed under CC BY-SA 3.0}
 
-During the \emph{S} phase (\emph{S} for DNA Synthesis) a complete copy of the cell's DNA is produced. During the \emph{M} phase, first the nucleus is devided into two, i.e. mitosis, then the whole cell divides into two cells, i.e. cytokinesis). For a cell which has an approximately a 24 hour cycle, the \emph{M} phase takes only one hour. $G_1$ and $G_2$ are gaps between the \emph{S} and the \emph{M} phase. During the $G_2$ phase, some processes make sure that the DNA is replicated properly and completely, and the cell is prepared to enter the \emph{M} phase. During $G_1$ phase, the cell grows, and it only enters the \emph{S} phase if the environment and conditions are favourable. $G_1$ may take a long time, and it can also enter the $G_0$ state, or resting state. A cell may stay in $G_0$ for years or even indefinitely until cell death. Human nerve cells, for instance, enter this state early in the body's development and they never duplicate. The switch between different phases are controlled by the cell's cell cycle control system which takes into account the cell's environment using the signals received from the surroundings, and the internal cell conditions using some feedbacks received from the cell's development in different stages. TODO: cell death.
+During the \emph{S} phase (\emph{S} for DNA Synthesis) a complete copy of the cell's DNA is produced. During the \emph{M} phase, first the nucleus is divided into two, i.e. mitosis, then the whole cell divides into two cells, i.e. cytokinesis). For a cell which has an approximately a 24 hour cycle, the \emph{M} phase takes only one hour. $G_1$ and $G_2$ are gaps between the \emph{S} and the \emph{M} phase. During the $G_2$ phase, some processes make sure that the DNA is replicated properly and completely, and the cell is prepared to enter the \emph{M} phase. During $G_1$ phase, the cell grows, and it only enters the \emph{S} phase if the environment and conditions are favorable. $G_1$ may take a long time, and it can also enter the $G_0$ state, or resting state. A cell may stay in $G_0$ for years or even indefinitely until cell death. Human nerve cells, for instance, enter this state early in the body's development and they never duplicate. The switch between different phases are controlled by the cell's cell cycle control system which takes into account the cell's environment using the signals received from the surroundings, and the internal cell conditions using some feedback received from the cell's development in different stages. TODO: cell death.
 
 \subsection{Epigenetics}
 
 
 \subsection{Lymphoma}
-
