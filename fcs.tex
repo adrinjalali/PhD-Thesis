@@ -6,6 +6,8 @@ Here we talk about flow cytometry data, how we analyze and visualize it; and how
 \section{Flow Cytometry}
 Flow cytometry is a technology that allows measurement of biomarkers inside and outside cells on a single cell basis~\cite{jaroszeski1999fundamentals}. The technology can also sort and separate certain cells according to a given criterion~\cite{flow-cytometry-sorting, jaroszeski1999fundamentals}.
 
+TODO: fix reference.
+
 Cell preparation in flow cytometry involves suspension of the cells in a liquid containing biomarker reagents. These biomarkers are antibodies which usually attach to proteins on the surface of cells' surface. Some markers can penetrate the cell's membrane and attach to a protein inside the cell, and are called intracellular markers. They tend to be more expensive than surface markers and often result in cell death, therefore they are not as commonly used as surface markers. Reagents are marked antibodies that can be detected by the laser beams in the flow cytometer machine~\cite{flow-cytometry-cell-preparation}. The antibodies are usually marked with a fluorescent label. Each fluorescent marker has a corresponding peak excitation and emission wavelength which can be detected using lasers or lamps available on the flow cytometer machine. The combination of markers has to be chosen such that their corresponding wavelengths have minimal overlap; otherwise they cannot be distinguished from one another due to interference between them.
 
 In a flow cytometer cells flow in a liquid stream one by one, where a lamps or laser beams in conjunction with sensors measure the intensity of reflected light from the cells. These measurements can be in linear or logarithmic space~\cite{practical-flow-cytometry-book}. The measured values depend on the light intensity projected onto cells which can be tuned by changing the voltage of the lasers or lamps. Different wavelengths correspond to different markers, but they might overlap. When the tail of the emission spectrum of a marker overlaps with the main part of the emission spectrum of another marker, it is called spillover as shown in Fig.~\ref{fig:flow-cytometry-spillover}~\cite{flow-cytometry-compensation}.
@@ -50,6 +52,8 @@ Different cell types express different proteins on their surface and inside them
 
 \section{Data Preprocessing and Challenges}
 Transformation and spillover compensation are the two main phases of raw flow cytometry data preprocessing.
+
+TODO: fix reference.
 
 \emph{Transformation}: The measured fluorescent intensities almost exponentially correspond to the number of existing fluorescent markers on or inside the cell. Therefor a proper transformation of the raw data is essential in order to have the data in a linear space. Logarithmic, log-linear hybrid transformation Logicle~\cite{fcs-logicle}, and hyperbolic arcsine~\cite{fcs-arcsineh} are some commonly used transformations. Some studies have compared different transformation techniques and reported their advantages and disadvantages~\cite{fcs-transformation-survey1, fcs-transformation-survey2}.
 

@@ -258,7 +258,77 @@ An alternative approach is to consider all available functions at the same time,
 
 Gaussian processes are particularly useful if are interested in the posterior variance of the prediction as well as the mean which is the case as explained in section~\ref{chap:ratboost-chapter}.
 
-TODO: expand, bishop's book?
+To formulate the above intuition, consider a regression problem, with some observed inputs $x_i$ and corresponding outputs $y_i$. The goal is usually to find the best function $f$ from a given family of functions such as linear functions, for which $y_i = f(x_i)$. Alternatively, we could infer a distribution over functions given the data, i.e. $p(f|\mathbf{X}, \mathbf{y})$, and give predictions for a new input $\mathbf{x}_*$ as shown in formula~\ref{frm:bkg:gp-1}~\cite{murphy2012machine}.
+
+\begin{align}
+  p(y_*|x_*,\mathbf{X}, \mathbf{y}) = \int p(y_*|f, \mathbf{x_*})p(f|\mathbf{X}, \mathbf{y})df
+  \label{frm:bkg:gp-1}
+\end{align}
+
+Fortunately, it turns out given a finite input dataset, predicting the mean and variance of the output given a new input can be done without having to compute the above integral. Here we follow the path in \emph{Pattern Recognition and Machine Learning, Bishop}~\cite{bishop2006pattern}. Similar to SVMs, consider $\phi(\mathbf{x})$ to be the transformation function for input $\mathbf{x}$, and the following linear model:
+
+\begin{align}
+  y(\mathbf{x}) = \mathbf{w}^T \phi(\mathbf{x})
+  \label{frm:bkg:gp-2}
+\end{align}
+
+Now assume a Gaussian distribution over the weight vector $\mathbf{w}$ as Formula~\ref{frm:bkg:gp-3}, in which $\alpha$ is the inverse variance of the distribution.
+
+\begin{align}
+  p(\mathbf{w}) = \mathcal{N}(\mathbf{w}|\mathbf{0}, \alpha^{-1}\mathbf{I})
+  \label{frm:bkg:gp-3}
+\end{align}
+
+Any sample taken from the above distribution represents a function in Formula~\ref{frm:bkg:gp-2}, hence the above distribution defines a distribution of the linear functions. Now we are interested in evaluating the function on training data $\mathbf{x}_{\{1\ldots N\}}$, i.e. function values $y(\mathbf{x}_{\{1\ldots N\}})$ denoted by the vector $\mathbf{y}$, written as:
+
+\begin{align}
+  \mathbf{y} = &\Phi\mathbf{w} \nonumber \\
+  \Phi_{nk} = &\phi_k(\mathbf{x}_n)
+  \label{frm:bkg:gp-4}
+\end{align}
+
+The probability distribution of $\mathbf{y}$ is Gaussian since it is a linear combination of elements of $\mathbf{w}$, which are Gaussian distributed. Hence we have:
+
+\begin{align}
+  \mathbb{E}[\mathbf{y}] & = \Phi\mathbb{E}[\mathbf{w}] = 0 \nonumber \\
+  cov[\mathbf{y}] & = \mathbb{E}[\mathbf{yy}^T] = \Phi\mathbb{E}[\mathbf{ww}^T]\Phi^T = \alpha^{-1}\Phi\Phi^T = \mathbf{K} \nonumber \\
+  \mathbf{K}_{mn} & = k(\mathbf{x}_n,\mathbf{x}_m) = \alpha^{-1}\phi(\mathbf{x}_n)^T\phi(\mathbf{x}_m)
+  \label{frm:bkg:gp-5}
+\end{align}
+
+Similar to SVMs, $k(\mathbf{x},\mathbf{x}')$ is called the kernel function. In general, a Gaussian process is a distribution over functions $y(\mathbf{x})$ such that the join distribution of $y(\mathbf{x}_{1\ldots N})$ is Gaussian for any input set $\mathbf{x}_{1\ldots N}$. Since the joint distribution can be specified using the second order statistics, i.e. the mean and the covariance of the distribution, hence a Gaussian process is completely specified given the two statistics. In many applications we do not have a prior knowledge about the mean of $y(\mathbf{x})$ and by symmetry we assume it $0$. Therefore specification of the covariance function would be the only requirement, which itself is given by the kernel function:
+
+\begin{align}
+  \mathbb{E}[y(\mathbf{x}_n)y(\mathbf{x}_m)] = k(\mathbf{x}_n,\mathbf{x}_m)
+  \label{frm:bkg:gp-6}
+\end{align}
+
+The kernel function defined in Formula~\ref{frm:bkg:gp-5} specifies a Gaussian process defined by a linear regression. Two other commonly used kernel functions are Gaussian kernel defined in Formula~\ref{frm:rbf-kernel1} and exponential kernels defined as:
+
+\begin{align}
+  k(\mathbf{x}_n,\mathbf{x}_m) = exp(-\theta |x - x'|)
+  \label{frm:bkg:gp-6}
+\end{align}
+
+Now given a new test data $\mathbf{x}_{N+1}$, we calculate the kernel matrix and partition it as shown in Formula~\ref{frm:bkg:gp-7}.
+
+\begin{align}
+  \mathbf{K}_{N+1} =
+  \begin{pmatrix}
+    \mathbf{K}_N & \mathbf{k} \\
+    \mathbf{k}^T & c
+  \end{pmatrix}
+  \label{frm:bkg:gp-7}
+\end{align}
+
+Then, as shown in \emph{Bishop, 2006}~\cite[Ch. 6.4]{bishop2006pattern}, the predicted mean and variance for the input would be:
+
+\begin{align}
+  m(\mathbf{x}_{N+1}) & = \mathbf{k}^T\mathbf{K}_N^{-1}\mathbf{y} \nonumber \\
+  \sigma^2(\mathbf{x}_{N+1}) & = c-\mathbf{k}^T\mathbf{K}_N^{-1}\mathbf{k}
+  \label{frm:bkg:gp-8}
+\end{align}
+
 
 \subsection{Boosting and Ensemble Methods}
 For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
