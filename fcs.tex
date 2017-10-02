@@ -717,35 +717,31 @@ The flowType method extracts cell populations as features from flow cytometry da
 Here our goal is to extend the method and create a framework for diagnosis quality checking purposes, \emph{i.e.} to report samples that might be misdiagnosed or require further investigation. For this, we first categorize the given samples into two groups according to their diagnosed label; then for each sample, we train our model using all samples except the selected one, and check how much our model agrees with the given diagnosis label. This scheme is also known as leave one out cross validation. At the end, we report the difference between the given labels and our predicted labels, and samples with the most difference between their predicted label and given label are candidates for further investigation by the pathologist/oncologist.
 \subsection{Materials and Methods}
 \subsubsection{Flow Cytometry Data}
-Our data consists of two cohorts both including Diffuse large B-cell lymphoma (DLBCL) and Follicular Lymphoma (FL) patients. Table~\ref{tbl:fcs-qa-cohorts} shows a summary of the two cohorts.
-
-TODO: only one cohort
+Our data includes samples from Diffuse large B-cell lymphoma (DLBCL) and Follicular Lymphoma (FL) patients. Table~\ref{tbl:fcs-qa-cohorts} shows a summary of the cohort.
 
 \begin{table}[!ht]
   \centering
-  \begin{tabular}{crrr}
-    Cohort & FL & DLBCL & Sum \\ \hline
-    A & 49 & 22 & 71 \\
-    B & ?? & ?? & ??
+  \begin{tabular}{rr}
+  	Diagnosis Label & Count \\ \hline
+    FL & 49\\
+    DLBCL & 22 \\ 
+    Sum & 71
   \end{tabular}
-  \caption{Cohorts A and B in numbers}
+  \caption{Number of samples belonging to each diagnosis label}
   \label{tbl:fcs-qa-cohorts}
 \end{table}
 
-The samples of each cohort were analyzed using three sets of 8 markers in three different tubes using an 8-color capable flow cytometry machine. We include forward and side scatter values to the analysis, and treat them as biomarkers. Therefore each tube gives us a $10$ dimensional vector for each patient. Table~\ref{tbl:fcs-qa-markers} presents markers on each tube for both cohorts A and B.
+The samples the cohort were analyzed using three sets of 8 markers in three different tubes using an 8-color capable flow cytometry machine. We include forward and side scatter values to the analysis, and treat them as biomarkers. Therefore each tube gives us a $10$ dimensional vector for each patient. Table~\ref{tbl:fcs-qa-markers} presents markers on each tube.
 
 \begin{table}[!ht]
   \centering
-  \begin{tabular}{rlm{7cm}}
-    Cohort & Tube & Markers \\ \hline
-    & Tube 1 & FS, SS, polyKappa, polyLambda, CD5, CD10, CD11c, CD20, CD3, CD19 \\
-    A & Tube 2 & FS, SS, FMC-7, CD103, CD5, CD38, CD23, CD25, CD19, CD3 \\
-    & Tube 3 & FS, SS, CD57, CD7, CD5, CD2, CD56, CD8, CD3, CD4 \\ \hline
-     & Tube 1 &  \\
-    B & Tube 2 &  \\
-     & Tube 3 &  \\
+  \begin{tabular}{lm{7cm}}
+    Tube & Markers \\ \hline
+    Tube 1 & FS, SS, polyKappa, polyLambda, CD5, CD10, CD11c, CD20, CD3, CD19 \\
+    Tube 2 & FS, SS, FMC-7, CD103, CD5, CD38, CD23, CD25, CD19, CD3 \\
+    Tube 3 & FS, SS, CD57, CD7, CD5, CD2, CD56, CD8, CD3, CD4 \\ \hline
   \end{tabular}
-  \caption{Combination of markers in three tubes for each cohort. FS: Forward Scatter, SS: Side Scatter}
+  \caption{Combination of markers in three tubes. FS: Forward Scatter, SS: Side Scatter}
   \label{tbl:fcs-qa-markers}
 \end{table}
 
@@ -850,7 +846,7 @@ Using a leave-one-out cross-validation scheme over $n$ samples, means we have $n
   \subfigure[Tube 3]{
     \includegraphics[width=.5\textwidth]{figs/fcs-qa/tube3}
     }
-  \caption{RchyOptimyx analysis cohort A}
+  \caption{RchyOptimyx analysis shows important features classifying the two subtypes according to this cohort, as well as contribution of each marker to the estimated importance.}
   \label{fig:fcs-qa-rchy1}
 \end{figure}
 
