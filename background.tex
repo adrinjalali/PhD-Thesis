@@ -537,6 +537,29 @@ When it comes to the cancers of the immune system, a few factors make the classi
 
 As mentioned in Section~\ref{sec:bkg:immune-system}, B and T cells both undergo somatic hypermutation. B cells, for example, once activated by an antigen, undergo a somatic mutation phase with the rate at least 100,000 times higher than the normal rate of mutation across the genome~\cite{mendelsohn2014molecular}. Although the hypermutation phase is highly regulated, sometimes errors happen which can lead to a possible malignancy.
 
-Hodgkin vs non-Hodgkin lymphoma: Hodgkin lymphoma has Reed-Sternberg cells with two nuclei.
+The first level of lymphoma classification creates two main categories: Hodgkin and non-Hodgkin lymphoma (NHL). The disease is considered Hodgkin lymphoma if Reed-Sternberg cells are present in the biopsy. These cells are large lymphocytes usually derived from B cells and can have more than one nucleus, as shown in Figure~\ref{fig:bkg:rs-cell}~\cite{sternberg1898eigenartige}.
 
-This work focuses on two types of lymphoid neoplasms: Follicular Lymphoma (FL) and Diffused Large B Cell Lymphoma (DLBCL).
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=.8\textwidth]{figs/background/Reed-Sternberg_lymphocyte_nci-vol-7172-300}
+  \caption{Reed-Sternberg cells in a sea of normal lymphocytes, indicative of Hodgkin lymphoma.}
+  \label{fig:bkg:rs-cell}
+\end{figure}
+
+Like Hodgkin lymphoma, the classification of non-Hodgkin cases also started by focusing on morphological features of the cancer cells. However, through improved understanding of the disease, immunologic, genetic, and clinical criteria are now also considered to better distinguish between cancer cases~\cite[Ch. 33]{hoffbrand2016postgraduate}. For instance, in the case of anaplastic large T cell lymphoma (ALCL), there are treatments if an anaplastic lymphoma kinase (ALK) translocation (t[2,5]) is present in the neoplasm, leading to a much better prognosis. As a result, a classification of ALCL now includes ALK$^+$ and ALK$^-$ sub-types~\cite[Ch. 29]{mendelsohn2014molecular}.
+Our focus in this work is on two major types of mature B cell neoplasms, namely Follicular Lymphoma (FL) and Diffuse Large B Cell Lymphomas (DLBCL).
+
+DLBCL is a high grade aggressive NHL and the most common among NHL cases. FL on the other hand, is the most common low grade NHL and is only second to DLBCL in terms of the number of NHL cases. Both FL and DLBCL are heterogeneous and have several sub-types of their own. FL is defined as a neoplasm of B cells in germinal centers, comprising different proportions of small centrocytes and large centroblasts with a follicular growth pattern, as shown in Figure~\ref{fig:bkg:fl}~\cite[Ch. 31]{hoffbrand2016postgraduate}. Its cases are divided into three main grades, and the third grade divided into 3a and 3b. Except FL-3b, the other cases progress slowly and all have a similar prognosis outcome. Grade 3b, on the other hand, is more aggressive and is clinically closer to DLBCL~\cite[Ch. 33]{hoffbrand2016postgraduate}.
+
+\begin{figure}[!ht]
+  \centering
+  \includegraphics[width=1\textwidth]{figs/background/fl}
+  \caption{Follicular lymphoma. (a) The tumour grows in a follicular pattern with expanded germinal centres without macrophages. The
+tumour cells are positive for CD10 (b) and BCL-2 (c).\protect\footnotemark}
+  \label{fig:bkg:fl}
+\end{figure}
+\footnotetext{Image and caption taken from \emph{Postgraduate Haematology}, p. 582~\cite[Ch. 31]{hoffbrand2016postgraduate}.}
+
+
+
+Since many lymphoid neoplasms are heterogeneous diseases each with a different underlying genetic cause, accurate classification each case using gene expression profiling (GEP) or next generation sequencing (NGS) enables oncologists to target specific genes, inhibiting or activating them, in order to activate apoptosis or inhibit cell growth as a method of treatment. However, since it is not feasible to use GEP or NGS for all patients due to their complexity and costs, immunophenotyping is often used as a proxy to diagnose each patient's sub-type. In this work, Chapter~\ref{sec:fcs} deals with immunophenotype data, and then Chapter~\ref{sec:adaptive-learning} explores analysis of genetic and epigenetics data.
