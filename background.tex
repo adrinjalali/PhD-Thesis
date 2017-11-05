@@ -1,16 +1,23 @@
 \chapter{Background}
 \label{sec:background}
 
-\section{Machine Learning}
-Machine learning techniques are used to extract information from data, or make some predictions about the data. This chapter briefly explains methods and techniques used in, or required to understand the proceeding chapters.
+This chapter covers the very basics of some of the concepts required to follow the work in later chapters. These concepts are divided into three sections: Section~\ref{sec:bkg:ml} machine learning, Section~\ref{sec:bkg:graph} graph theory, and Section~\ref{sec:bkg:biology} cell biology. This chapter by far does not exhaustively covers explained concepts, and the reader is strongly recommended to study the subjects using the references and text books cited throughout the chapter. In particular, The Elements of Statistical Learning~\cite{statistical-learning}, Pattern Recognition and Machine Learning~\cite{bishop2006pattern}, and Introduction to Graph Theory~\cite{west2001introduction} cover machine learning and graph theory respectively; and the biology and cancer background is best covered by Molecular Biology of the Cell~\cite{the-cell} and Postgraduate Haematology~\cite{hoffbrand2016postgraduate}.
 
-We can recognize two groups of learning problems: supervised and unsupervised learning. Supervised learning deals with data sets that are in the form of a set of input and outputs, and the task at hand is to predict the output using the input~\cite[Ch. 2]{statistical-learning},~\cite[Ch. 1]{murphy2012machine}. Classification and regression are supervised learning problems. Unsupervised learning, on the contrary, deals with data sets which are in the form of a set of data points, and no output is given. Clustering the most studied unsupervised learning problem~\cite[Ch. 14]{statistical-learning}~\cite[Ch. 1]{murphy2012machine}.
+\section{Machine Learning}
+\label{sec:bkg:ml}
+Machine learning techniques are used to extract information from data, or make some predictions about the data. We can recognize two groups of learning problems: supervised and unsupervised learning. Unsupervised learning, deals with data sets which are in the form of a set of data points, and no desired output is given. Clustering is the most studied unsupervised learning problem which is the task of grouping similar data together in certain clusters~\cite[Ch. 14]{statistical-learning}~\cite[Ch. 1]{murphy2012machine}.
+
+Supervised learning deals with data sets that are in the form of a set of input and outputs, and the task at hand is to predict the output using the input~\cite[Ch. 2]{statistical-learning},~\cite[Ch. 1]{murphy2012machine}. Classification and regression are supervised learning problems. 
+
+Classification is the problem of putting data into different classes~\cite[Ch. 1]{statistical-learning}. During the training phase, the matrix $X_{samples \times features}$ is given as the input and $y_{samples}$ as the desired output. The vector $y$ has values from a discrete set. If the set has only two distinct values, the problem is called a binary classification. On the other hand, if the output is a continues variable, then it is called a regression problem~\cite[Ch. 1]{statistical-learning}.
+
+Logistic regression~\cite{logistic-regression1,logistic-regression2}, Support Vector Machines (SVM)~\cite{svm1,svm2}, and decision trees~\cite[Ch. 9]{statistical-learning} are examples of classification methods, and Linear regression~\cite[Ch. 3]{statistical-learning}, Gaussian processes~\cite{gaussian-processes}, and kernel based regression~\cite[Ch. 9]{learning-with-kernels} are some well established regression methods.
 
 \subsection{Empirical Risk Minimization}
 \label{chap:empirical-risk-minimization}
 As mentioned above, supervised learning deals with predicting an output $y_i \in Y$ given an input $x_i \in X$. The task is to find a function $f(.)$ which best predicts the output, given any possible input. Because in practice we have access to a limited given data set, the best we can do is to find a function that best predicts the output given any input in the data set.
 
-We can formulate finding the best function $f(.)$, as finding a function that has the minimum loss over the data. Therefore we need a loss function which is defined as $L(x, y, f(x))$, with $x$ the input, $y$ the desired output, and $f(x)$ the predicted output. The loss value has to be in $[0, \infty)$, and $L(x, y, y) = 0$~\cite[p. 62]{learning-with-kernels}. The empirical risk function is then defined as~\cite[p. 67]{learning-with-kernels}:
+We can formulate finding the best function $f(.)$, as finding a function that has the minimum loss over the data. Therefore we need a loss function defined as $L(x, y, f(x))$, with $x$ being the input, $y$ the desired output, and $f(x)$ the predicted output. The loss value has to be in $[0, \infty)$, and $L(x, y, y) = 0$~\cite[p. 62]{learning-with-kernels}. The empirical risk function is then defined as~\cite[p. 67]{learning-with-kernels}:
 
   \begin{align}
     R_{emp}[f] := \frac{1}{m}\sum_{i = 1}^{m} L(x_i, y_i, f(x_i))
@@ -22,14 +29,34 @@ Now let $\mathcal{F}$ be the function space available to choose $f(.)$ from it. 
   \arg \min_{f \in \mathcal{F}} R_{emp}[f] = \arg \min_{f \in \mathcal{F}} \frac{1}{m}\sum_{i = 1}^{m} L(x_i, y_i, f(x_i))
 \end{align}
 
-But there is a problem with the above formulation, if the function space $\mathcal{F}$ is rich enough to fit to the given data too well. Imagine a function that returns $y_i$ for each $x_i$ in the training set, and $0$ otherwise. This function clearly has a minimum loss of $0$, but does not generalize on unseen data. This is called overfitting in machine learning. One way to fix this issue is to regularize the loss function in some way, and give preference to functions $f(.)$ with lower complexity, or smoother functions. This is referred to as regularized empirical risk minimization~\cite[Ch. 4.1]{learning-with-kernels}, or structural risk minimization~\cite[Ch. 4.1]{thenatureofstatisticallearningtheory}. Assume $\Omega(f)$ is a penalty assigned to function $f(.)$; then the regularized empirical risk is formulated as:
+But there is a problem with the above formulation if the function space $\mathcal{F}$ is rich enough to fit to the given data too well. Imagine a function that returns $y_i$ for each $x_i$ in the training set, and $0$ otherwise. This function clearly has a minimum loss of $0$, but does not generalize on unseen data. This is called overfitting in machine learning. One way to fix this issue is to regularize the loss function in some way, and give preference to functions $f(.)$ with lower complexity, or smoother functions. This is referred to as regularized empirical risk minimization~\cite[Ch. 4.1]{learning-with-kernels}, or structural risk minimization~\cite[Ch. 4.1]{thenatureofstatisticallearningtheory}. Assume $\Omega(f)$ is a penalty assigned to function $f(.)$; then the regularized empirical risk is formulated as:
 
 \begin{align}
   R_{emp}[f] := \frac{1}{m}\sum_{i = 1}^{m} L(x_i, y_i, f(x_i)) + \lambda \Omega(f)
   \label{frm:bkg:emp-regularized}
 \end{align}
 
-Parameter $\lambda$ is the regularization term and we estimate it, among other among other parameters, using cross validation.
+Parameter $\lambda$ is the regularization term and we estimate it, among other model parameters, using cross validation.
+
+For instance, in the case of a linear model, assume a model minimizes a loss function $E(X, Y)$, where $X$ is the input matrix and $Y$ is the output vector or matrix, defined as:
+
+\begin{align}
+  E(X, Y) = \parallel Y - X \beta \parallel_2
+  \label{frm:loss-function}
+\end{align}
+
+The optimization algorithm finds a $\beta$ that minimizes the loss function in Formula~\ref{frm:loss-function}. As explained above, having enough number of features, the optimization algorithm might find a $\beta$ that gives a perfect loss, i.e. 0. But in noisy environments the resulting $\beta$ is probably not the real $\beta$ of the underlying model producing the data. The vector $\beta$ might also have some extreme values that are likely not desired. Penalizing the \emph{size} of $\beta$ as shown in Formula~\ref{frm:regularized} will address the abovementioned concern. The size of a vector in this context is represented by its $l_1$ or $l_2$ norm as defined in Formula~\ref{frm:lp-norm}. The $l_1$-regularization is an appropriate tool when the intention is to reduce the number of features a model takes into account for prediction as well as its complexity~\cite{l1-regularized}, since it favors more absolute zeros in the $\beta$ vector, and hence is also used as a feature selection tool.
+
+\begin{align}
+  \parallel \beta \parallel_p := \left(\sum\limits_{i=1}^n \mid \beta_i \mid^p \right)^{1/p}
+  \label{frm:lp-norm}
+\end{align}
+\begin{align}
+  &E(X, Y) + \alpha \parallel \beta \parallel_2 = \parallel Y - X \beta \parallel_2 + \alpha \parallel \beta \parallel_2 \nonumber \\
+  &\text{or} \nonumber \\
+  &E(X, Y) + \alpha \parallel \beta \parallel_1 = \parallel Y - X \beta \parallel_2 + \alpha \parallel \beta \parallel_1
+  \label{frm:regularized}
+\end{align}
 
 \subsection{Cross Validation}
 \label{chap:cross-validation}
@@ -38,10 +65,10 @@ Cross validation is a technique used in method selection and performance estimat
 
 There are also some variations to the simple $k$-fold cross validation scheme. One way is to repeat the $k$-fold system multiple times with a random shuffle of the data before each $k$-fold test, and calculate the estimated error using the repeated test. Another variation is to randomly partition the data into train and test partitions several times and use these sets to estimate the performance of the method.
 
-The latter two variations are shown to give better estimates of the true error of the method compared to bootstrap and a single $10$-fold scheme~\cite{kim2009estimating, efron1994introduction}. Because repeating a $k$-fold scheme can be computationally intensive depending on the method being tested, we sometimes use a repeated random partitioning of the data in our work. In some even more computationally intensive cases, we have limited our analysis to a single $k$-fold to select methods.
+The latter two variations are shown to give better estimates of the true error of the method compared to leave one out and a single $10$-fold scheme~\cite{kim2009estimating, efron1994introduction}. Because repeating a $k$-fold scheme can be computationally intensive depending on the method being tested, we sometimes use a repeated random partitioning of the data in our work. In some even more computationally intensive cases, we have limited our analysis to a single $k$-fold scheme to select methods.
   
 \subsection{Feature Selection}
-Feature selection is the task of selecting important features to the problem at hand. It becomes particularly a hard task when the number of features in the data is of a higher magnitude compared to the number of given samples. Table~\ref{tab:sample-sample-size} shows an example number of samples vs. number of features in a typical data. One of the challenges when dealing with such a large number of features is that if enough number of features have a probability distribution independent of the outcome, some of them might falsely seem correlated with the outcome. Another obstacle comes from the fact that our features are not independent and they function in complex networks. As a result, features should be considered in groups, which is a combinatorial and intractable problem.
+Feature selection is the task of selecting features most relevant and predictive to the problem at hand from the given set of features. It becomes particularly a hard task when the number of features in the data is of a higher magnitude compared to the number of given samples. Table~\ref{tab:sample-sample-size} shows an example number of samples vs. number of features in a typical data in this study. One of the challenges when dealing with such a large number of features is that if there are enough number of features, even if they have a probability distribution independent of the outcome, some of them might falsely seem correlated with the outcome due to the relatively small sample size. Another obstacle comes from the fact that our features are not independent and they function in complex networks. As a result, features should be considered in groups, which is a combinatorial and intractable problem.
 
 \begin{table}[th!]
   \centering
@@ -60,48 +87,12 @@ Feature selection is the task of selecting important features to the problem at 
 
 We have used correlation~\cite{correlation}, mutual information~\cite{mutual-information}, and $l_1$-regularized methods~\cite{l1-regularized} as techniques to select features.
 
-\subsection{Classification}
-Classification is the problem of putting data into different classes~\cite[Ch. 1]{statistical-learning}. During the training phase, the matrix $X_{samples \times features}$ is given as the input and $y_{samples}$ as the desired output. The vector $y$ has values from a discrete set. If the set has only two distinct values, the problem is called a binary classification.
-
-Logistic regression~\cite{logistic-regression1,logistic-regression2}, Support Vector Machines (SVM)~\cite{svm1,svm2}, and decision trees~\cite[Ch. 9]{statistical-learning} are examples of classification methods.
-
-\subsection{Regression}
-In statistics, predicting a continues output value given an input data is called regression~\cite[Ch. 1]{statistical-learning}. Regression and classification differ in their desired output type. In regression the output is continues in contrast to classification in which the output is a discrete value.
-
-Linear regression~\cite[Ch. 3]{statistical-learning}, Gaussian processes~\cite{gaussian-processes}, and kernel based regression~\cite[Ch. 9]{learning-with-kernels} are some available methods here.
-
-\subsection{Regularization}
-Building a machine to predict the outcome with a good performance on the training set is easy if the number of features in the data is large enough compared to the number of samples, even if features are drawn from a random background probability distribution independent of the outcome. But the trained machine will perform poorly on the unseen test samples. This phenomenon is called overfitting. One way to prevent overfitting is to select potential features before training a selected model.
-
-Another way to tackle the problem is to reduce the complexity of the models. This can be done via regularization. The $l_1$-regularization is an appropriate tool when the intention is to reduce the number of features a model takes into account for prediction as well as its complexity~\cite{l1-regularized}.
-
-Assume a model minimizes a loss function $E(X, Y)$, where $X$ is the input matrix and $Y$ is the output vector or matrix. In most regression models the loss function is defined as:
-
-\begin{align}
-  E(X, Y) = \parallel Y - X \beta \parallel_2
-  \label{frm:loss-function}
-\end{align}
-
-The optimization algorithm finds a $\beta$ that minimizes the loss function in Formula~\ref{frm:loss-function}. Having enough number of features, the optimization algorithm might find a $\beta$ that gives a perfect loss, i.e. 0. But in noisy environments the resulting $\beta$ is probably not the real $\beta$ of the underlying model producing the data. The vector $\beta$ might also have some extreme values that are likely not desired. Penalizing the \emph{size} of $\beta$ as shown in Formula~\ref{frm:regularized} will address the abovementioned concern. The size of a vector in this context is represented by its $l_1$ or $l_2$ norm as defined in Formula~\ref{frm:lp-norm}.
-
-
-\begin{align}
-  \parallel \beta \parallel_p := \left(\sum\limits_{i=1}^n \mid \beta_i \mid^p \right)^{1/p}
-  \label{frm:lp-norm}
-\end{align}
-\begin{align}
-  &E(X, Y) + \alpha \parallel \beta \parallel_2 = \parallel Y - X \beta \parallel_2 + \alpha \parallel \beta \parallel_2 \nonumber \\
-  &\text{or} \nonumber \\
-  &E(X, Y) + \alpha \parallel \beta \parallel_1 = \parallel Y - X \beta \parallel_2 + \alpha \parallel \beta \parallel_1
-  \label{frm:regularized}
-\end{align}
-
 \subsection{Support Vector Machines}
 \label{sec:svms}
 
-Support vector machines (SVM) can be used both for regression and classification tasks~\cite{svm2, svr1}. As a classifier, SVM finds an optimal hyperplane to separate data points in the feature space by maximizing the hyperplane's margin to the nearest point. Therefore given a test data point, its side with regard to the hyperplane determines its class. As a regressor however, SVM finds an optimal hyperplane to interpolate given data points by minimizing the hyperplane's distance from data points.
+Support vector machines (SVM) can be used both for regression and classification tasks~\cite{svm2, svr1}. As a binary classifier, SVM finds an optimal hyperplane to separate data points in the feature space by maximizing the hyperplane's margin to the nearest points on both sides of it. Therefore given a test data point, its side with regard to the hyperplane determines its class. As a regressor however, SVM finds an optimal hyperplane to interpolate given data points by minimizing the hyperplane's distance from data points. In this work we use SVMs as a binary classifier.
 
-Formally speaking, given data-set $\mathcal{D}$ of $n$ data points:
+Formally speaking, given a data-set $\mathcal{D}$ of $n$ data points:
 
 \begin{align}
   \mathcal{D}={(\mathbf{x}_i, y_i) | \mathbf{x}_i \in \mathbb{R}^p, y_i \in {-1, 1}}_{i=1}^{n}
@@ -121,7 +112,7 @@ Now consider two hyperplanes on both sides of the abovementioned hyperplane as f
   \mathbf{w} . \mathbf{x} - b &= -1
 \end{align}
 
-The distance between each of these hyperplanes and the on in the middle is $\frac{1}{\parallel \mathbf{w} \parallel}$. Therefore the distance between the two of them is $\frac{2}{\parallel \mathbf{w} \parallel}$. For now we assume the data is linearly separable in its feature space, i.e. there exists a hyperplane that separates the data into two classes without error. Such a hyperplane satisfies the following constraint:
+The distance between each of these hyperplanes and the one in the middle is $\frac{1}{\parallel \mathbf{w} \parallel}$. Therefore the distance between the two of them is $\frac{2}{\parallel \mathbf{w} \parallel}$. For now we assume the data is linearly separable in its feature space, i.e. there exists a hyperplane that perfectly separates the data into two classes without error. Such a hyperplane satisfies the following constraint:
 
 \begin{align}
   y_i (\mathbf{w} . \mathbf{x}_i - b)\geq 1 \text{ for all } 1 \leq i \leq n
@@ -161,7 +152,7 @@ which can be written as Formula~\ref{frm:svm3} after introducing Karush-Kuhn-Tuc
   \label{frm:svm3}
 \end{align}
 
-Multipliers $\alpha_i$ will be $0$ for each $\mathbf{x}_i$ that does not lie on either of the marginal hyperplanes. For example in Figure~\ref{fig:svm-hyperplane}, $\alpha_i$ is non-zero for only three of the data points; the ones that are exactly on either of the marginal lines. The corresponding $\mathbf{x}_i$ for which $\alpha_i$ is non-zero, are \emph{support vectors}.
+Multipliers $\alpha_i$ will be $0$ for each $\mathbf{x}_i$ that does not lie on either of the marginal hyperplanes. For example in Figure~\ref{fig:svm-hyperplane}, $\alpha_i$ is non-zero for only three of the data points; the ones that are exactly on either of the marginal lines. The corresponding $\mathbf{x}_i$ for which $\alpha_i$ is non-zero are called \emph{support vectors}.
 
 It can be shown that Formula~\ref{frm:svm-dual1} is a dual of the optimization problem defined in Formula~\ref{frm:svm3}~\cite[p. 14]{learning-with-kernels}~\cite[Ch. 5]{thenatureofstatisticallearningtheory}.
 
@@ -201,7 +192,7 @@ Using Mercer's theorem~\cite{mercer-theorem} and its corollary Mercer's conditio
   \label{frm:positive-definite}
 \end{align}
 
-Arguably, other than dot-product, the most famous kernel function $k$ satisfying the above condition is the \emph{Gaussian kernel}, also known as the \emph{radial basis function (RBF) kernel}~\cite[Ch. 2]{learning-with-kernels}:
+This means to solve the SVM optimization, we only need the kernel matrix $\mathbf{K}$, which has $k(\mathbf{x}_i, \mathbf{x}_j)$ as its values. For many kernels, this matrix can be calculated directly without transforming the data into the alternate representing feature space. This also means that we can use kernels which have an infinite dimensional representing feature space. This technique is sometimes called the \emph{kernel trick}. Arguably, other than dot-product, the most famous kernel function $k$ satisfying the above condition is the \emph{Gaussian kernel}, also known as the \emph{radial basis function (RBF) kernel}~\cite[Ch. 2]{learning-with-kernels}:
 
 \begin{align}
   &k(\mathbf{x_i}, \mathbf{x_j}) = \exp\left(-\frac{||\mathbf{x_i} - \mathbf{x_j}||^2}{2\sigma^2}\right) \nonumber \\
@@ -209,7 +200,7 @@ Arguably, other than dot-product, the most famous kernel function $k$ satisfying
   \label{frm:rbf-kernel1}
 \end{align}
 
-Many implementations use a different formulation which uses a different parametrization, using $\gamma=\frac{1}{2\sigma^2}$:
+This is an example of a kernel with an infinite dimensional representing kernel space~\cite{steinwart2006explicit}. Many implementations use a different formulation which uses a different parametrization, using $\gamma=\frac{1}{2\sigma^2}$:
 
 \begin{align}
   &k(\mathbf{x_i}, \mathbf{x_j}) = \exp\left(-\gamma||\mathbf{x_i} - \mathbf{x_j}||^2\right) \nonumber \\
@@ -218,7 +209,7 @@ Many implementations use a different formulation which uses a different parametr
 \end{align}
 
 \subsubsection{Regularization of Support Vector Machines}
-In real-world applications data-sets are often not linearly separable, \emph{i.e.} no hyperplane can separate the two classes of the data-set without error. To handle such cases, Formula~\ref{frm:svm1} can be modified as Formula~\ref{frm:svm-slack} with the introduction of $\xi_i$ called slack variables~\cite{cortes1995support},\cite[Ch. 7.5]{learning-with-kernels}. This allows some of the data points to be within the margin area or to be on the wrong side of the hyperplane. This formulation is also referred to as a soft margin hyperplane.
+In real-world applications data-sets are often not linearly separable, \emph{i.e.} no hyperplane can perfectly separate the two classes of the data-set. To handle such cases, Formula~\ref{frm:svm1} can be modified as Formula~\ref{frm:svm-slack} with the introduction of $\xi_i$ called slack variables~\cite{cortes1995support},\cite[Ch. 7.5]{learning-with-kernels}. This allows some of the data points to be within the margin area or to be on the wrong side of the hyperplane. This formulation is also referred to as a soft margin hyperplane.
 
 \begin{align}
   &\arg\min_{(\mathbf{w},b)}\frac{1}{2}\|\mathbf{w}\|_2^2 + C \sum_{i=1}^n \xi_i \nonumber \\
@@ -241,22 +232,22 @@ Note that parameter $C$ in Formula~\ref{frm:svm-slack} corresponds to $\frac{1}{
   \label{frm:bkg:svm-lambda-l1}
 \end{align}
 
-It is important to note that the algorithm to solve the above optimization problem does not involve the kernel trick~\cite{zhu20041}, which means we cannot use similarity measures that require transforming data into spaces we cannot compute, such as the RBF kernels which has a corresponding infinite dimensional representing feature space~\cite[Ch. 2.3]{learning-with-kernels}. In order to use the $l^1$-norm regularized SVM with such kernels, an approximation of the feature space can be used to transform the data first, and then apply the above optimization problem on the transformed data~\cite{rahimi2007random}.
+It is important to note that the algorithm to solve the above optimization problem does not involve the kernel trick~\cite{zhu20041}, which means we cannot use similarity measures that require transforming data into spaces we cannot compute, such as the RBF kernel. In order to use the $l^1$-norm regularized SVM with such kernels, an approximation of the feature space can be used to transform the data first, and then apply the above optimization problem on the transformed data~\cite{rahimi2007random}.
 
 \subsection{Gaussian Processes}
-Given a regression or a classification problem, one approach is to find the most likely function among the functions we consider reasonable for our problem. For instance, a linear regression assumes the underlying function explaining the data is linear, and tries to find one by looking at the data which is most probable to be the real underlying function. Another example are support vector machines for a classification problem, which try to find the best separating hyperplane, i.e. a linear function, and assume that function explains the data the best.
+Given a regression or a classification problem, one approach is to find the most likely function among the functions we consider reasonable for our problem. For instance, a linear regression assumes the underlying function explaining the data to be linear, and then tries to find one which is most probable to be the real underlying function for the given data. Another example are support vector machines for a classification problem, which try to find the best separating hyperplane, i.e. a linear function, and assume that function explains the data the best.
 
-An alternative approach is to consider all available functions at the same time, and assign a probability to each function according to how well they explain the data. To illustrate the idea better, assume we have a family of functions as our prior (Figure~\ref{fig:bkg:gp-intro}(a)  ), and then we observe a few values from the underlying function. If the data is noiseless, only those functions passing all of our observations can be considered (Figure~\ref{fig:bkg:gp-intro}(b)). Considering all those functions, we can calculate a posterior mean and variance for each unobserved value as shown in Figure~\ref{fig:bkg:gp-intro}(c)~\cite{gaussian-processes}.
+An alternative approach is to consider all available functions at the same time, and assign a probability to each function according to how well they explain the data. To illustrate the idea better, assume we have a family of functions as our prior (Figure~\ref{fig:bkg:gp-intro}(a)), and then we observe a few values from the underlying function. If the data is noiseless, only those functions passing all of our observations can be considered (Figure~\ref{fig:bkg:gp-intro}(b)). Considering all those functions, we can calculate a posterior mean and variance for each unobserved value as shown in Figure~\ref{fig:bkg:gp-intro}(c)~\cite{gaussian-processes}.
 
 \begin{figure}[!ht]
   \centering
   \includegraphics[width=1\textwidth]{figs/background/Gaussian_Process_Regression}
-  \caption[(a) Samples from prior family of functions, (b) samples from posterior family of functions, and (c) predicted mean and variance]{(a) Samples from prior family of functions, (b) samples from posterior family of functions, and (c) predicted mean and variance\protect\footnotemark.}
+  \caption[(a) Samples from prior family of functions, (b) samples from posterior family of functions, and (c) predicted mean and variance]{(a) Samples from prior family of functions, (b) samples from posterior family of functions, and (c) predicted mean and variance of the posterior\protect\footnotemark.}
   \label{fig:bkg:gp-intro}
 \end{figure}
 \footnotetext{Image by Cdipaolo96 (\url{https://en.wikipedia.org/wiki/Gaussian_process}) licensed under CC BY-SA 4.0.}
 
-Gaussian processes are particularly useful if are interested in the posterior variance of the prediction as well as the mean which is the case as explained in section~\ref{chap:ratboost-chapter}.
+Gaussian processes are particularly useful if not only the mean of the prediction is of interest, but also an estimate of the variance of the posterior probability distribution is important, which is the case for us as explained in section~\ref{chap:ratboost-chapter}.
 
 To formulate the above intuition, consider a regression problem, with some observed inputs $x_i$ and corresponding outputs $y_i$. The goal is usually to find the best function $f$ from a given family of functions such as linear functions, for which $y_i = f(x_i)$. Alternatively, we could infer a distribution over functions given the data, i.e. $p(f|\mathbf{X}, \mathbf{y})$, and give predictions for a new input $\mathbf{x}_*$ as shown in formula~\ref{frm:bkg:gp-1}~\cite{murphy2012machine}.
 
@@ -265,7 +256,7 @@ To formulate the above intuition, consider a regression problem, with some obser
   \label{frm:bkg:gp-1}
 \end{align}
 
-Fortunately, it turns out given a finite input dataset, predicting the mean and variance of the output given a new input can be done without having to compute the above integral. Here we follow the path in \emph{Pattern Recognition and Machine Learning, Bishop}~\cite{bishop2006pattern}. Similar to SVMs, consider $\phi(\mathbf{x})$ to be the transformation function for input $\mathbf{x}$, and the following linear model:
+Fortunately, it turns out given a finite input dataset, predicting the mean and variance of the output given a new input can be done without having to compute the above integral. To explain, here we follow the path in \emph{Pattern Recognition and Machine Learning, Bishop}~\cite{bishop2006pattern}. Similar to SVMs, consider $\phi(\mathbf{x})$ to be the transformation function for input $\mathbf{x}$, and the following linear model:
 
 \begin{align}
   y(\mathbf{x}) = \mathbf{w}^T \phi(\mathbf{x})
@@ -279,7 +270,7 @@ Now assume a Gaussian distribution over the weight vector $\mathbf{w}$ as Formul
   \label{frm:bkg:gp-3}
 \end{align}
 
-Any sample taken from the above distribution represents a function in Formula~\ref{frm:bkg:gp-2}, hence the above distribution defines a distribution of the linear functions. Now we are interested in evaluating the function on training data $\mathbf{x}_{\{1\ldots N\}}$, i.e. function values $y(\mathbf{x}_{\{1\ldots N\}})$ denoted by the vector $\mathbf{y}$, written as:
+Any sample taken from the above distribution represents a function in Formula~\ref{frm:bkg:gp-2}, hence the above distribution defines a distribution over linear functions. Now we are interested in evaluating the function on training data $\mathbf{x}_{\{1\ldots N\}}$, i.e. function values $y(\mathbf{x}_{\{1\ldots N\}})$ denoted by the vector $\mathbf{y}$, written as:
 
 \begin{align}
   \mathbf{y} = &\Phi\mathbf{w} \nonumber \\
@@ -296,7 +287,7 @@ The probability distribution of $\mathbf{y}$ is Gaussian since it is a linear co
   \label{frm:bkg:gp-5}
 \end{align}
 
-Similar to SVMs, $k(\mathbf{x},\mathbf{x}')$ is called the kernel function. In general, a Gaussian process is a distribution over functions $y(\mathbf{x})$ such that the join distribution of $y(\mathbf{x}_{1\ldots N})$ is Gaussian for any input set $\mathbf{x}_{1\ldots N}$. Since the joint distribution can be specified using the second order statistics, i.e. the mean and the covariance of the distribution, hence a Gaussian process is completely specified given the two statistics. In many applications we do not have a prior knowledge about the mean of $y(\mathbf{x})$ and by symmetry we assume it $0$. Therefore specification of the covariance function would be the only requirement, which itself is given by the kernel function:
+Similar to SVMs, $k(\mathbf{x},\mathbf{x}')$ is called the kernel function. In general, a Gaussian process is a distribution over functions $y(\mathbf{x})$ such that the join distribution of $y(\mathbf{x}_{1\ldots N})$ is Gaussian for any input set $\mathbf{x}_{1\ldots N}$. Since the joint distribution can be specified using the second order statistics, i.e. the mean and the covariance of the distribution, a Gaussian process is completely specified given the two statistics. In many applications we do not have a prior knowledge about the mean of $y(\mathbf{x})$ and by symmetry we assume it to be $0$. Therefore specification of the covariance function would be the only requirement, which itself is given by the kernel function:
 
 \begin{align}
   \mathbb{E}[y(\mathbf{x}_n)y(\mathbf{x}_m)] = k(\mathbf{x}_n,\mathbf{x}_m)
@@ -331,9 +322,10 @@ Then, as shown in \emph{Bishop, 2006}~\cite[Ch. 6.4]{bishop2006pattern}, the pre
 
 
 \subsection{Boosting and Ensemble Methods}
-For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners''~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
+For a given prediction problem the idea of boosting is to find an optimal combination of classifiers, also called ``weak learners'', in such a way that a combination of their outputs improves the prediction accuracy. This combination can be majority voting, average, or a weighted average of the outputs of the weak learners~\cite{ensemble2002}. There are many methods of finding the optimal combination of such weak learners, two of which are stochastic gradient boosting~\cite{friedman2002stochastic} and AdaBoost~\cite{adaboost97}. Stochastic gradient boosting tries to estimate the gradients of the loss function and train each individual weak learner in a way that best improves the loss function. AdaBoost tries to identify samples among given data samples that are harder to classify, and gives them more weight in the process of training individual weak learners. One way of improving AdaBoost is to take into account the confidences of predictions given by weak learners if possible and use estimated confidences in the voting process~\cite{adaboost99improved}.
 
 \section{Shortest Path Algortihms for Graphs}
+\label{sec:bkg:graph}
 A graph $G$ is a set of vertices (also called nodes) $V$, and a set of edges $E=\left\{(v_i, v_j) | v_i, v_j \in V\right\}$ that connect vertices in $V$. A graph can be directed or undirected. In directed graphs, edges have direction, i.e. edge $(s, t)$ is different than the edge $(t, s)$. In other words, the following list shows the possible sets of edges regarding vertices $s$ and $t$ in a directed graph:
 
 \begin{align}
@@ -343,9 +335,9 @@ A graph $G$ is a set of vertices (also called nodes) $V$, and a set of edges $E=
   E &= \{(s, t), (t, s)\}
 \end{align}
 
-In an undirected graph however, edges $(s, t)$ and $(t, s)$ are identical, and can in fact be represented as a set ${s, t}$ instead of an ordered pair.
+In an undirected graph however, edges $(s, t)$ and $(t, s)$ are identical, and can in fact be represented as a set $\{s, t\}$ instead of an ordered pair.
 
-Graphs can also be weighted or not. If a graph $G$ is weighted, then there is a weight assigned to each edge of the graph. We use $w_{s,t}$ to note the weight of the edge $(s,t)$. In undirected graphs, $w_{s, t}$ is always the same as $w_{t, s}$. Sometimes the weight of an edge is referred to as the length of an edge and noted as $l_{s,t}$ depending on the context in the literature. A sequence of $n$ nodes $(v_1, v_2,\ldots,v_n) \in V^n$ define a path $p$ of length $n$ if for every consecutive nodes $v_i$ and $v_{i+1}$, $(v_i, v_{i+1})$ is an edge in the graph. The weight or the length of a given path is the sum over the corresponding weights/lengths of its edges.
+Graphs can also be weighted or not. If a graph $G$ is weighted, then there is a weight assigned to each edge of the graph. We use $w_{s,t}$ to note the weight of the edge $(s,t)$. In undirected graphs, $w_{s, t}$ is always the same as $w_{t, s}$. Sometimes the weight of an edge is referred to as the length of an edge and noted as $l_{s,t}$ depending on the context in the literature. A sequence of $n$ nodes $(v_1, v_2,\ldots,v_n) \in V^n$ defines a path $p$ of length $n$ if for every consecutive nodes $v_i$ and $v_{i+1}$, $(v_i, v_{i+1})$ is an edge in the graph. The weight or the length of a given path is the sum over the corresponding weights/lengths of its edges.
 An undirected graph $G$ is connected if there is at least one path between every given two vertices on the graph.
 
 \subsection{The Shortest Path Problem}
@@ -358,7 +350,7 @@ An undirected graph $G$ is connected if there is at least one path between every
   \label{fig:shortest-path1}
 \end{figure}
 
-Some prominent algorithms to solve the shortest path problem are Dijkstra's~\cite{dijkstra}, Bellman-Ford~\cite{bellman-ford}, and Floyd-Warshall~\cite{floyd-warshall} algorithms. Dijkstra's algorithm applies to the single-source shortest path problem on graphs with non-negative weight values with time complexity $O(|E| + |V| \log |V|)$~\cite{fredman1987fibonacci}, whereas Bellman-Ford algorithm works on graphs with also negative weights having time complexity $O(|V| |E|)$. Floyd-Warshall algorithm, on the other hand, applies to all pairs shortest path problem, i.e. it finds shortest paths between all pairs of vertices, on graphs with negative and non-negative weight values and its time complexity is $O(|V|^3)$. The big $O$ notation defines an asymptotically upper bound of a function up to a constant factor. Formula \ref{frm:bkg:big-O} formally defines the notation \cite{thomas2001introduction}. An undirected graph $G$ is connected if there is at least one path between every given two vertices on the graph.
+Some prominent algorithms to solve the shortest path problem are Dijkstra's~\cite{dijkstra}, Bellman-Ford~\cite{bellman-ford}, and Floyd-Warshall~\cite{floyd-warshall} algorithms. Dijkstra's algorithm applies to the single-source shortest path problem on graphs with non-negative weight values with time complexity $O(|E| + |V| \log |V|)$~\cite{fredman1987fibonacci}, whereas Bellman-Ford algorithm works on graphs with also negative weights having time complexity $O(|V| |E|)$. Floyd-Warshall algorithm, on the other hand, solves the all pairs shortest path problem, i.e. it finds shortest paths between all pairs of vertices, on graphs with negative and non-negative weight values and its time complexity is $O(|V|^3)$. The big $O$ notation defines an asymptotically upper bound of a function up to a constant factor. Formula \ref{frm:bkg:big-O} formally defines the notation \cite{thomas2001introduction}. 
 
 \begin{align}
   f(x) = O(g(x)) \iff \exists k > 0 \exists n_0 \forall n > n_0 |f(n)| \leq k|g(n)|
@@ -366,8 +358,8 @@ Some prominent algorithms to solve the shortest path problem are Dijkstra's~\cit
 \end{align}
 
 
-\subsection{The $k$ Shortest Path Problem}
-\emph{The $k$ shortest path problem} is to find the $k$ paths from $s$ to $t$ with minimum weight among all distinct possible paths from $s$ to $t$. Two settings of the problem are due to whether or not allowing loops in the paths. For the case when the goal is to find $k$ best shortest paths from a single source to all other nodes, Jin Y. Yen published an algorithm of the time complexity $O(k |V|(|E|+|V|\log|V|))$ in 1971 for the loopless setting which still has the best available time complexity available~\cite{yen1971finding}. It is possible to achieve better worst case time complexity if we allow loops in the paths. In 1998 Eppstein came up with an algorithm with $O(|E| + |V|\log|V| + |V| k)$ time complexity, and $O(|E| + |V|\log|V| + k)$ if the problem is reduced to the single source single destination case~\cite{eppstein1998finding}. There has been improvements to Eppstein's algorithm, but the worst case time complexity has not been improved.
+\subsection{The $k$ Shortest Paths Problem}
+\emph{The $k$ shortest paths problem} is to find the $k$ paths from $s$ to $t$ with minimum weight among all distinct possible paths from $s$ to $t$. Whether or not loops in the paths are allowed results in two different definitions of this problem.For the case when the goal is to find $k$ best shortest paths from a single source to all other nodes, Jin Y. Yen published an algorithm of the time complexity $O(k |V|(|E|+|V|\log|V|))$ in 1971 for the loopless setting which still has the best available time complexity~\cite{yen1971finding}. It is possible to achieve better worst case time complexity if we allow loops in the paths. In 1998 Eppstein came up with an algorithm with $O(|E| + |V|\log|V| + |V| k)$ time complexity, and $O(|E| + |V|\log|V| + k)$ if the problem is reduced to the single source single destination case~\cite{eppstein1998finding}. There has been improvements to Eppstein's algorithm, but the worst case time complexity has not been improved.
 
 In our case, the graph is a directed acyclic graph (DAG), i.e. there are no directed loops in the graph. Therefore despite we require paths to be loopless, Eppstein's algorithm is sufficient and gives desirable paths.
 Intuitively, the algorithm starts with the shortest path between $s$ and $t$, and in each iteration it finds the next shortest path by modifying a part of the previous path. This is achieved by storing a tree of all shortest paths to the destination $t$, then calculating the cost of jumping from one shortest path to another one using edges that are not a part of that tree (called sidetracks), and at the end picking the sidetrack edges with the least costs.
@@ -388,7 +380,7 @@ Assume the problem is to find the $k$ shortest paths from $s$ to $t$ on a connec
 
 If the edge $e$ is not a part of $T$, it is a \emph{sidetrack} and the cost of including it in a path to $t$ is non-negative~\cite[Lemma 1]{eppstein1998finding}.
 
-A key point to understanding the algorithm is the way paths are represented. A path $p$ from $s$ to $t$ can be represented by the list of \emph{sidetrack} edges it includes. If the path $p$ includes only one \emph{sidetrack} edge $(v_i, v_j)$, it means the path is the shortest path from $s$ to $v_i$, then the edge $(v_i, v_j)$, and then the shortest path from $v_j$ to $t$. The set $sidetracks(p)$ includes all edges in $p$ that are not in the shortest path tree $T$, i.e. they are in $G - T$. The graph $G - T$ is defined as the graph $G$ minus edges that are present in the graph $T$.
+A key point to understanding the algorithm is the way paths are represented. A path $p$ from $s$ to $t$ can be represented by the list of \emph{sidetrack} edges it includes. If the path $p$ includes only one \emph{sidetrack} edge $(v_i, v_j)$, it means the path is the shortest path from $s$ to $v_i$, then the edge $(v_i, v_j)$, and then the shortest path from $v_j$ to $t$. The set $sidetracks(p)$ includes all edges in $p$ that are not in the shortest path tree $T$, i.e. they are in $G - T$. The graph $G - T$ is defined as the graph $G$ excluding edges that are present in the graph $T$.
 
 To calculate the length of the path $p$ we have~\cite[Lemma 2]{eppstein1998finding}:
 \begin{align}
@@ -406,11 +398,12 @@ To overcome this challenge each path $p$, roughly speaking, is replaced by a hea
 \item The length of an $s-t$ path in $G$ is $d(s,t)$ plus the weight of the corresponding node in $H(G)$.
 \end{itemize}
 
-Finding $k$ smallest nodes in a min-heap costs $k\log k$, which can be further improved by Frederickson's technique~\cite{frederickson1993optimal}, and hence the time complexity of the Eppstein's algorithm~\cite[Lemma 7]{eppstein1998finding}.
+Finding $k$ smallest nodes in a min-heap costs $O(k\log k)$, which can be further improved by Frederickson's technique~\cite{frederickson1993optimal}, and hence the time complexity of the Eppstein's algorithm~\cite[Lemma 7]{eppstein1998finding}.
 
 Although Eppstein's algorithm has the best know worst-case time complexity, it can be shown that in practice we can achieve faster running times by constructing some parts of the algorithm's intermediate structures as they're needed. In 2003 V{\'\i}ctor M. Jim{\'e}nez and Andr{\'e}s Marzal published the modified version of the algorithm and a more detailed explanation of Eppstein's algorithm~\cite{jimenez2003lazy}.
 
 \section{Cell Biology}
+\label{sec:bkg:biology}
 In order to understand cancer, we need some basics of cellular molecular biology, most importantly the central dogma of molecular biology which shows how information is transferred and transformed inside cells. The central dogma deals with three types of molecules: Deoxyribonucleic acid (DNA), Ribonucleic acid (RNA), and protein. The flow of information between these three types of molecules is depicted in Figure~\ref{fig:bkg:central-dogma}.
 
 \begin{figure}[!ht]
@@ -433,17 +426,17 @@ DNA molecules are polymers, mostly made of four different unit types called nucl
 \end{figure}
 \footnotetext{Image by Zephyris (\url{https://en.wikipedia.org/wiki/DNA}) licensed under CC BY-SA 3.0}
 
-DNA is the genetic code that is carried on from cell to cell, and generation to generation. All the cells in an organism have the same genetic material. TODO: Chromosome, methylation, hystones, DNA length. In computational biology we usually think of DNAs as long strings with \emph{T, C, G, A} as characters. But it is important to remember that for each given string, there is a complement attached to it.
+DNA is the genetic code that is carried on from cell to cell, and generation to generation. All the cells in an organism have the same genetic material. In computational biology we usually think of DNAs as long strings with \emph{T, C, G, A} as characters. But it is important to remember that for each given string, there is a complement attached to it.
 
 \subsection{Ribonucleic acid (RNA)}
-RNA molecules are polymers like DNA, but they carry uracil (U) instead of thymine (T). They are much shorted polymers compared to usual DNAs. There are different types of RNAs with different functions and messenger RNAs (mRNA) are the ones we are interested in, in the context of the central dogma. We can think of RNAs as strings of \emph{U, C, G, A} (TODO: ref to rna).
+RNA molecules are polymers like DNA, but they carry uracil (U) instead of thymine (T). They are much shorted polymers compared to usual DNAs. There are different types of RNAs with different functions and messenger RNAs (mRNA) are the ones we are interested in, in the context of the central dogma. We can think of RNAs as strings of \emph{U, C, G, A}~\cite[Ch. 6]{the-cell}.
 
-mRNAs are constructed in a process called \emph{transcription} by reading a part of a strand of the DNA and constructing its complement nucleotide by nucleotide, except whenever whenever a thymine (T) is required, instead an uracil (U) is used. This process is shown by a dark blue arrow from DNA to RNA in Figure~\ref{fig:bkg:central-dogma} (TODO: ref to transcription). The term \emph{gene expression} refers to the rate at which genes are transcribed and mRNAs are synthesized from them. In other terms, a more active gene has a higher gene expression level.
+mRNAs are constructed in a process called \emph{transcription} by reading a part of a strand of the DNA and constructing its complement nucleotide by nucleotide, except whenever whenever a thymine (T) is required, instead a uracil (U) is used. This process is shown by a dark blue arrow from DNA to RNA in Figure~\ref{fig:bkg:central-dogma}~\cite[Ch. 6]{the-cell}. The term \emph{gene expression} refers to the rate at which genes are transcribed and mRNAs are synthesized from them. In other terms, a more active gene has a higher gene expression level.
 
 \subsection{Protein}
 Proteins are polymers made of amino acids. There are 20 different amino acids in humans. Proteins form and perform most of structures and functions in cells. Enzymes and cell membrane, a.k.a. cytoskeleton~\cite[Ch. 16]{the-cell}, are two examples of molecules and structures mostly made of proteins.
 
-A process called translation, translates mRNA strands into protein strands. In this process, a ribosome complex gets attached to the start codon near (usually AUG) the beginning of the mRNA, and then the mRNA strand is decoded codon by codon by tRNAs. A tRNA is a small RNA molecule which can attach to one codon on one side, and has an amino acid on the other side of it. This process is continued until an stop codon (UAA, UAG, or UGA) is reached. Figure~\ref{fig:bkg:translation} illustrates a simplified version of this process. Translation is shown as a dark blue arrow from RNA to protein in Figure~\ref{fig:bkg:central-dogma}.
+A process called translation, translates mRNA strands into protein strands. In this process, a ribosome complex gets attached to the start codon near the beginning of the mRNA (usually AUG), and then the mRNA strand is decoded codon by codon by tRNAs. In the decoding process, the mRNA molecule is processed three nucleotides at a time, each 3 encoding and representing a specific amino acid. A tRNA is a small RNA molecule which can attach to one codon on one side, and has an amino acid attached to its the other side. This process is continued until a stop codon (UAA, UAG, or UGA) is reached. Figure~\ref{fig:bkg:translation} illustrates a simplified version of this process. Translation is shown as a dark blue arrow from RNA to protein in Figure~\ref{fig:bkg:central-dogma}.
 
 \begin{figure}[!ht]
   \centering
@@ -453,7 +446,7 @@ A process called translation, translates mRNA strands into protein strands. In t
 \end{figure}
 
 \subsection{Pathways}
-Cellular processes involve collaboration of several molecules (RNAs and proteins included) in the form of a long chain of reactions. A chain of reactions with a specific goal is called a pathway. Among other things, pathways can result in production of molecule, a change in the cell, activating or deactivating a gene, or make the cell move. A graphical representation of a pathway has molecules as nodes and reactions and dependencies as edges. Figure~\ref{fig:bkg:apoptosis-pathway} shows a graphical representation of the apoptosis pathway which results in programmed cell death, whose significance is explained shortly~\cite{bose2007p53, mott2007mir, lakin1999regulation, xiong2010effects, park2009mir}. As you can see, the same proteins and RNAs are used in different reactions, and reactions are interdependent, i.e. the product of a reaction is a prerequisite of another reaction. It is also important to note that pathways are not mutually exclusive. The same proteins and other molecules may be used in several pathways.
+Cellular processes involve collaboration of several molecules (RNAs and proteins included) in the form of a long chain of reactions. A chain of reactions with a specific goal is called a pathway. Among other things, pathways can result in production of a molecule, a change in the cell, activating or deactivating a gene, or to make the cell move. A graphical representation of a pathway has molecules as nodes and reactions and dependencies as edges. Figure~\ref{fig:bkg:apoptosis-pathway} shows a graphical representation of the apoptosis pathway which results in programmed cell death, whose significance is explained shortly~\cite{bose2007p53, mott2007mir, lakin1999regulation, xiong2010effects, park2009mir}. As you can see, the same proteins and RNAs are used in different reactions, and reactions are interdependent, i.e. the product of a reaction is a prerequisite of another reaction. It is also important to note that pathways are not mutually exclusive. The same proteins and other molecules may be used in several pathways.
 
 \begin{figure}[!ht]
   \centering
@@ -477,11 +470,11 @@ A new cell is created only when another cell duplicates, which itself is the res
 During the \emph{S} phase (\emph{S} for DNA Synthesis) a complete copy of the cell's DNA is produced. During the \emph{M} phase, first the nucleus is devided into two, i.e. mitosis, then the whole cell divides into two cells, i.e. cytokinesis). For a cell which has an approximately a 24 hour cycle, the \emph{M} phase takes only one hour. $G_1$ and $G_2$ are gaps between the \emph{S} and the \emph{M} phase. During the $G_2$ phase, some processes make sure that the DNA is replicated properly and completely, and the cell is prepared to enter the \emph{M} phase. During $G_1$ phase, the cell grows, and it only enters the \emph{S} phase if the environment and conditions are favourable. $G_1$ may take a long time, and it can also enter the $G_0$ state, or resting state. A cell may stay in $G_0$ for years or even indefinitely until cell death. Human nerve cells, for instance, enter this state early in the body's development and they never duplicate. The switch between different phases are controlled by the cell's cell cycle control system which takes into account the cell's environment using the signals received from the surroundings, and the internal cell conditions using some feedbacks received from the cell's development in different stages.
 
 \subsection{Cell Death}
-Programmed cell death is as important cell division and reproduction to a healthy tissue. An organism or a tissue can only maintain its size if cells die with the same rate as they divide, otherwise the tissue will keep growing uncontrollably. It is also critical for the cells to die in an orchestrated way during fetus development for limbs and tissues to take their desired form. A third case for programmed cell death is when cells are damaged or infected, to make sure they are removed before threatening the organism's health~\cite[Ch. 18]{the-cell}.
+Programmed cell death is as important as cell division and reproduction to a healthy tissue. An organism or a tissue can only maintain its size if cells die with the same rate as they divide, otherwise the tissue will keep growing uncontrollably. It is also critical for the cells to die in an orchestrated way during fetus development for limbs and tissues to take their desired form. A third case for programmed cell death is when cells are damaged or infected, to make sure they are removed before threatening the organism's health~\cite[Ch. 18]{the-cell}.
 
-In most cases this programmed cell death occurs from within the cell via apoptosis, i.e. through a set of processes and pathways which result in the cell to shrink and die to be eaten by other cells. If the cell is large, it will be dismantled into membrane enclosed pieces. The membrane is also altered to give other cells the signal to eat them quickly. Apoptosis ensures that the contents of the cell are not spilled over other cells and that the remains are digested quickly.
+In most cases this programmed cell death occurs from within the cell via apoptosis, i.e. through a set of processes and pathways which result in the cell to shrink and die and then to be eaten by other responsible cells. If the cell is large, it will be dismantled into membrane enclosed pieces. The membrane is also altered to give other cells the signal to eat them quickly. Apoptosis ensures that the contents of the cell are not spilled over other cells and that the remains are digested quickly.
 
-In contrast to apoptosis, cells which die as a result of a physical trauma or lack of blood supply usually go through cell necrosis resulting in the swell and burst of the cell triggering an inflammatory response. As we will discuss in Section~\ref{sec:bkg:cancer}, damage to pathways related to apoptosis plays a role in cancer.
+In contrast to apoptosis, cells which die as a result of a physical trauma or lack of blood supply usually go through cell necrosis resulting in the swell and burst of the cell triggering an inflammatory response. As we will discuss in Section~\ref{sec:bkg:cancer}, damages to pathways related to apoptosis play a role in cancer.
 
 \subsection{Epigenetics}
 As stated in \emph{An operational definition of epigenetics}~\cite{berger2009operational}: ``An epigenetic trait is a stably heritable phenotype resulting from changes in a chromosome without alterations in the DNA sequence''. Two of the most studied such alterations are histone modification and methylation/demethylation of the cytosine in a CG sequence, which is usually referred to as DNA-methylation. Figure~\ref{fig:bkg:epigenetics} illustrates epigenetic alterations on the DNA sequence.
@@ -496,28 +489,28 @@ As stated in \emph{An operational definition of epigenetics}~\cite{berger2009ope
 
 If a methyl component is attached to a DNA nucleotide, that nucleotide is called \emph{methylated}. In vertebrate cells, except stem cells, methylation happens mostly on a cytosine in a CG sequence, on both sides of the DNA strand. During cell division this property is usually kept and inherited by the offspring cells. A methylated upstream of a gene can suppress that gene's expression. In human and mice cells, it is shown that DNA methylation can inhibit the activity of an entire chromosome~\cite[Ch. 7]{the-cell}.
 
-Histones are proteins acting as cylinders around which a DNA molecule winds and therefore is packed. As a result of this condensation, a DNA fiber of the length $180mm$ and $30nm$ is compressed into a $12\mu m$ long and $700nm$ thick molecule~\cite{redon2002histone}. Histones have a tail which can be altered, \emph{e.g.} methylation or acetylation of some of the amino acids, and some of these alterations are passed to the progenies of the cell, and hence are epigenetic markers~\cite{turner2000histone, berger2009operational, moazed2011mechanisms}. Presence, absence, or alterations of histones near a gene can activate, deactivate, or regulate the expression of the gene~\cite{turner2000histone}.
+Histones are proteins acting as cylinders around which a DNA molecule winds and therefore is packed. As a result of this condensation, a DNA fiber of the length $180mm$ and $30nm$ is compressed into a $12\mu m$ long and $700nm$ thick molecule~\cite{redon2002histone}. Histones have a tail which can be altered, \emph{e.g.} methylation or acetylation of some of the amino acids, and some of these alterations are passed to the progenies of the cell, and hence are epigenetic markers~\cite{turner2000histone, berger2009operational, moazed2011mechanisms}. Presence, absence, or alterations of histones near a gene can activate, deactivate, or regulate the expression of that gene~\cite{turner2000histone}.
 
 
 \subsection{Innate and Adaptive Immune System}
 \label{sec:bkg:immune-system}
 Multicellular organisms use a mechanism called innate immune response to defend themselves against pathogens, through some physical barriers such as the sweat on the skin or saliva in the mouth, as well as biochemically responding to common patterns presented by pathogens called \emph{pathogen-associated molecular patterns (PAMPs)} using receptors called \emph{pattern recognition receptors (PRRs)}~\cite[Ch. 24]{the-cell}. These PRRs detect different categories of PAMPs, triggering an inflammatory response, which in turn in animals, proceeds with the engulfment of the pathogen by a phagocytic cell. Phagocytes, macrophages, natural killer cells (NK cells), and dendritic cells are among cell types comprising the innate immune system.
 
-Dendritic cells, present in vertebrates, are a crucial component connecting the innate immune system to the adaptive immune system. They detect a large variety of PAMPs by expressing an exhaustive variety of PRRs on their surface. Once a dendritic cell detects a pathogen or one of its products, it engulfs it through phagocytosis, through which it also becomes an activated dendritic cell. These activated cells then travel to a nearby lymphoid organ such as a lymph node to activate T-cells (discussed bellow) there and present the invading pathogen to them.
+Dendritic cells, present in vertebrates, are a crucial component connecting the innate immune system to the adaptive immune system. They detect a large variety of PAMPs by expressing an exhaustive variety of PRRs on their surface. Once a dendritic cell detects a pathogen or one of its products, it engulfs it through phagocytosis, through which it also becomes an activated dendritic cell. These activated cells then travel to a nearby lymphoid organ such as a lymph node to activate T-cells (discussed bellow) and present the invading pathogen to them.
 
-Some time during the evolution, vertebrates developed an adaptive immune system, in theory capable of detecting and remembering any foreign pathogen. The core are this system are the T and B lymphocytes, commonly referred to as T and B cells. They are called T and B lymphocytes since they mature in the \emph{B}one marrow and the \emph{T}hymus respectively. Through their development, these cells undergo an inheritable somatic hyper-mutation process resulting in the expression of virtually all possible receptors and antibodies. This process, however, sometimes produces some lymphocytes detecting the organism's own cells. Therefore a separate process called immunological self-tolerance ensures lymphocytes detecting one's own cells are either destroyed or deactivated. A failure to do so causes an allergy or an autoimmune disease~\cite[Ch. 24]{the-cell}.
+At some point during the evolution, vertebrates developed an adaptive immune system, in theory capable of detecting and remembering any foreign pathogen. The core of this system are the T and B lymphocytes, commonly referred to as T and B cells. They are called T and B lymphocytes because they mature in the \emph{B}one marrow and the \emph{T}hymus respectively. Through their development, these cells undergo an inheritable somatic hyper-mutation process resulting in the expression of virtually all possible receptors and antibodies. This process, however, sometimes produces some lymphocytes detecting the organism's own cells. Therefore a separate process called immunological self-tolerance ensures lymphocytes detecting one's own cells are either destroyed or deactivated. A failure to do so causes an allergy or an autoimmune disease~\cite[Ch. 24]{the-cell}.
 
 Both B and T cells differentiate from hematopoietic stem cells residing in bone marrow. A product of this differentiation are lymphoid progenitor cells, some of which stay in the bone marrow and develop to become B cells, and some others move to the thymus and become thymocytes and then T cells~\cite[Ch. 24]{the-cell}. The differentiation does not end at this stage, and these two types of cells will further develop into more specific cells such as effector B/T cells, na\"ive B/T cells, and memory B/T cells.
 
-In simple terms, the adaptive immune response can be seen as two main processes. A foreign pathogen may trigger either of these two or both processes: antibody response and T cell mediated immune response. The antibody response involves B cells producing specific antibodies which bind to the targeted pathogen, disabling them from binding to the organism's own cells and also marking them for destruction. These antibodies circulate in blood and other body fluids reaching and detecting pathogens in the whole organism. T cell mediated immune response, on the other hand, works by T cells detecting some cell surface proteins called MHC proteins. These proteins are encoded in \emph{major histocompatibility complex} and are expressed in most cells of vertebrates. These MHC proteins can carry some fragments of the products of a pathogen from inside the cell to its surface. When dendritic cells present these pieces to T cells in a lymph gland, the T cells detecting those proteins are activated. These activated cells divide and differentiate into memory T cells and effector T cells. The effector T cells travel to the site of the infection and locally detect the infected cells, marking them for destruction.
+In simple terms, the adaptive immune response can be seen as two main processes. A foreign pathogen may trigger either of these two or both processes: antibody response and T cell mediated immune response. The antibody response involves B cells producing specific antibodies which bind to the targeted pathogen, disabling them from binding to the organism's own cells and also marking them for destruction. These antibodies circulate in blood and other body fluids reaching and detecting pathogens in the whole organism. T cell mediated immune response, on the other hand, works by T cells detecting some cell surface proteins called MHC proteins. These proteins are encoded in \emph{major histocompatibility complex} and are expressed in most cells of vertebrates. These MHC proteins can carry some fragments of the products of a pathogen from inside the cell to its surface. When dendritic cells present these pieces to T cells in a lymph gland, the T cells detecting those proteins are activated. These activated cells divide and differentiate into memory T cells and effector T cells. The effector T cells travel to the site of the infection and locally detect the infected cells, marking them for destruction~\cite[Ch. 24]{the-cell}.
 
 \subsection{Cancer}
 \label{sec:bkg:cancer}
-Thinking of an organism as a society of cells helps to better understand and explain cancer. In a healthy and functional organism, cells collaborate, do not invade each other's space, and sacrifice themselves through programmed cell death to control their population. A group of cells reproducing abnormally and faster than the usual rate leads to a neoplasm. If these cells are not invasive to the neighboring cells ,the formed tumor is called benign. On the other hand, if the cells start reproducing as wells as invading the surrounding tissue, it then is called a malignant tumor, or cancer~\cite[Ch. 20]{the-cell}.
+Thinking of an organism as a society of cells helps to better understand and explain cancer. In a healthy and functional organism, cells collaborate, do not invade each other's space, and sacrifice themselves through programmed cell death to control their own population. A group of cells reproducing abnormally and faster than the usual rate leads to a neoplasm. If these cells are not invasive to the neighboring cells ,the formed tumor is called benign. On the other hand, if the cells start reproducing as wells as invading the surrounding tissue, it then is called a malignant tumor, or cancer~\cite[Ch. 20]{the-cell}.
 
-A malfunction in a pathway related to the cell cycle can cause cells to reproduce uncontrollably and/or not die according toe the plan. These malfunctions can be caused by over or under expression of a gene resulting in excess or lack of a protein or an RNA in a pathway. A mutation in the upstream of a gene, e.g. the promoter region of the gene, or certain epigenetic changes such as methylation of the upstream region of a gene can lead to under expression or completely disable the expression of that gene. On the other hand, demethylation of the promoter region might enhance the expression of the gene and disrupt the related pathways~\cite{methylation-cancer} TODO: fix reference. It can also be the case that a mutation on a specific gene renders a protein dysfunctional, hence a malfunction in the pathways to which it belongs.
+A malfunction in a pathway related to the cell cycle can cause cells to reproduce uncontrollably and/or not die according to the plan. These malfunctions can be caused by over or under expression of a gene resulting in excess or lack of a protein or an RNA in a pathway. A mutation in the upstream of a gene, e.g. the promoter region of the gene, or certain epigenetic changes such as methylation of the upstream region of a gene can lead to under expression or completely disable the expression of that gene. On the other hand, demethylation of the promoter region might enhance the expression of the gene and disrupt the related pathways. It can also be the case that a mutation on a specific gene renders a protein dysfunctional, hence a malfunction in the pathways to which it belongs~\cite{esteller2008epigenetics}.
 
-Even without the presence of mutation inducing agents, mutations naturally occur on the DNA during cell division, most of which are corrected due to DNA repair mechanisms present in the cell. Out of the mutations which remain on the DNA, only a few can lead to a malignant cell. There is also strong evidence that cancer causing mutations need to be present on both chromosomes for it to cause cancer, unless that mutation already exists on one of the chromosomes, inherited from one of the parents; in which case, only one mutation on the right position is enough to activate/deactivate that corresponding gene~\cite{mutation-both-chromosomes}. TODO: fix reference 
+Even without the presence of mutation inducing agents, mutations naturally occur on the DNA during cell division, most of which are corrected due to DNA repair mechanisms present in the cell. Out of the mutations which remain on the DNA, only a few can lead to a malignant cell. There is also strong evidence that cancer causing mutations need to be present on both chromosomes for it to cause cancer, unless that mutation already exists on one of the chromosomes, inherited from one of the parents; in which case, only one mutation on the right position is enough to activate/deactivate that corresponding gene~\cite{mutation-both-chromosomes}.
 
 Cancer cells also go though some morphological changes which are visible under a microscope. These cells have a larger nucleus and a smaller cytoplasm, therefore a larger nucleus/cytoplasm ratio, and both nucleus and the cell have irregular shapes. Investigation of these characteristics play a role in cancer diagnosis~\cite{baba2007tumor}. Figure~\ref{fig:bkg:normal-cancer} depicts some of the differences between normal and cancer cells.
 
@@ -531,11 +524,11 @@ Cancer cells also go though some morphological changes which are visible under a
 Since cancer cells are evolved from the cells of the organism itself, they are not detected by the immune system as enemies. These cancerous cells also know all the internal protocols of the organism. For instance, as soon as a cancerous cell grows into a tumor-like mass, it needs more blood supply. Therefore it sends signals triggering new veins to develop to support the tumor with the food and oxygen it needs. The cancerous cells may then enter the blood stream of lymphatic vessels, land on another part of the body, and form a secondary tumor, i.e. metastasis~\cite[Ch. 20]{the-cell}.
 
 \subsection{Lymphoid Neoplasms and Lymphoma}
-Like other diseases, cancer had been categorized according to the symptoms and the organ in which it appears. With the advancements in medicine, we could detect metastasis and therefore classify the disease according to the organ from which it originates. This classification, however, is far from perfect. Depending on the underlying genetic cause of the cancer, it can practically be considered different diseases although happening on the same organ. For instance, breast cancer was considered one disease for thousands of years, until it was discovered that tumor cells with estrogen receptors on their surface as inhibitors, i.e. ER+ breast cancer tumor, are different disease than the ones not having estrogen as an inhibitor. This discovery resulted in subclassification of cancer into ER+ and ER- tumors improving diagnosis, treatment, and prognosis specially for patients with ER+ tumors~\cite{the-emperor-of-all-maladies}.
+Like other diseases, cancer had traditionally been categorized according to the symptoms and the organ in which it appears. With the advancements in medicine, we could detect metastasis and therefore classify the disease according to the organ from which it originates. This classification, however, is far from perfect. Depending on the underlying genetic cause of the cancer, it can practically be considered different diseases although happening on the same organ. For instance, breast cancer was considered one disease for thousands of years, until it was discovered that tumor cells with estrogen receptors on their surface as inhibitors, i.e. ER+ breast cancer tumors, are a different disease than the ones not having estrogen as an inhibitor. This discovery resulted in subclassification of cancer into ER+ and ER- tumors improving diagnosis, treatment, and prognosis specially for patients with ER+ tumors~\cite{the-emperor-of-all-maladies}.
 
-When it comes to the cancers of the immune system, a few factors make the classification of the disease even more complicated. One is the location of the cancer, which can be any place along the development path of our immune system, bone marrow, thymus, blood stream, and lymph nodes included. For this reason, cancers of the immune system used to be put in two main classes: (1) if the disease appears only in blood stream and does not form a mass: leukemia (2) if it forms a mass mainly where lymph nodes are located: lymphoma~\cite{swerdlow20162016, younes2016handbook}. However, our better understanding of immune system and these diseases proved traditional classification of these diseases wrong, and as a result, WHO classification of these malignancies now puts them all together under the category of \emph{lymphoid neoplasms}~\cite{norris2008classification, swerdlow20162016}. For example, Chronic lymphocytic leukemia and small lymphocytic lymphoma are now considered two different stages of the same disease affecting mature B cells. Generally speaking, lymphoma are neoplasms of the immune system resulting in a solid tumor~\cite[Ch. 1]{younes2016handbook}.
+When it comes to the cancers of the immune system, a few factors make the classification of the disease even more complicated. One is the location of the cancer, which can be any place along the development path of our immune system, bone marrow, thymus, blood stream, and lymph nodes included. For this reason, cancers of the immune system used to be put in two main classes: (1) if the disease appears only in blood stream and does not form a mass: leukemia (2) if it forms a mass mainly where lymph nodes are located: lymphoma~\cite{swerdlow20162016, younes2016handbook}. However, our better understanding of the immune system and these diseases proved traditional classification of these diseases inefficient at best, and as a result, WHO classification of these malignancies now puts them all together under the category of \emph{lymphoid neoplasms}~\cite{norris2008classification, swerdlow20162016}. For example, Chronic lymphocytic leukemia and small lymphocytic lymphoma are now considered two different stages of the same disease affecting mature B cells. Generally speaking, lymphoma are neoplasms of the immune system resulting in a solid tumor~\cite[Ch. 1]{younes2016handbook}.
 
-As mentioned in Section~\ref{sec:bkg:immune-system}, B and T cells both undergo somatic hypermutation. B cells, for example, once activated by an antigen, undergo a somatic mutation phase with the rate at least 100,000 times higher than the normal rate of mutation across the genome~\cite{mendelsohn2014molecular}. Although the hypermutation phase is highly regulated, sometimes errors happen which can lead to a possible malignancy.
+As mentioned in Section~\ref{sec:bkg:immune-system}, B and T cells both undergo somatic hypermutation. B cells, for example, once activated by an antigen, undergo a somatic mutation phase with a rate at least 100,000 times higher than the normal rate of mutation across the genome~\cite{mendelsohn2014molecular}. Although the hypermutation phase is highly regulated, sometimes errors happen which can lead to a possible malignancy.
 
 The first level of lymphoma classification creates two main categories: Hodgkin and non-Hodgkin lymphoma (NHL). The disease is considered Hodgkin lymphoma if Reed-Sternberg cells are present in the biopsy. These cells are large lymphocytes usually derived from B cells and can have more than one nucleus, as shown in Figure~\ref{fig:bkg:rs-cell}~\cite{sternberg1898eigenartige}.
 
@@ -546,10 +539,10 @@ The first level of lymphoma classification creates two main categories: Hodgkin 
   \label{fig:bkg:rs-cell}
 \end{figure}
 
-Like Hodgkin lymphoma, the classification of non-Hodgkin cases also started by focusing on morphological features of the cancer cells. However, through improved understanding of the disease, immunologic, genetic, and clinical criteria are now also considered to better distinguish between cancer cases~\cite[Ch. 33]{hoffbrand2016postgraduate}. For instance, in the case of anaplastic large T cell lymphoma (ALCL), there are treatments if an anaplastic lymphoma kinase (ALK) translocation (t[2,5]) is present in the neoplasm, leading to a much better prognosis. As a result, a classification of ALCL now includes ALK$^+$ and ALK$^-$ sub-types~\cite[Ch. 29]{mendelsohn2014molecular}.
+Like Hodgkin lymphoma, the classification of non-Hodgkin cases also started by focusing on morphological features of the cancer cells. However, through improved understanding of the disease, immunologic, genetic, and clinical criteria are now also considered to better distinguish between cancer subtypes~\cite[Ch. 33]{hoffbrand2016postgraduate}. For instance, in the case of anaplastic large T cell lymphoma (ALCL), there are treatments if an anaplastic lymphoma kinase (ALK) translocation (t[2,5]) is present in the neoplasm, leading to a much better prognosis. As a result, a classification of ALCL now includes ALK$^+$ and ALK$^-$ subtypes~\cite[Ch. 29]{mendelsohn2014molecular}.
 Our focus in this work is on two major types of mature B cell neoplasms, namely Follicular Lymphoma (FL) and Diffuse Large B Cell Lymphomas (DLBCL).
 
-DLBCL is a high grade aggressive NHL and the most common among NHL cases. FL on the other hand, is the most common low grade NHL and is only second to DLBCL in terms of the number of NHL cases. Both FL and DLBCL are heterogeneous and have several sub-types of their own. FL is defined as a neoplasm of B cells in germinal centers, comprising different proportions of small centrocytes and large centroblasts with a follicular growth pattern, as shown in Figure~\ref{fig:bkg:fl}~\cite[Ch. 31]{hoffbrand2016postgraduate}. Its cases are divided into three main grades, and the third grade divided into 3a and 3b. Except FL-3b, the other cases progress slowly and all have a similar prognosis outcome. Grade 3b, on the other hand, is more aggressive and is clinically closer to DLBCL~\cite[Ch. 33]{hoffbrand2016postgraduate}.
+DLBCL is a high grade aggressive NHL and the most common among NHL cases. FL on the other hand, is the most common low grade NHL and is only second to DLBCL in terms of the number of NHL cases. Both FL and DLBCL are heterogeneous diseases and have several subtypes of their own. FL is defined as a neoplasm of B cells in germinal centers, comprising different proportions of small centrocytes and large centroblasts with a follicular growth pattern, as shown in Figure~\ref{fig:bkg:fl}~\cite[Ch. 31]{hoffbrand2016postgraduate}. Its cases are divided into three main grades, and the third grade divided into 3a and 3b. Except FL-3b, the other cases progress slowly and all have a similar prognosis outcome. Grade 3b, on the other hand, is more aggressive and is clinically closer to DLBCL~\cite[Ch. 33]{hoffbrand2016postgraduate}.
 
 \begin{figure}[!ht]
   \centering
@@ -562,4 +555,4 @@ tumour cells are positive for CD10 (b) and BCL-2 (c).\protect\footnotemark}
 
 DLBCL is a neoplasm of B cells with the commonality of having a diffuse growth pattern. It includes a very diverse set of subtypes. There are also classes of neoplasms categorized between DLBCL and other types of lymphoid neoplasms such as Hodgkin lymphoma or Burkitt lymphoma. Although in many cases it is not clear what the background of the occurring DLBCL is, in some rather rare cases it can be a transformation from other diseases such as FL~\cite[Ch. 31, 33]{hoffbrand2016postgraduate}.
 
-Since many lymphoid neoplasms are heterogeneous diseases each with a different underlying genetic cause, accurate classification each case using gene expression profiling (GEP) or next generation sequencing (NGS) enables oncologists to target specific genes, inhibiting or activating them, in order to activate apoptosis or inhibit cell growth as a method of treatment. However, since it is not feasible to use GEP or NGS for all patients due to their complexity and costs, immunophenotyping is often used as a proxy to diagnose each patient's sub-type. In this work, Chapter~\ref{sec:fcs} deals with immunophenotype data, and then Chapter~\ref{sec:adaptive-learning} explores analysis of genetic and epigenetics data.
+Since many lymphoid neoplasms are heterogeneous diseases each with a different underlying genetic cause, accurate classification of each case using gene expression profiling (GEP) or next generation sequencing (NGS) enables oncologists and pathologists to target specific genes, inhibiting or activating them, in order to activate apoptosis or inhibit cell growth as a method of treatment. However, since it is not feasible to use GEP or NGS for all patients due to their complexity and costs, immunophenotyping is often used as a proxy to diagnose each patient's subtype. In this work, Chapter~\ref{sec:fcs} deals with immunophenotype data, and then Chapter~\ref{sec:adaptive-learning} explores analysis of genetic and epigenetics data retrieved from biopsies of cancer patients.
