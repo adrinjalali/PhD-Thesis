@@ -1,7 +1,7 @@
 \chapter{Flow Cytometry Analysis}
 \label{sec:fcs}
 
-Here we talk about flow cytometry data, how we analyze and visualize it; and how we use that analysis alongside with some machine learning tools to classify samples into cancer subtypes.
+As mentioned in Chapter~\ref{ch:intro}, we a part of this work, we touch on the data and problems available and related to clinics. For this purpose, we tackle some problems using flow cytometry data which is available on a daily basis for immunophenotyping and diagnosis purposes. This chapter first introduces flow cytometry, and then our contributions related to flow cytometry data. It is also worth mentioning that Section~\ref{sec:fcs:rchy} and \ref{sec:fcs:flowtype-rchy} are previously published articles both well received and cited by the community. However, due to space journal limitations not all required background were included in them and therefore some of the required background are included in Chapter~\ref{sec:background} and some here in this chapter. 
 
 \section{Flow Cytometry}
 Flow cytometry is a technology that allows measurement of biomarkers inside and outside cells on a single cell basis~\cite{jaroszeski1999fundamentals}. The technology can also sort and separate certain cells according to a given criterion~\cite{flow-cytometry-sorting, jaroszeski1999fundamentals}.
@@ -86,6 +86,7 @@ $\mathbf{M}(c_i)$ is the observed value of marker $\mathbf{M}$ for cell $c_i$. I
 The flowType method iterates through all possible combinations of cell populations and reports cell count and/or Mean Fluorescence Intensity (MFI) for each cell population. Given $m$ markers, there are $3^m$ possible combinations, and flowType reports all of them. Some possible further analysis using these reported cell counts and/or MFIs are explored in the original publication~\cite{Aghaeepour2012}.
 
 \subsection{Hierarchical Analysis of Cell Populations: RchyOptimyx}
+\label{sec:fcs:rchy}
 Recent advances in FCM instrumentation and reagents  have enabled high-dimensional analyses to identify large numbers of  cell populations with potentially significant correlations to an external outcome.
 However,  studies often fail to characterize the complex relationships between the markers involved in the  identification of these cell populations.
 Revealing this information can provide additional insight into the biological characteristics of the populations identified.
@@ -643,7 +644,8 @@ The raw data and meta-data used in this study is publicly available through Flow
     \label{r1:KI67Overlap}
   \end{figure}
 
- \subsection{flowType/RchyOptimyx pipiline}
+\subsection{flowType/RchyOptimyx pipeline}
+\label{sec:fcs:flowtype-rchy}
  Flow cytometry has undergone a ``chromatic explosion'' over the past decade and can now measure 17 markers at once for each of hundreds of thousands of individual cells \cite{Chattopadhyay2008}.
 Since then, mass cytometry has enabled measurement of 30--45 markers per cell \cite{Bendall2012a}, while single-cell multiplexed RT-qPCR can measure 50--96 mRNAs per cell \cite{White2011}. 
 The growth in high-throughput single-cell data continues to outpace development of corresponding bioinformatics techniques \cite{Chattopadhyay2008}.
@@ -709,7 +711,7 @@ This would not have been possible with only two partitions for each of CD45 and 
 
 
 \section{Lymphoma Diagnosis Quality Checking}
-The processes followed by pathologists to diagnose cancer cases are not perfect and can be subjective. Also, since cancer is a heterogeneous disease and the cells from different parts of the same tumor might show different characteristics, the diagnosis may be inaccurate or unrepresentative of the whole tumor. As a result, pathologists do not always agree on the diagnosis, and in some cases a consortium of doctors is required to get a more reliable diagnosis. In order to improve this process, hospitals go through routine quality checking on the past diagnoses looking for potential mistakes in the hindsight. However, due to limited amount or resources, this process can be done for a small fraction of all the patients. Here we develop a pipeline to give candidate cases to be checked in the QC process. We shall also interpret our models to give candidate reasons for these cases being tagged.
+The processes followed by pathologists to diagnose cancer cases are not perfect and can be subjective. Also, since cancer is a heterogeneous disease and the cells from different parts of the same tumor might show different characteristics, the diagnosis may be inaccurate or unrepresentative of the whole tumor. As a result, pathologists do not always agree on the diagnosis, and in some cases a consortium of doctors is required to get a more reliable diagnosis. In order to improve this process, hospitals go through routine quality checking on the past diagnoses looking for potential mistakes in the hindsight. However, due to limited amount or resources, this process can be done for a small fraction of all the patients. Here we develop a pipeline to assert candidate cases to be checked in this QC process. We shall also interpret our models to propose potential reasons for these cases being tagged.
 
 \subsection{Introduction}
 We have designed and developed two methods flowType and RchyOptimyx in this chapter.
@@ -852,9 +854,7 @@ Using a leave-one-out cross-validation scheme over $n$ samples, means we have $n
   \label{fig:fcs-qa-rchy1}
 \end{figure}
 
-Now we present a post-analysis of our method for individual samples. Our goal is to give insight about why our models have misclassified an individual sample. An oncologist/pathologist can use this part of the analysis as a hint for further investigation on the patient, or they can decide the misclassification is due to other errors in the pipeline.
-
-TODO: better motivate the way we read the weights and the plots for the oncologists.
+Now we present a post-analysis of our method for individual samples as mentioned before. Our goal is to give insight about why our models have misclassified an individual sample. An oncologist/pathologist can use this part of the analysis as a hint for further investigation on the patient, or they can decide the misclassification is due to other errors in the pipeline.
 
 As already mentioned, we follow a leave one out cross validation scheme. This means we train a model for each sample $x_i$, using all samples but $x_i$. Let this model be referred to as $M_i$. Then we use we weight vector of $M_i$ as an indicator of feature significance. Now let the set $\mathcal{F}_{i,k}$ be the set of $k$ features with largest absolute values in the weight vector of $M_i$. Then for each feature $f_j$ in $\mathcal{F}_{i,k}$:
 \begin{itemize}
@@ -897,7 +897,7 @@ TODO: the above paragraph needs to be fixed to show those cell populations are "
   \subfigure[Tube 3 - Cell Population]{
     \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube3_2001220022_pops}
   }
-  \caption{Actual Density-Scatter plots of sample F09-0939}
+  \caption{Actual Density-Scatter plots of sample F09-0939 for selected immunophenotypes of each tube.}
   \label{fig:fcs-qa-density-scatter-FL}
 \end{figure}
 
@@ -921,9 +921,17 @@ TODO: the above paragraph needs to be fixed to show those cell populations are "
   \subfigure[Tube 3 - Cell Population]{
     \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube3_0121200200_pops}
   }
-  \caption{Actual Density-Scatter plots of sample F09-0628}
+  \caption{Actual Density-Scatter plots of sample F09-0628 for selected immunophenotypes of each tube.}
   \label{fig:fcs-qa-density-scatter-DLBCL}
 \end{figure}
 
 \subsection{Summary}
-As mentioned before, we divide cells into two groups according to each biomarker. We have shown in another work that this is not a constraint and cells can be divided into more than two groups if necessary~\cite{o2014enhanced}. TODO: what did I do? what comes out? how is this useful?
+In this work we developed an interpretable method to classify flow cytometry samples, which can be used to enhance the internal quality assurance process of cancer hospitals and clinics. Although we further analyzed only misclassified samples, if the resources available to a QA team allows, they can continue to samples which are classified correctly, but with a lower confidence score. One can of course investigate the effectiveness of methods other than an $l2$-SVM with a linear kernel, as long as they can interpret the method and get values resembling importance of features from it. Also, as mentioned before, we divide cells into two groups according to each biomarker. We also showed in this chapter that this is not a constraint and cells can be divided into more than two groups if necessary. This might be important in some special cases where a certain biomarker usually divides into more than two groups.
+
+
+\section{Contribution}
+Since I co-first authored the articles presented in sections~\ref{sec:fcs:rchy}~\cite{Aghaeepour2012a} and \ref{sec:fcs:flowtype-rchy}~\cite{o2014enhanced}, they are included in this chapter with minor modifications from the original article, as a whole. However, for the purpose of this thesis, it is only fair for me to take credit only for the parts I was directly and heavily involved with.
+
+In Section~\ref{sec:fcs:rchy} my main contribution was to model the problem on graphs and solve it using a multiple k-shortest paths algorithm. I also took an existing implementation of the algorithm and wrote an R wrapper for it after fixing some issues which existed in that implementation. This resulted in two packages, one in CRAN and one Bioconductor.
+
+My contribution in Section~\ref{sec:fcs:fowtype-rchy} was to solve the problem using a dynamic algorithm, and its initial implementation in C++. The implementation then replaced the old implementation in the flowType Bioconductor repository. 
