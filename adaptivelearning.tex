@@ -734,4 +734,10 @@ The result of the above changes is available in the same repository on \emph{git
 TODO: results and conclusion
 
 \section{Raccoon}
-TODO: Only explain the idea
+In section~\ref{chap:ratboost-chapter} we developed the idea of an ensemble method, taking into account properties of a new given sample to assign confidences to each individual learner while calculating the final model output. In this section we take the idea further and train a model for each given new input. This means that unlike usual supervised methods, a part of training happens for every given new sample in this proposed method. In order to explain the method, we divide the steps into \emph{prepare} and \emph{fit-predict}.
+
+\subsection{Prepare}
+In this step we only learn the relationships between the features of the training data. For this, we first select a pool of candidate features which have the potential of being used later in the \emph{fit-predict} step. Once members of this candidate features pool are selected, we try to find a pattern between other features of the training data and the selected 
+
+\subsection{Fit-Predict}
+
