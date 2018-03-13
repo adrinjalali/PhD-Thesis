@@ -737,7 +737,27 @@ TODO: results and conclusion
 In section~\ref{chap:ratboost-chapter} we developed the idea of an ensemble method, taking into account properties of a new given sample to assign confidences to each individual learner while calculating the final model output. In this section we take the idea further and train a model for each given new input. This means that unlike usual supervised methods, a part of training happens for every given new sample in this proposed method. In order to explain the method, we divide the steps into \emph{prepare} and \emph{fit-predict}.
 
 \subsection{Prepare}
-In this step we only learn the relationships between the features of the training data. For this, we first select a pool of candidate features which have the potential of being used later in the \emph{fit-predict} step. Once members of this candidate features pool are selected, we try to find a pattern between other features of the training data and the selected 
+In this step we only learn the relationships between the features of the training data. For this, we first select a pool of candidate features which have the potential of being used later in the \emph{fit-predict} step. Once members of this candidate features pool are selected, we try to find a pattern between other features of the training data and each selected feature the same way we did in Section~\ref{chap:ratboost-chapter}. Algorithm~\ref{fig:raccoon:prepare1} depicts a pseudocode of this step.
+
+\begin{algorithm}
+\caption{Prepare}
+\label{fig:raccoon:prepare1}
+\begin{algorithmic}
+\Function{Prepare}{$X, Y$}
+    \State $\Phi \gets $ \Call{features\_of}{$X$}
+    \State $\Phi_l \gets $ \Call{select\_candidates}{$X, Y$}
+    \State $\mathcal{M} \gets \{\}$
+    \ForAll{$f \in \Phi_l$}
+        \State $\Phi_f \gets $ \Call{top$_k$}{$\{(f', \text{MIC}(f, f') | f' \in \Phi \setminus f \}$}
+        \State $g_f \gets $ \Call{gp}{$X_{\Phi_f}, f$}
+        \State $\mathcal{M} \gets \mathcal{M} \cup \{g_f\}$
+    \EndFor
+    \State \Return $\mathcal{M}, \Phi_l$
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+In the above pseudocode, the ``SELECT\_CANDIDATES'' function returns a subset of all given features which are at least remotely related to the outcome $Y$. It is basically a loose feature selection step which is free to choose also less than perfect features. We include a larger than usual features for two reasons: (1) the data is noisy, (2) only a subset of these features are used for the prediction given a new sample.
 
 \subsection{Fit-Predict}
 
