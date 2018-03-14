@@ -777,3 +777,13 @@ This step happens for each given new test sample. For each given sample $x$, a c
 \end{algorithm}
 
 Line 2 in Algorithm~\ref{alg:raccoon:fit-predict} uses the Formula~\ref{frm:ratboost:feature-confidence} to calculate feature confidences using the models which were prepared in Algorithm~\ref{fig:raccoon:prepare1}. Line 3 trains the model $M$ on the given data $(X_{\Phi_x}, Y$, using only the selected features $\Phi_x$. And at last, the final prediction is calculated in line 4 using only the selected features of the given sample $x$.
+
+\subsection{Discussion and Future Work}
+This method puts a heavy focus on selecting features specific to a given input $x$, and trains a separate model for each input. This means training these models should be preferably fast, otherwise it takes a very long time for the method to give an output for all samples in a dataset. Further analysis and experiments are required to understand the conditions under which, this method performs better than traditional methods.
+
+TODO: interpret Raccoon
+
+\section{Conclusion}
+In this chapter we introduced adaptive and interpretable methods which not only have the potential of counteracting batch effects and noise, but are also a step further towards truly personalized medicine. The latter is a result of interpretability of our methods for each given sample, \emph{i.e.} a different interpretation of the model per patient.
+
+TODO: conclusion too short
