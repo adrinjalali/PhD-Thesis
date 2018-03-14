@@ -564,6 +564,7 @@ The training phase of the model is shown in Fig.~\ref{fig:train}, in which, $N$ 
 
 \begin{equation}
 c_f(X_s) := 2 \cdot F\left(-\left| \frac{X_{s,f} - \mu_{g_f(X_s)}}{\sigma_{g_f(X_s)}}\right|\right)
+\label{frm:ratboost:feature-confidence}
 \end{equation}
 
 \noindent Then the overall feature reliability or confidence of a classifier $l_i$ is estimated as:
@@ -742,13 +743,13 @@ In this step we only learn the relationships between the features of the trainin
 \begin{algorithm}
 \caption{Prepare}
 \label{fig:raccoon:prepare1}
-\begin{algorithmic}
+\begin{algorithmic}[1]
 \Function{Prepare}{$X, Y$}
     \State $\Phi \gets $ \Call{features\_of}{$X$}
-    \State $\Phi_l \gets $ \Call{select\_candidates}{$X, Y$}
+    \State $\Phi_l \gets $ \Call{select\_candidates$_{k_1}$}{$X, Y$}
     \State $\mathcal{M} \gets \{\}$
     \ForAll{$f \in \Phi_l$}
-        \State $\Phi_f \gets $ \Call{top$_k$}{$\{(f', \text{MIC}(f, f') | f' \in \Phi \setminus f \}$}
+        \State $\Phi_f \gets $ \Call{top$_{k_2}$}{$\{(f', \text{MIC}(f, f') | f' \in \Phi \setminus f \}$}
         \State $g_f \gets $ \Call{gp}{$X_{\Phi_f}, f$}
         \State $\mathcal{M} \gets \mathcal{M} \cup \{g_f\}$
     \EndFor
@@ -757,7 +758,22 @@ In this step we only learn the relationships between the features of the trainin
 \end{algorithmic}
 \end{algorithm}
 
-In the above pseudocode, the ``SELECT\_CANDIDATES'' function returns a subset of all given features which are at least remotely related to the outcome $Y$. It is basically a loose feature selection step which is free to choose also less than perfect features. We include a larger than usual features for two reasons: (1) the data is noisy, (2) only a subset of these features are used for the prediction given a new sample.
+In the above pseudocode, the ``SELECT\_CANDIDATES'' function returns a subset of all given features which are at least remotely related to the outcome $Y$. It is basically a loose feature selection step which is free to choose also less than perfect features. We include a larger than usual features for two reasons: (1) the data is noisy, (2) only a subset of these features are used for the prediction given a new sample. Our implementation uses maximal information coefficient (MIC) of each feature with $Y$ to sort them, and take the best $k_1$ (hyperparameter) features forming the set $\Phi_l$. Then for each feature $f$ in $\Phi_l$, a model is trained to predict $f$ using other features, similar to what we did in Section~\ref{chap:ratboost-chapter}.
 
 \subsection{Fit-Predict}
+This step happens for each given new test sample. For each given sample $x$, a confidence level is calculated according to Formula~\ref{frm:ratboost:feature-confidence}, and then a few features with the highest confidence are selected for the next step. The number of selected features is another hyperparameter. $\Phi_x$ being the candidate features selected for this particular test sample $x$, a model is trained on the original training data $(X, Y)$, using only features in $\Phi_x$. The output of this model given the input $x$ is our prediction for $x$. The type of model used here can be set by the user, and the user controls the hyperparameters of the given model. This model can of course run a grid search on its hyperparameters given $X_{\Phi_x}$, looking for the best parameter set for a given set of features. Algorithm~\ref{alg:raccoon:fit-predict} shows a pseudocode of this step.
 
+
+\begin{algorithm}
+\caption{Fit-Predict}
+\label{alg:raccoon:fit-predict}
+\begin{algorithmic}[1]
+\Function{Fit\_Predict}{$X, Y, x, \Phi_l, \mathcal{M}, M$}
+    \State $\Phi_x \gets $ \Call{top$_{k_3}$}{$\{(f,$ \Call{Confidence}{$\mathcal{M}_f, x, f$}  $) | f \in \Phi_l\}$}
+    \State $M_x \gets $ \Call{fit}{$M, X_{\Phi_x}, Y$}
+    \State \Return \Call{predict}{$M_x, x_{\Phi_x}$}
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+Line 2 in Algorithm~\ref{alg:raccoon:fit-predict} uses the Formula~\ref{frm:ratboost:feature-confidence} to calculate feature confidences using the models which were prepared in Algorithm~\ref{fig:raccoon:prepare1}. Line 3 trains the model $M$ on the given data $(X_{\Phi_x}, Y$, using only the selected features $\Phi_x$. And at last, the final prediction is calculated in line 4 using only the selected features of the given sample $x$.

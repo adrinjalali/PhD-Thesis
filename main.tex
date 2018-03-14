@@ -19,6 +19,8 @@
 
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+%this is to fix nested function calls
+\renewcommand*\Call[2]{\textproc{#1}(#2)}
 
 \usepackage{colortbl}
 \usepackage{xcolor}
