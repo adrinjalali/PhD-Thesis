@@ -6,7 +6,7 @@
 \chapter{Adaptive Learning}
 \label{sec:adaptive-learning}
 
-In contrast to Chapter~\ref{sec:fcs} where we focused on data readily available in clinics, in this chapter we focus on more experimental data and hypotheses relevant to them. Specifically, in terms of data, we mostly use DNA methylation data (see Section~\ref{sec:bkg:epigenetics}) and we partly explore the idea that not only DNA mutations are a factor in cancer, but epigenetic markers such as methyl components are also predictive of cancer, suggesting a potential causal relationship between epigenetic markers and cancer. Another main hypothesis we follow is whether and how we to design methods which adapt to every given sample. We call such methods adaptive. Like the methods introduced in previous chapters, we do our best to interpret our methods to give biological insight to the biologists and pathologists. In this chapter we first discuss some common issues with regard to cancer and cancer data, showing the need to adaptive solutions to diagnostics. Then we present an extended version of a previously published article(ref:TODO:ratboost). Finally we present an idea initially designed and developed with my collaboration, and then was continued more concretely by other members of the team after me(ref:TODO:raccoon).
+In contrast to Chapter~\ref{sec:fcs} where we focused on data readily available in clinics, in this chapter we focus on more experimental data and hypotheses relevant to them. Specifically, in terms of data, we mostly use DNA methylation data (see Section~\ref{sec:bkg:epigenetics}) and we partly explore the idea that not only DNA mutations are a factor in cancer, but epigenetic markers such as methyl components are also predictive of cancer, suggesting a potential causal relationship between epigenetic markers and cancer. Another main hypothesis we follow is whether and how we to design methods which adapt to every given sample. We call such methods adaptive. Like the methods introduced in previous chapters, we do our best to interpret our methods to give biological insight to the biologists and pathologists. In this chapter we first discuss some common issues with regard to cancer and cancer data, showing the need to adaptive solutions to diagnostics. Then we present an extended version of a previously published article~\cite{jalali2016interpretable}. Finally we present an idea initially designed and developed with my collaboration, and then was continued more concretely by other members of the team after me (Section~\ref{sec:raccoon})..
 
 \section{Challenges in Cancer Data}
 \subsection{Cancer Heterogeneity}
@@ -735,6 +735,7 @@ The result of the above changes is available in the same repository on \emph{git
 TODO: results and conclusion
 
 \section{Raccoon}
+\label{sec:raccoon}
 In section~\ref{chap:ratboost-chapter} we developed the idea of an ensemble method, taking into account properties of a new given sample to assign confidences to each individual learner while calculating the final model output. In this section we take the idea further and train a model for each given new input. This means that unlike usual supervised methods, a part of training happens for every given new sample in this proposed method. In order to explain the method, we divide the steps into \emph{prepare} and \emph{fit-predict}.
 
 \subsection{Prepare}
