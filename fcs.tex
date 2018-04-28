@@ -873,55 +873,53 @@ where $P_{f_j, s}$ is the cell count of the corresponding feature $f_j$ for samp
 
 Whenever there is a misclassification, it means there are features for which, the given sample lays where the opposite class has higher density. For a given misclassified sample $x_i$, and its corresponding set $F_{i,k}$, we draw the explained plots, and also their corresponding scatter plot of the cell population, which is similar to the result of a \emph{manual gating}. Manual gating is a technique in flow-cytometry analysis to identify certain cell populations. It is an iterative process, and at each step the data is plotted using two chosen markers (a 2-D projection of the data), and the cells in a manually chosen area are selected for the next step. This process is often used by oncologists to identify certain cell populations and hence a specific diagnosis. To give the oncologists a familiar representation of our detected cell populations, we provide a scatter plot of them as well.
 
-Such a process results in plots shown in Figure~\ref{fig:fcs-qa-density-scatter-FL} and~\ref{fig:fcs-qa-density-scatter-DLBCL}. Figure~\ref{fig:fcs-qa-density-scatter-FL} shows the analysis for three cell populations of an FL diagnosed sample. The three cell populations include: $SS^+polyLambda^+CD20^−CD3^+$, $CD103^+CD5^+CD38^−CD23^+CD19^+$, and $FS^+CD7^−CD5^+CD2^+CD3^+CD4^+$. As shown on the left side of these plots, for all the three cell populations, the cell counts of the corresponding cell populations is more evidence for the sample being a DLBCL sample rather than an FL sample. The corresponding cells are shown on the right side of the density plots. Similarly, Figure~\ref{fig:fcs-qa-density-scatter-DLBCL} shows the analysis for a DLBCL diagnosed sample, and three cell populations which result in our model labeling it as FL. These three cell populations are $SS^+polyLambda^−CD5^−CD11c^+CD20^−$, $SS^+FMC−7^+CD103^+CD38^−CD25^+CD19^−$, and $SS^−CD57^+CD7^−CD5^+CD8^+$. 
-
-TODO: the above paragraph needs to be fixed to show those cell populations are "a" factor, not "the" reason for the misclassification. Also, better caption is needed for the two plots of the paragraph (Figure~\ref{fig:fcs-qa-density-scatter-FL} and~\ref{fig:fcs-qa-density-scatter-DLBCL}).
+Such a process results in plots shown in Figures~\ref{fig:fcs-qa-density-scatter-FL} and~\ref{fig:fcs-qa-density-scatter-DLBCL}. Figure~\ref{fig:fcs-qa-density-scatter-FL} shows the analysis for three cell populations of an FL diagnosed sample. The three cell populations include: $SS^+polyLambda^+CD20^−CD3^+$, $CD103^+CD5^+CD38^−CD23^+CD19^+$, and $FS^+CD7^−CD5^+CD2^+CD3^+CD4^+$. As shown on the left side of these plots, for all the three cell populations, the cell counts of the corresponding cell populations is more evidence for the sample being a DLBCL sample rather than an FL sample based on our models. The corresponding cells are shown on the right side of the density plots. Similarly, Figure~\ref{fig:fcs-qa-density-scatter-DLBCL} shows the analysis for a DLBCL diagnosed sample, and three cell populations contributing to our model labeling it as FL. These three cell populations are $SS^+polyLambda^−CD5^−CD11c^+CD20^−$, $SS^+FMC−7^+CD103^+CD38^−CD25^+CD19^−$, and $SS^−CD57^+CD7^−CD5^+CD8^+$. It is important to note that these cell populations are not the only factor in misclassification, but rather important contributors to it.
 
 \begin{figure}[!ht]
   \centering
   \subfigure[Tube 1 - Density]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube1_0202000120_density}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube1_0202000120_density}
   }
   \subfigure[Tube 1 - Cell Population]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube1_0202000120_pops}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube1_0202000120_pops}
   }
   \subfigure[Tube 2 - Density]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube2_0002212020_density}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube2_0002212020_density}
   }
   \subfigure[Tube 2 - Cell Population]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube2_0002212020_pops}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube2_0002212020_pops}
   }
   \subfigure[Tube 3 - Density]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube3_2001220022_density}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube3_2001220022_density}
   }
   \subfigure[Tube 3 - Cell Population]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube3_2001220022_pops}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0939_tube3_2001220022_pops}
   }
-  \caption{Actual Density-Scatter plots of sample F09-0939 for selected immunophenotypes of each tube.}
+  \caption{Density and scatter plots of the selected immunophenotypes for the sample F09-0939. The left column shows the kernel densities of observed number of cells of the corresponding immunophenotype in FL vs. DLBCL, and the number of cells of that same immunophenotype for the given sample. The right column shows the scatter plots of those selected cell populations.}
   \label{fig:fcs-qa-density-scatter-FL}
 \end{figure}
 
 \begin{figure}[!ht]
   \centering
   \subfigure[Tube 1 - Density]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube1_0201102100_density}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube1_0201102100_density}
   }
   \subfigure[Tube 1 - Cell Population]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube1_0201102100_pops}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube1_0201102100_pops}
   }
   \subfigure[Tube 2 - Density]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube2_0222010210_density}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube2_0222010210_density}
   }
   \subfigure[Tube 2 - Cell Population]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube2_0222010210_pops}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube2_0222010210_pops}
   }
   \subfigure[Tube 3 - Density]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube3_0121200200_density}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube3_0121200200_density}
   }
   \subfigure[Tube 3 - Cell Population]{
-    \includegraphics[width=.45\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube3_0121200200_pops}
+    \includegraphics[width=.4\textwidth]{figs/fcs-qa/density-analysis/F09-0628_tube3_0121200200_pops}
   }
-  \caption{Actual Density-Scatter plots of sample F09-0628 for selected immunophenotypes of each tube.}
+  \caption{Density and scatter plots of the selected immunophenotypes for the sample F09-0628. The left column shows the kernel densities of observed number of cells of the corresponding immunophenotype in FL vs. DLBCL, and the number of cells of that same immunophenotype for the given sample. The right column shows the scatter plots of those selected cell populations.}
   \label{fig:fcs-qa-density-scatter-DLBCL}
 \end{figure}
 
