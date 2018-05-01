@@ -814,7 +814,7 @@ Another computationally intensive operation in our method is MIC, which is used 
 
 Interpreting \emph{Raccoon} for each given sample $x$ can be done in a similar fashion to \emph{RatBoost}, and in two different levels. First we need to check which features are selected in $\Phi_x$, and then see how those features are used by the model $M_x$. A combination of the confidences calculated for each $f \in \Phi_x$, and the importance of those features reported by $M_x$ gives an idea of why the given sample is classified to the class it has. Please note that the interpretability of the method depends to some extend on the interpretability of the model $M$, which is a factor to be considered while choosing $M$.
 
-We hope that the fact that the above method is very flexible, adaptive, and interpretable proves it a step further towards personalized medicine while at the same time helping cell biologists study cancer with better clues derived from the data.
+We hope that the fact that the above method is very flexible, adaptive, and interpretable proves it a step further towards personalized medicine while at the same time helping cell biologists study cancer with better clues derived from the data. An implementation of the method is available on \emph{github}\footnote{\url{https://github.com/adrinjalali/Network-Classifier/tree/master/Raccoon}}.
 
 TODO: proofread the above subsection.
 
