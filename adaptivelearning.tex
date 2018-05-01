@@ -708,6 +708,7 @@ any concern. Some of these alternatives are already available on the
 \emph{github} repository of the method.
 
 \subsection{Enhancements and Parameter Selection}
+\label{sec:adaptive:ratboost-enhanced}
 In order to withdraw the hassle of parameter setting from our method, we utilize a nested cross-validation scheme to automatically search for and find best parameters for a given dataset. A nested cross-validation scheme tests the method with different parameters several times, and therefore the method must be fast enough for the process to be feasible. As a result, we modified and enhanced the method.
 
 Before we fix the computational bottleneck, we need to review our method's modules and their parameters. On the highest level, we have the number of weak learners. We use nested cross-validation at this level, to select the best number of weak learners for the given dataset. The next parameter on a lower level, is the complexity of each weak learner and correspondingly their number of selected features. At this stage, we choose the best parameter again using another nested cross-validation. The main parameter on the lowest level is the complexity of our feature confidence estimators. This is where we have the most computationally intensive task, i.e. computing MICs.
@@ -759,7 +760,7 @@ As shown in Table~\ref{tbl:ratboost2-performance}, our method not only outperfor
 \label{sec:raccoon}
 In Section~\ref{chap:ratboost-chapter} we developed the idea of an ensemble method, taking into account properties of a new given sample to assign confidences to each individual learner while calculating the final output of the model. In this section we take the idea further and train a model for each given new input. This means that unlike usual supervised methods, a part of training happens for every given new sample. In order to explain the method, we divide the steps into \emph{prepare} and \emph{fit-predict}. 
 
-During \emph{prepare} phase, we only learn the relationships between the input features. This information is then used to identify features of a given sample which are more reliable than others. Then, given a new sample during the \emph{fit-predict} phase, a model is trained on the training data, using only the identified ``reliable'' features. At the end, the putput of that model is considered as the output of this method for the given input.
+During \emph{prepare} phase, we only learn the relationships between the input features. This information is then used to identify features of a given sample which are more reliable than others. Then, given a new sample during the \emph{fit-predict} phase, a model is trained on the training data, using only the identified ``reliable'' features. At the end, the putput of that model is considered as the output of this method for the given input. We use code name \emph{Raccoon} for this method.
 
 \subsection{Prepare}
 In this step we only learn the relationships between the features of the training data. Since it would be computationally infeasible to learn the relationship between all the features, we first select a pool of candidate features which have the potential of being used later in the \emph{fit-predict} step. Once members of this candidate features pool are selected, we try to find a pattern between other features of the training data and each selected feature the same way we did in Section~\ref{chap:ratboost-chapter}, \emph{i.e.} we try to predict each chosen feature using all other features available in the data. Algorithm~\ref{fig:raccoon:prepare1} depicts a pseudocode of this step.
@@ -805,13 +806,17 @@ Line 2 in Algorithm~\ref{alg:raccoon:fit-predict} uses the Formula~\ref{frm:ratb
 \subsection{Discussion and Future Work}
 This method puts a heavy focus on selecting features specific to a given input $x$, and trains a separate model for each input. This means training these models should be preferably fast, otherwise it takes a very long time for the method to give an output for all samples in a dataset. Further analysis and experiments are required to understand the conditions under which, this method performs better than traditional methods.
 
-TODO: ``prepare'' on a separate dataset.
+There are some potential paths which can be taken for further experiments. As explained above, the purpose of the \emph{prepare} phase is to learn the relationships between our input features. Amid high computational costs, we choose a limited number of features for this step using our given dataset. However, once the candidate features are selected, the patterns predictive of those features using the rest of the input could potentially be learned using other datasets. For instance, if our input features are average methylation level on and around each gene, we could try predicting these values using other datasets, including healthy tissue datasets, as long as the datasets are conceptually compatible, \emph{i.e.} they are taken from the same tissue type.
 
-TODO: interpret Raccoon
+A minor modification worth exploring is to replace the $MIC \rightarrow GP$ pipeline (lines 6-7 Algorithm~\ref{fig:raccoon:prepare1}) with a C-SVM the same way it was done in Section~\ref{sec:adaptive:ratboost-enhanced}, reducing the computational complexity of the method and enabling nested cross-validation schemes for easier parameter search.
 
-TODO: C-SVM instead of GP like modified RatBoost
+Another computationally intensive operation in our method is MIC, which is used in lines 3 and 6 of Algorithm~\ref{fig:raccoon:prepare1} for the purpose of selecting features. This operation can be replaced by faster schemes such as an $l_1-SVM$ with a linear kernel or a LASSO model.
 
-TODO: Something other than MIC for feature selections.
+Interpreting \emph{Raccoon} for each given sample $x$ can be done in a similar fashion to \emph{RatBoost}, and in two different levels. First we need to check which features are selected in $\Phi_x$, and then see how those features are used by the model $M_x$. A combination of the confidences calculated for each $f \in \Phi_x$, and the importance of those features reported by $M_x$ gives an idea of why the given sample is classified to the class it has. Please note that the interpretability of the method depends to some extend on the interpretability of the model $M$, which is a factor to be considered while choosing $M$.
+
+We hope that the fact that the above method is very flexible, adaptive, and interpretable proves it a step further towards personalized medicine while at the same time helping cell biologists study cancer with better clues derived from the data.
+
+TODO: proofread the above subsection.
 
 \section{Conclusion}
 In this chapter we introduced adaptive and interpretable methods which not only have the potential of counteracting batch effects and noise, but are also a step further towards truly personalized medicine. The latter is a result of interpretability of our methods for each given sample, \emph{i.e.} a different interpretation of the model per patient.
