@@ -48,38 +48,45 @@ accepted by the community, they are used by pathologists and oncologists in the
 clinics. However, the diagnosis itself is also complex, challenging, and
 uncertain. This is why in many cases doctors do not agree on the exact
 diagnosis, and a counsel of experts is required for a better and more reliable
-diagnosis.
+diagnosis and a decision the selected treatment.
 
 Cancer is a collection of extremely smart and complicated diseases. Although
 they share many common characteristics, they cannot be treated the same. A
-treatment which is very effective for some subtype of breast cancer, may be
-completely ineffective against another subtype while both showing very similar
-symptoms. In normal cells, there are processes and checks put in place which
-define when and if the cell should divide, or die at a certain time or under
-certain conditions. Some of those mechanisms act like an automated self destruct
-switch which is triggered if something goes wrong in the cell. However,
-sometimes the damage to the cell affects those mechanisms and disables them.
-This may lead to the cell divide uncontrollably, and become cancerous. Another
-difference between normal cells and cancerous ones, is that normal cells are
-capable of repairing most of the mutations happening on the DNA, whereas those
-processes themselves are damaged in a cancerous cell. As a result, the rate of
-mutation in cancerous cells is higher of a few orders of magnitude. The high
-rate of cell division in combination with hyper mutation, makes cancerous cells
-very adaptive to the environment around them, as well as against the drugs
-attacking them.
+treatment which is very effective for some subtype of breast cancer, for
+example, may be completely ineffective against another subtype while both
+showing very similar symptoms. At the core of it, it comes to the fact that in
+normal cells there are processes and checks put in place which define when and
+if the cell should divide, or die at a certain time or under certain conditions.
+Some of those mechanisms act like an automated self destruct switch which is
+triggered if something goes wrong in the cell. However, our cells are under
+constant stress from the external factors which damage them, UV being one
+example, and sometimes the damage to the cell affects those mentioned mechanisms
+and disables them. This may lead to the cell divide uncontrollably, and become
+cancerous. Another difference between normal cells and cancerous ones, is that
+normal cells are capable of repairing most of the mutations happening on their
+DNA, whereas those processes themselves are damaged in a cancerous cell. As a
+result, the rate of mutation in cancerous cells is higher of a few orders of
+magnitude compared to a normal healthy cell. The high rate of cell division in
+combination with hyper mutation, makes cancerous cells very adaptive to the
+environment around them, as well as against the drugs attacking them.
 
-Cancer cells are derived from our own cells, and therefore it is not easy to
-distinguish them from normal cells.
+Cancer treatments are methods and substances which ideally target only the
+cancerous cells and kill them. In a sense, they are poison, but ideally only to
+cancer. However, cancer cells are derived from our own cells, and therefore it
+is not easy to distinguish them from normal cells. The more difference between
+the cancer cells and our normal healthy cells, the easier to target them; but
+unfortunately not all cancer subtypes are easily distinguishable from other
+cells for the purpose of treatment.
 
 I can better put this thesis in context by giving my personal perspective on
 cancer research and diagnosis. I spent over a year researching in British
 Columbia's Cancer Research Center (BCCRC) in Vancouver, Canada, which also
 admitted patients for diagnosis and treatment. As a result, I worked closely
-with oncologists diagnosing patients as well as cell biologists researching
-fundamentals of cancer. Their experiences and the challenges they were facing
-had a great impact on me and to a large extent shaped my research for the next
-few following years. More specifically, here are some of the questions which
-intrigued me the most.
+with oncologists who were diagnosing patients as well as cell biologists
+researching fundamentals of cancer. Their experiences and the challenges they
+were facing had a great impact on me and to a large extent shaped my research
+for the next few following years. More specifically, here are some of the
+questions which intrigued me the most.
 
 Some patients enter the clinic carrying cancer type A, which is mild and does
 not require an aggressive treatment. Therefore they are put under the
@@ -87,9 +94,9 @@ appropriate treatment while their condition is monitored through time. However,
 the disease in some of these patients develops into another type, let say type
 B, which is more aggressive and sometimes requires a harsher or a different
 treatment. Considering the fact that like many other diseases, cancer can be
-defeated best in its earliest stages, we could potentially achieve a
-better prognosis for these patients had we known their disease will develop into
-type B at a much earlier stage.
+defeated best in its earliest stages, we could potentially achieve a better
+prognosis for these patients had we known their disease will develop into type B
+at a much earlier stage.
 
 Similar to the above issue, out of the many patients who go in remission,
 \emph{i.e} they seem free of cancer after the course of the treatment, some
@@ -103,7 +110,7 @@ detect those cells, or something about the original cancer cells predicting the
 relapse, earlier during the treatment or even at the time of the original
 diagnosis?
 
-In BCCRC, people were also researching cancer by looking at the effect of
+In BCCRC, people were also researching cancer by looking at the effects of
 different drugs and drug combinations targeting different genes. Some of my cell
 biologist friends, often taking recommendations from their supervisors, would
 choose a few genes and spend years investigating the role of those genes in the
@@ -111,7 +118,9 @@ development of a particular cancer type. Of course they would do their best to
 choose the most relevant set of genes to their knowledge, but the task of
 choosing a few genes out of over 22k genes on the human genome is rather
 challenging and does not always lead to positive results and successful
-treatments.
+treatments. There is also a bias towards the genes which have been discovered
+earlier and have been studied more in depth. If the cancer happens to be related
+to one of the less studied genes, it usually can stay under the radar for while.
 
 This thesis is an effort to design and develop computational methods to tackle
 the abovementioned challenges. There are two main parts to this thesis. In the
@@ -119,15 +128,18 @@ first part, presented in Chapter~\ref{sec:fcs}, the focus is mostly on the
 methods applicable directly in clinics, using the kind of data readily available
 at the time of the diagnosis. The technology required to produce the required
 data is not new and it has been in widespread use for decades all around the
-world. The technology is flow cytometry and the machine producing the data is a
-flow cytometer. It takes certain measurements from single cells, one by one,
-allowing us to study the presence and absence of certain cell types in a single
-biopsy. Although the technology has been around for a while, up until recently
+world. The technology is called flow cytometry and the machine producing the
+data is a flow cytometer. The machine takes certain measurements from single
+cells, one by one, allowing us to study the presence and absence of certain cell
+types in a single biopsy. It also allows us to sort and extract certain cell
+types from the biopsy for further analysis on only those selected cells.
+Although the technology has been around for a while, up until recently
 researchers have been analyzing its data manually. This work presents methods to
 automate some of those laborious and tedious tasks, while deriving new
-information and insights at the same time. As a byproduct, these methods can be
-used to design tests which can be run on cheaper machines available in poorer
-countries and yet deliver a relatively similar performance.
+information and insights about the data at the same time. As a byproduct, these
+methods can be used to design tests which can be run on cheaper machines
+available in poorer countries using the data from the more advanced machines,
+and yet deliver a relatively similar performance.
 
 More specifically, one way pathologists study a given biopsy, is to find out
 what kinds of cells are present in a given sample, and what types of
@@ -135,39 +147,45 @@ irregularities they posses. Each of these groups of cells is called a cell
 population, and what is presented in Chapter~\ref{sec:fcs}, is an effort to find
 different ways of discovering meaningful cell populations in each given sample.
 At the same time, we detect certain cell populations which appear to be
-correlated with a specific disease.
+correlated with a specific disease, or are helpful differentiating between
+two subtypes of a disease.
 
 The other part of this thesis is closer to the bleeding edge of cancer research
-than what happens in clinics. It uses some types of data, such as gene
+compared to what happens in clinics. It uses some types of data, such as gene
 expression profiles and DNA methylation data, which are more expensive to
 acquire and are usually measured for the purpose of research. A gene expression
-profile measures the activity of all 22k+ genes for a given sample, and a usual
+profile measures the activity of all 22k+ genes in a given sample, and a usual
 DNA methylation profile measures the methylation level of about 450k sites on
 the human DNA. These data, as well as others such as DNA, RNA, and protein
 sequence data have been increasingly used by biologists and computational
 biologists to better understand cell biology in many fields, including cancer
 research.
 
-These methods have been so essential to our understanding of cancer, that the
-classification of some cancer types now depend on them. In some cases, they have
-shown us that two different classes of cancer are indeed the same disease, only
-in different stages.
+These data and methods have been so essential to our understanding of cancer
+that the classification of some cancer types now depend on them. In some cases,
+they have shown us that two different classes of cancer are indeed the same
+disease, only in different stages. Lymphoma and leukemia are two good examples
+which used to be considered two different cancers, and now put together in the
+\emph{lymphoid neoplasms} group.
 
-If we had computational methods which would give us a list of promising genes
-that are influential in determining the cancer subtypes, the same set of genes
-could be a better starting point for cell biologists to choose from. Doing so,
-if we could deliver a list of genes specific to each patient, a rather
-personalized treatment could be selected for the patient.
+One goal of this thesis is to design computational methods capable of give us a
+list of promising genes that are influential in determining the cancer subtypes,
+so that the same set of genes can be a better starting point for cell biologists
+to choose and investigate. Doing so, we can also deliver a list of genes
+specific to each patient, enabling the selection of a rather personalized
+treatment for the patient.
 
-Although there has been magnificent advancements in the field, from the
+Although there has been magnificent advancements in the field from the
 computational perspective, these are very hard problems. The curse of
-dimensionality on top of low number of samples compared to dimension count makes
-it really hard. The fact that the data is often affected by noise and batch
-effects (Section ???) doesn't help the case neither. another category of
-challenges include the facts that cancer, and even a single cancer tumor, is
-heterogeneous and different cases show very different varying genetic profiles.
-Historically, this has lead to further classification of cancer, ant at times,
-changing the classification and merging some classes all together.
+dimensionality on top of the low number of samples compared to the number of
+dimension in the data all result in a hard computational problem
+(Section~\ref{sec:background}). The fact that the data is often affected by
+noise and batch effects (Section~\ref{sec:adaptive-learning}) doesn't help the
+case neither. Another challenging factor is that cancer, and even a single
+cancer tumor, is heterogeneous and different cases show very different varying
+genetic profiles. Historically this has lead to further classification of
+cancer, and at times, changing the classification and merging some classes all
+together as mentioned above.
 
 Black box models are not good. Interpreting models has value, and we do that.
 Medicine has also progressed. We have many treatments for the same diagnosis. We
