@@ -1,1 +1,23 @@
 \chapter{Conclusion}
+In chapter~\ref{sec:fcs} we covered a flow cytometry data analysis pipeline, and
+its application to two types of non-Hodgkin lymphoma, \emph{i.e.} Follicular
+Lymphoma and Diffuse Large B Cell Lymphomas. We showed how the pipeline can
+extract novel insights from the data as well as effectively automate a laborious
+workflow.
+
+We showed how flowType can extract features which can be used to train a model
+to classify subtypes. However, we did not consider the relationships between
+those features, \emph{i.e.} cell populations, while training the model. One
+approach would be to design a kernel which takes into account those
+relationships and therefore implicitly reduce the dimensionality of the input
+data.
+
+In chapter~\ref{sec:adaptive-learning} we focused mostly on the analysis of DNA
+methylation data using adaptive and interpretable models. Although we put a
+heavy focus on the models, our experiments showed that the preprocessing step
+can play a crucial role in stability and the performance of those models. In the
+case of DNA methylation data, for instance, a step to aggregate methylation
+levels over genes made the models more stable, faster, and better performing.
+Our observations support the idea of putting more focus on the preprocessing
+steps, and to document them in a more informative way. This would also greatly
+help towards improved reproducibility of efforts in the field.
