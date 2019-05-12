@@ -40,35 +40,41 @@ words~\cite[prologue]{the-emperor-of-all-maladies}:
 \end{displayquote}
 
 These decisions are hard to make, and it does not help knowing that our deep
-understanding of cancer is far from complete. The battle against cancer has many
-fronts, including prevention, diagnosis, and treatment, all of which benefiting
-from the advancements in understanding the disease. Cancer researchers try to
-understand the disease in the lab, and once their findings are confirmed and
-accepted by the community, they are used by pathologists and oncologists in the
-clinics. However, the diagnosis itself is also complex, challenging, and
-uncertain. This is why in many cases doctors do not agree on the exact
+understanding of cancer is far from complete. The battle against cancer has
+many fronts, including prevention, diagnosis, and treatment, all of which
+benefiting from the advancements in understanding the disease. As a part of the
+process, cancer researchers try to understand the disease in the lab, and once
+their findings are confirmed, accepted by the community, and pass the legal
+requirements, they are used by pathologists and oncologists in the clinics.
+However, the diagnosis itself is also complex, challenging, and in many cases
+not a definitive one. This is why sometimes doctors do not agree on the exact
 diagnosis, and a counsel of experts is required for a better and more reliable
-diagnosis and a decision the selected treatment.
+diagnosis and a treatment which hopefully results in a better prognosis.
 
 Cancer is a collection of extremely smart and complicated diseases. Although
-they share many common characteristics, they cannot be treated the same. A
-treatment which is very effective for some subtype of breast cancer, for
-example, may be completely ineffective against another subtype while both
-showing very similar symptoms. At the core of it, it comes to the fact that in
-normal cells there are processes and checks put in place which define when and
-if the cell should divide, or die at a certain time or under certain conditions.
-Some of those mechanisms act like an automated self destruct switch which is
-triggered if something goes wrong in the cell. However, our cells are under
-constant stress from the external factors which damage them, UV being one
-example, and sometimes the damage to the cell affects those mentioned mechanisms
-and disables them. This may lead to the cell divide uncontrollably, and become
+they share many common characteristics, the same treatment does not result in a
+similar prognosis. For example, two patients may come with two very similar
+malignant tumors in their breasts. However, one of the patient's tumor grows in
+response to estrogen, while the other one shows no reaction to estrogen. In
+this case, a treatment which blocks estrogen receptors is very effective for
+the first patient (ER+), while being completely ineffective against the second
+patient who has an ER- subtype of breast cancer.
+
+At the core of it, it comes to the fact that in normal cells there are
+processes and checks put in place which define when and if the cell should
+divide or die at a certain time or under certain conditions. Some of those
+mechanisms act like an automated self destruct switch which is triggered if
+something goes wrong in the cell. However, our cells are under constant stress
+from the external factors which damage them, UV being one example, and
+sometimes the damage to the cell affects those mentioned mechanisms and
+disables them. This may lead the cell to divide uncontrollably, and become
 cancerous. Another difference between normal cells and cancerous ones, is that
 normal cells are capable of repairing most of the mutations happening on their
 DNA, whereas those processes themselves are damaged in a cancerous cell. As a
 result, the rate of mutation in cancerous cells is higher of a few orders of
 magnitude compared to a normal healthy cell. The high rate of cell division in
-combination with hyper mutation, makes cancerous cells very adaptive to the
-environment around them, as well as against the drugs attacking them.
+combination with hyper mutation, makes cancerous cells very adaptive to their
+environment, as well as against the drugs attacking them.
 
 Cancer treatments are methods and substances which ideally target only the
 cancerous cells and kill them. In a sense, they are poison, but ideally only to
@@ -77,6 +83,10 @@ is not easy to distinguish them from normal cells. The more difference between
 the cancer cells and our normal healthy cells, the easier to target them; but
 unfortunately not all cancer subtypes are easily distinguishable from other
 cells for the purpose of treatment.
+
+TODO: a bad jump
+
+TODO: we don't say why we help and how
 
 I can better put this thesis in context by giving my personal perspective on
 cancer research and diagnosis. I spent over a year researching in British
@@ -88,6 +98,8 @@ were facing had a great impact on me and to a large extent shaped my research
 for the next few following years. More specifically, here are some of the
 questions which intrigued me the most.
 
+TODO: include motivation from MPI
+
 Some patients enter the clinic carrying cancer type A, which is mild and does
 not require an aggressive treatment. Therefore they are put under the
 appropriate treatment while their condition is monitored through time. However,
@@ -95,8 +107,8 @@ the disease in some of these patients develops into another type, let say type
 B, which is more aggressive and sometimes requires a harsher or a different
 treatment. Considering the fact that like many other diseases, cancer can be
 defeated best in its earliest stages, we could potentially achieve a better
-prognosis for these patients had we known their disease will develop into type B
-at a much earlier stage.
+prognosis for these patients had we known their disease will develop into type
+B at a much earlier stage.
 
 Similar to the above issue, out of the many patients who go in remission,
 \emph{i.e} they seem free of cancer after the course of the treatment, some
@@ -122,6 +134,8 @@ treatments. There is also a bias towards the genes which have been discovered
 earlier and have been studied more in depth. If the cancer happens to be related
 to one of the less studied genes, it usually can stay under the radar for while.
 
+TODO: The two parts are not clear
+
 This thesis is an effort to design and develop computational methods to tackle
 the abovementioned challenges. There are two main parts to this thesis. In the
 first part, presented in Chapter~\ref{sec:fcs}, the focus is mostly on the
@@ -141,10 +155,18 @@ methods can be used to design tests which can be run on cheaper machines
 available in poorer countries using the data from the more advanced machines,
 and yet deliver a relatively similar performance.
 
+TODO: first tell a story, then the contribution
+
+TODO: chapter 3 doesn't seem new here.
+
+TODO: be clearn on what is done!
+
+TODO: same paragraph as above
+
 More specifically, one way pathologists study a given biopsy, is to find out
 what kinds of cells are present in a given sample, and what types of
 irregularities they posses. Each of these groups of cells is called a cell
-population, and what is presented in Chapter~\ref{sec:fcs}, is an effort to find
+population, and what is presented in Chapter~\ref{sec:fcs} is an effort to find
 different ways of discovering meaningful cell populations in each given sample.
 At the same time, we detect certain cell populations which appear to be
 correlated with a specific disease, or are helpful differentiating between
@@ -161,12 +183,18 @@ sequence data have been increasingly used by biologists and computational
 biologists to better understand cell biology in many fields, including cancer
 research.
 
+TODO: same paragraph
+
+TODO: bad place, move up?
+
 These data and methods have been so essential to our understanding of cancer
 that the classification of some cancer types now depend on them. In some cases,
-they have shown us that two different classes of cancer are indeed the same
+they(?, TODO) have shown us that two different classes of cancer are indeed the same
 disease, only in different stages. Lymphoma and leukemia are two good examples
 which used to be considered two different cancers, and now put together in the
 \emph{lymphoid neoplasms} group.
+
+TODO: what's the other one?
 
 One goal of this thesis is to design computational methods capable of give us a
 list of promising genes that are influential in determining the cancer subtypes,
@@ -176,7 +204,7 @@ specific to each patient, enabling the selection of a rather personalized
 treatment for the patient.
 
 Although there has been magnificent advancements in the field from the
-computational perspective, these are very hard problems. The curse of
+computational perspective, these(?, TODO) are very hard problems. The curse of
 dimensionality on top of the low number of samples compared to the number of
 dimension in the data all result in a hard computational problem as further
 explained in Section~\ref{sec:background}). Also, the fact that the data is
@@ -198,7 +226,7 @@ interpretable machine learning models so that:
   information about the potential underlying cause of the disease which in
   combination with the fact that we often times have several treatment options
   for the same disease can be used in the diagnosis phase to improve the
-  treatment and prognosis.
+  treatment and prognosis. (TODO: one sentence!)
 \item For a trained model, give an overall explanation on how the model is
   working so that it can better be trusted and understood by the people in
   clinics.
@@ -213,3 +241,5 @@ apply that to some specific lymphoma subtypes. Then we continue in
 chapter~\ref{sec:adaptive-learning} with the analysis of mostly DNA methylation
 data and design some adaptable and interpretable models with an eye on
 personalized medicine.
+
+TODO: what are the concrete research questions?
