@@ -9,9 +9,9 @@ Cancer has been with human species throughout our 4000 years of history.
 Although our understanding of cancer has changed drastically through time, its
 treatment stays challenging and in many cases we have not been able to cure it
 to this date. The immense frustration of dealing with cancer not only affects
-the patients, but also the doctors, pathologists, and oncologists treating those
-patients. Siddhartha Mukherjee in his book ``The Emperor of All Maladies''
-explains the feeling with these
+the patients, but also the doctors, pathologists, and oncologists treating
+those patients. Siddhartha Mukherjee in his book ``The Emperor of All
+Maladies'' explains the feeling with these
 words~\cite[prologue]{the-emperor-of-all-maladies}:
 
 \begin{displayquote}
@@ -33,9 +33,9 @@ words~\cite[prologue]{the-emperor-of-all-maladies}:
     sixty-six-year-old pharmacist with lung cancer who had failed all other
     drugs? Was it better to try a tested and potent combination of drugs on a
     twenty-six-year-old woman with Hodgkin's disease and risk losing her
-    fertility, or to choose a more experimental combination that might spare it?
-    Should a Spanish-speaking mother of three with colon cancer be enrolled in a
-    new clinical trial when she can barely read the formal and inscrutable
+    fertility, or to choose a more experimental combination that might spare
+    it? Should a Spanish-speaking mother of three with colon cancer be enrolled
+    in a new clinical trial when she can barely read the formal and inscrutable
     language of the consent forms?}
 \end{displayquote}
 
@@ -68,22 +68,23 @@ compared to when they where originally diagnosed. This sometimes happens when a
 very small number of cells from the original cancer are or become resistant to
 the drugs and survive the treatment, but go undetected for a while in the tests
 and scans. It may take months for them to grow large enough to be detected
-again. Now the question is, looking back at the data of these patients, could we
-detect those cells, or something about the original cancer cells predicting the
-relapse, earlier during the treatment or even at the time of the original
+again. Now the question is, looking back at the data of these patients, could
+we detect those cells, or something about the original cancer cells predicting
+the relapse, earlier during the treatment or even at the time of the original
 diagnosis?
 
 In BCCRC, people were also researching cancer by looking at the effects of
-different drugs and drug combinations targeting different genes. Some of my cell
-biologist friends, often taking recommendations from their supervisors, would
-choose a few genes and spend years investigating the role of those genes in the
-development of a particular cancer type. Of course they would do their best to
-choose the most relevant set of genes to their knowledge, but the task of
-choosing a few genes out of over 22k genes on the human genome is rather
+different drugs and drug combinations targeting different genes. Some of my
+cell biologist friends, often taking recommendations from their supervisors,
+would choose a few genes and spend years investigating the role of those genes
+in the development of a particular cancer type. Of course they would do their
+best to choose the most relevant set of genes to their knowledge, but the task
+of choosing a few genes out of over 22k genes on the human genome is rather
 challenging and does not always lead to positive results and successful
 treatments. There is also a bias towards the genes which have been discovered
-earlier and have been studied more in depth. If the cancer happens to be related
-to one of the less studied genes, it usually can stay under the radar for while.
+earlier and have been studied more in depth. If the cancer happens to be
+related to one of the less studied genes, it usually can stay under the radar
+for while.
 
 TODO: The two parts are not clear
 
@@ -138,27 +139,25 @@ TODO: we don't say why we help and how
 This thesis is an effort to design and develop computational methods to tackle
 the abovementioned challenges. There are two main parts to this thesis. In the
 first part, presented in Chapter~\ref{sec:fcs}, the focus is mostly on the
-methods applicable directly in clinics, using the kind of data readily available
-at the time of the diagnosis. The technology required to produce the required
-data is not new and it has been in widespread use for decades all around the
-world. The technology is called flow cytometry and the machine producing the
-data is a flow cytometer. The machine takes certain measurements from single
-cells, one by one, allowing us to study the presence and absence of certain cell
-types in a single biopsy. It also allows us to sort and extract certain cell
-types from the biopsy for further analysis on only those selected cells.
-Although the technology has been around for a while, up until recently
-researchers have been analyzing its data manually. This work presents methods to
-automate some of those laborious and tedious tasks, while deriving new
+methods applicable directly in clinics, using the kind of data readily
+available at the time of the diagnosis. The technology required to produce the
+required data is not new and it has been in widespread use for decades all
+around the world. The technology is called flow cytometry and the machine
+producing the data is a flow cytometer. The machine takes certain measurements
+from single cells, one by one, allowing us to study the presence and absence of
+certain cell types in a single biopsy. It also allows us to sort and extract
+certain cell types from the biopsy for further analysis on only those selected
+cells. Although the technology has been around for a while, up until recently
+researchers have been analyzing its data manually. This work presents methods
+to automate some of those laborious and tedious tasks, while deriving new
 information and insights about the data at the same time. As a byproduct, these
 methods can be used to design tests which can be run on cheaper machines
 available in poorer countries using the data from the more advanced machines,
 and yet deliver a relatively similar performance.
 
-TODO: first tell a story, then the contribution
-
 TODO: chapter 3 doesn't seem new here.
 
-TODO: be clearn on what is done!
+TODO: be clear on what is done!
 
 TODO: same paragraph as above
 
@@ -180,26 +179,22 @@ DNA methylation profile measures the methylation level of about 450k sites on
 the human DNA. These data, as well as others such as DNA, RNA, and protein
 sequence data have been increasingly used by biologists and computational
 biologists to better understand cell biology in many fields, including cancer
-research.
-
-TODO: same paragraph
+research. These data and methods have been so essential to our understanding of
+cancer that the classification of some cancer types now depend on them. In some
+cases, they(?, TODO) have shown us that two different classes of cancer are
+indeed the same disease, only in different stages. Lymphoma and leukemia are
+two good examples which used to be considered two different cancers, and now
+put together in the \emph{lymphoid neoplasms} group.
 
 TODO: bad place, move up?
 
-These data and methods have been so essential to our understanding of cancer
-that the classification of some cancer types now depend on them. In some cases,
-they(?, TODO) have shown us that two different classes of cancer are indeed the same
-disease, only in different stages. Lymphoma and leukemia are two good examples
-which used to be considered two different cancers, and now put together in the
-\emph{lymphoid neoplasms} group.
-
 TODO: what's the other one?
 
-One goal of this thesis is to design computational methods capable of give us a
-list of promising genes that are influential in determining the cancer subtypes,
-so that the same set of genes can be a better starting point for cell biologists
-to choose and investigate. Doing so, we can also deliver a list of genes
-specific to each patient, enabling the selection of a rather personalized
+One goal of this thesis is to design computational methods capable of reporting
+a list of promising genes that are influential in determining the cancer
+subtypes, so that the same set of genes can be a better starting point for cell
+biologists to choose and investigate. Doing so, we can also deliver a list of
+genes specific to each patient, enabling the selection of a rather personalized
 treatment for the patient.
 
 Although there has been magnificent advancements in the field from the
@@ -233,9 +228,9 @@ interpretable machine learning models so that:
 
 In the following chapters, some of the basics required to follow the later
 sections, covering some background in the related parts of machine learning and
-biology are covered in chapter~\ref{sec:background}. In chapter~\ref{sec:fcs} we
-focus on flow cytometry data and explain the design and implementation of a few
-pieces which together make an end to end pipeline to analyze such data, and
+biology are covered in chapter~\ref{sec:background}. In chapter~\ref{sec:fcs}
+we focus on flow cytometry data and explain the design and implementation of a
+few pieces which together make an end to end pipeline to analyze such data, and
 apply that to some specific lymphoma subtypes. Then we continue in
 chapter~\ref{sec:adaptive-learning} with the analysis of mostly DNA methylation
 data and design some adaptable and interpretable models with an eye on
