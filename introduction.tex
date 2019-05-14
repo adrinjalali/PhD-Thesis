@@ -44,13 +44,13 @@ cancer research and diagnosis. I spent over a year researching in British
 Columbia's Cancer Research Center (BCCRC) in Vancouver, Canada, which also
 admitted patients for diagnosis and treatment. As a result, I worked closely
 with oncologists who were diagnosing patients as well as cell biologists
-researching fundamentals of cancer. Their experiences and the challenges they
-were facing had a great impact on me and to a large extent shaped my research
-for the next few following years. Then, once I moved to the Bioinformatics lab
-in Max Planck Institute for Informatics in Saarbr\"ucken, Germany, I was better
-equipped with required statistics and machine learning skills to tackle the
-computational problems explained here. Following are a few examples of
-challenges I saw people were facing in BCCRC:
+researching fundamentals of cancer and new treatments for it. Their experiences
+and the challenges they were facing had a great impact on me and to a large
+extent shaped my research for the next few following years. Then, once I moved
+to the Bioinformatics lab in Max Planck Institute for Informatics in
+Saarbr\"ucken, Germany, I was better equipped with required the statistics and
+machine learning skills to tackle the computational problems explained here.
+Here is a list of some of the challenges I saw people were facing in BCCRC:
 
 \begin{itemize}
   \item Some patients enter the clinic carrying cancer type A, which is mild
@@ -59,9 +59,9 @@ challenges I saw people were facing in BCCRC:
     However, the disease in some of these patients develops into another type,
     let say type B, which is more aggressive and sometimes requires a harsher
     or a different treatment. Considering the fact that like many other
-    diseases, cancer can be defeated best in its earliest stages, we could
-    potentially achieve a better prognosis for these patients had we known
-    their disease will develop into type B at a much earlier stage.
+    diseases, cancer can be defeated best while at its earliest stages, we
+    could potentially achieve a better prognosis for these patients had we
+    known their disease will develop into type B at a much earlier stage.
 
   \item Similar to the above issue, out of the many patients who go in
     remission, \emph{i.e} they seem free of cancer after the course of the
@@ -70,43 +70,43 @@ challenges I saw people were facing in BCCRC:
     sometimes happens when a very small number of cells from the original
     cancer are or become resistant to the drugs and survive the treatment, but
     go undetected for a while in the tests and scans. It may take months for
-    them to grow large enough to be detected again. Now the question is,
-    looking back at the data of these patients, could we detect those cells, or
-    something about the original cancer cells predicting the relapse, earlier
-    during the treatment or even at the time of the original diagnosis?
+    those cell populations to grow large enough to be detected again. Now the
+    question is, looking back at the data of these patients, could we detect
+    those cells, or something about the original cancer cells predicting the
+    relapse, earlier during the treatment or even at the time of the original
+    diagnosis?
 
   \item In BCCRC, people were also researching cancer by looking at the effects
     of different drugs and drug combinations targeting different genes. Some of
     my cell biologist friends, often taking recommendations from their
     supervisors, would choose a few genes and spend years investigating the
-    role of those genes in the development of a particular cancer type. Of
-    course they would do their best to choose the most relevant set of genes to
-    their knowledge, but the task of choosing a few genes out of over 22k genes
-    on the human genome is rather challenging and does not always lead to
-    positive results and successful treatments. There is also a bias towards
-    the genes which have been discovered earlier and have been studied more in
-    depth. If the cancer happens to be related to one of the less studied
-    genes, it usually can stay under the radar for while.
+    role of those genes in the development of a particular type of cancer. Of
+    course they would do their best to choose the most relevant set of genes,
+    but the task of choosing a few genes out of over 22k genes on the human
+    genome is rather challenging and does not always lead to successful
+    treatments and positive results. There is also a bias towards the genes
+    which have been discovered earlier and have been studied more in depth. If
+    the cancer happens to be related to one of the less studied genes, it
+    usually can stay under the radar for while.
 \end{itemize}
 
-TODO: The two parts are not clear
+All of the abovementioned issues involve decisions that are hard to make, and
+it does not help knowing that our deep understanding of cancer is far from
+complete. The battle against cancer has many fronts, including prevention,
+diagnosis, and treatment, all of which benefiting from the advancements in
+understanding the disease. As a part of the process, cancer researchers try to
+understand the disease in the lab, and once their findings are confirmed,
+accepted by the community, and pass the legal requirements, they are used by
+pathologists and oncologists in the clinics. However, the diagnosis itself is
+also complex, challenging, and in many cases not a definitive one. This is why
+sometimes doctors do not agree on the exact diagnosis, and a counsel of experts
+is required for a better and more reliable diagnosis and a treatment which
+hopefully results in a better prognosis.
 
-These(TODO: ?) decisions are hard to make, and it does not help knowing that
-our deep understanding of cancer is far from complete. The battle against
-cancer has many fronts, including prevention, diagnosis, and treatment, all of
-which benefiting from the advancements in understanding the disease. As a part
-of the process, cancer researchers try to understand the disease in the lab,
-and once their findings are confirmed, accepted by the community, and pass the
-legal requirements, they are used by pathologists and oncologists in the
-clinics. However, the diagnosis itself is also complex, challenging, and in
-many cases not a definitive one. This is why sometimes doctors do not agree on
-the exact diagnosis, and a counsel of experts is required for a better and more
-reliable diagnosis and a treatment which hopefully results in a better
-prognosis.
-
-Cancer is a collection of extremely smart and complicated diseases. Although
-they share many common characteristics, the same treatment does not result in a
-similar prognosis. For example, two patients may come with two very similar
+To better understand the challenge, we need to realize that cancer is a
+collection of extremely smart and complicated diseases. Although they share
+many common characteristics, the same treatment does not result in a similar
+prognosis. For example, two patients may come with two physically very similar
 malignant tumors in their breasts. However, one of the patient's tumor grows in
 response to estrogen, while the other one shows no reaction to estrogen. In
 this case, a treatment which blocks estrogen receptors is very effective for
@@ -123,19 +123,21 @@ sometimes the damage to the cell affects those mentioned mechanisms and
 disables them. This may lead the cell to divide uncontrollably, and become
 cancerous. Another difference between normal cells and cancerous ones, is that
 normal cells are capable of repairing most of the mutations happening on their
-DNA, whereas those processes themselves are damaged in a cancerous cell. As a
-result, the rate of mutation in cancerous cells is higher of a few orders of
-magnitude compared to a normal healthy cell. The high rate of cell division in
+DNA as a result of either external stress or during cell division, whereas
+those processes themselves are often damaged in a cancerous cell. As a result,
+the rate of mutation in cancerous cells is higher of a few orders of magnitude
+compared to a normal healthy cell. The high rate of cell division in
 combination with hyper mutation, makes cancerous cells very adaptive to their
 environment, as well as against the drugs attacking them.
 
 Cancer treatments are methods and substances which ideally target only the
-cancerous cells and kill them. In a sense, they are poison, but ideally only to
-cancer. However, cancer cells are derived from our own cells, and therefore it
-is not easy to distinguish them from normal cells. The more difference between
-the cancer cells and our normal healthy cells, the easier to target them; but
-unfortunately not all cancer subtypes are easily distinguishable from other
-cells for the purpose of treatment.
+cancerous cells and kill them, or stop their growth and cell division. In a
+sense, they are poison, but ideally only to cancer. However, cancer cells are
+derived from our own cells, and therefore it is not easy to distinguish them
+from normal cells. The more difference between the cancer cells and our normal
+healthy cells, the easier it is to target them; but unfortunately not all
+cancer subtypes are easily distinguishable from healthy cells for the purpose
+of treatment.
 
 TODO: we don't say why we help and how
 
@@ -192,6 +194,8 @@ put together in the \emph{lymphoid neoplasms} group.
 TODO: bad place, move up?
 
 TODO: what's the other one?
+
+TODO: The two parts are not clear
 
 One goal of this thesis is to design computational methods capable of reporting
 a list of promising genes that are influential in determining the cancer
