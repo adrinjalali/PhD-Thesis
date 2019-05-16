@@ -147,14 +147,50 @@ given sample, which in our case are all from biopsies or blood samples taken
 from patients. This type of single cell measurement data enables us to detect
 and sort different cell populations within a single given sample.
 Chapter~\ref{sec:fcs} explains our designed and implemented methods to analyze
-flow cytometry data which include:
+flow cytometry to address the following challenges:
 
 \begin{itemize}
-  \item Automated analysis of the data: ...
-  \item Novel cell population discovery: ...
-  \item Quality assurance: ...
-  \item Enabling similar tests using cheaper machines: ...
-  \item Visualization, cell population relationships: ...
+  \item Automated analysis of the data: manual analysis of flow cytometry data
+    involves manually looking at 2D projections of the data long two selected
+    features at a time, and potentially filtering a part of the data before
+    moving on to a different projection. This way at each step a
+    sub-population, \emph{i.e.} a subset of the cells, is selected for further
+    analysis. Presence or absence of a cell population, or its predominance
+    compared to other cell populations, can be indicative of a certain type of
+    cancer. Our developed methods can automate this process and help clinicians
+    to quickly find a certain cell population within a given sample.
+  \item Novel cell population discovery: our method analyzes the relationship
+    between all the cell populations it finds with the target cancer subtypes,
+    and reports the cell populations which seem to be informative or predictive
+    in differentiating two subtypes. Discovering new predictive cell
+    populations can help the diagnosis process, as well as potentially a better
+    choice of treatment for each patient.
+  \item Quality assurance: in clinics, oncologists sometimes go through a QA
+    process in which they randomly look at a limited number of past patients
+    and retrospectively check the quality of the original diagnosis. However,
+    due to limited amount of available resources, the can only go through a
+    small number of cases. We develop a method to report cases where there is a
+    higher probability that the diagnosis could be improved, hoping that
+    retrospective investigation of those cases could generally improve the
+    diagnosis process.
+  \item Visualization: one important aspect of analyzing cell populations is
+    that they are related to one another, \emph{i.e.} some cell populations are
+    a subset of others. While there is value in reporting relevant cell
+    populations for a diagnosis, it is also essential to visualize related
+    sub-populations to the reported ones, as well as showing how one can best
+    filter and find a specific group of cells if they were to do that manually.
+    Another reason to visualize the data the way we do, is that it helps a
+    cancer researcher to better understand why or how those cell populations
+    are relevant.
+  \item Enabling similar tests using cheaper machines: one important benefit of
+    visualizing the cell populations the way we do, is that it shows
+    alternative ways that a cell population can be isolated from the other
+    cells using fewer measurements per cell. As a result, the same cell
+    population can then be filtered using a smaller number or a cheaper
+    variation of chemical reagents used in flow cytometry. Consequently, a
+    pathologist in a place where there is harder or no access to more expensive
+    cytometers and reagents, can benefit from the findings of a research
+    institute with significantly more budget at their disposal.
 \end{itemize}
 
 The second part of the thesis, described in
