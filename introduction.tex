@@ -139,63 +139,47 @@ healthy cells, the easier it is to target them; but unfortunately not all
 cancer subtypes are easily distinguishable from healthy cells for the purpose
 of treatment.
 
-TODO: we don't say why we help and how
+In the first part of this thesis, \emph{i.e.} Chapter~\ref{sec:fcs}, we tackle
+some of the issues faced by clinicians while analyzing flow cytometry data. A
+flow cytometer, \emph{i.e.} the instrument producing the data, is capable of
+measuring a dozen or so different characteristics of individual cells in a
+given sample, which in our case are all from biopsies or blood samples taken
+from patients. This type of single cell measurement data enables us to detect
+and sort different cell populations within a single given sample.
+Chapter~\ref{sec:fcs} explains our designed and implemented methods to analyze
+flow cytometry data which include:
 
-This thesis is an effort to design and develop computational methods to tackle
-the abovementioned challenges. There are two main parts to this thesis. In the
-first part, presented in Chapter~\ref{sec:fcs}, the focus is mostly on the
-methods applicable directly in clinics, using the kind of data readily
-available at the time of the diagnosis. The technology required to produce the
-required data is not new and it has been in widespread use for decades all
-around the world. The technology is called flow cytometry and the machine
-producing the data is a flow cytometer. The machine takes certain measurements
-from single cells, one by one, allowing us to study the presence and absence of
-certain cell types in a single biopsy. It also allows us to sort and extract
-certain cell types from the biopsy for further analysis on only those selected
-cells. Although the technology has been around for a while, up until recently
-researchers have been analyzing its data manually. This work presents methods
-to automate some of those laborious and tedious tasks, while deriving new
-information and insights about the data at the same time. As a byproduct, these
-methods can be used to design tests which can be run on cheaper machines
-available in poorer countries using the data from the more advanced machines,
-and yet deliver a relatively similar performance.
+\begin{itemize}
+  \item Automated analysis of the data: ...
+  \item Novel cell population discovery: ...
+  \item Quality assurance: ...
+  \item Enabling similar tests using cheaper machines: ...
+  \item Visualization, cell population relationships: ...
+\end{itemize}
 
-TODO: chapter 3 doesn't seem new here.
-
-TODO: be clear on what is done!
-
-TODO: same paragraph as above
-
-More specifically, one way pathologists study a given biopsy, is to find out
-what kinds of cells are present in a given sample, and what types of
-irregularities they posses. Each of these groups of cells is called a cell
-population, and what is presented in Chapter~\ref{sec:fcs} is an effort to find
-different ways of discovering meaningful cell populations in each given sample.
-At the same time, we detect certain cell populations which appear to be
-correlated with a specific disease, or are helpful differentiating between
-two subtypes of a disease.
-
-The other part of this thesis is closer to the bleeding edge of cancer research
-compared to what happens in clinics. It uses some types of data, such as gene
-expression profiles and DNA methylation data, which are more expensive to
-acquire and are usually measured for the purpose of research. A gene expression
-profile measures the activity of all 22k+ genes in a given sample, and a usual
-DNA methylation profile measures the methylation level of about 450k sites on
-the human DNA. These data, as well as others such as DNA, RNA, and protein
-sequence data have been increasingly used by biologists and computational
-biologists to better understand cell biology in many fields, including cancer
-research. These data and methods have been so essential to our understanding of
-cancer that the classification of some cancer types now depend on them. In some
-cases, they(?, TODO) have shown us that two different classes of cancer are
-indeed the same disease, only in different stages. Lymphoma and leukemia are
-two good examples which used to be considered two different cancers, and now
-put together in the \emph{lymphoid neoplasms} group.
+The second part of the thesis, described in
+Chapter~\ref{sec:adaptive-learning}, focuses on some types of data that are not
+yet available as a routine test in clinics, but are essential to our deeper
+understanding of cancer. These data are measurements from the whole human
+genome, and our focus is on gene expression profiles and a modification on the
+DNA, called methylation, \emph{i.e.} a methyl component is attached a
+Cytosine(C) or an Adenine(A) base on the DNA. A gene expression profile
+measures the activity of all 22k+ genes in a given sample, and a usual DNA
+methylation profile measures the methylation level of about 450k sites on the
+human DNA. DNA methylation levels can change due to environmental factors and
+during cell differentiation and aging, and there is evidence that they are
+sometimes heritable. These data, as well as others such as DNA, RNA, and
+protein sequence data have been increasingly used by biologists and
+computational biologists to better understand cell biology in many fields,
+including cancer research. These data and methods have been so essential to our
+understanding of cancer that the classification of some cancer types now depend
+on them. In some cases, molecular and chemical analysis of cancer has shown us
+that two different classes of cancer are indeed the same disease, only in
+different stages. Lymphoma and leukemia are two good examples which used to be
+considered two different cancers, and now together they form the \emph{lymphoid
+  neoplasms} group.
 
 TODO: bad place, move up?
-
-TODO: what's the other one?
-
-TODO: The two parts are not clear
 
 One goal of this thesis is to design computational methods capable of reporting
 a list of promising genes that are influential in determining the cancer
@@ -219,18 +203,19 @@ above.
 
 All of the above facts and arguments motivated me to focus on investigating
 interpretable machine learning models so that:
+
 \begin{itemize}
-\item The result of the investigation and application of the model on the data
-  results in better understanding of the disease, by giving cell biologists
-  hints about where they can put their focus.
-\item For any given data from a single patient, the model can give some
-  information about the potential underlying cause of the disease which in
-  combination with the fact that we often times have several treatment options
-  for the same disease can be used in the diagnosis phase to improve the
-  treatment and prognosis. (TODO: one sentence!)
-\item For a trained model, give an overall explanation on how the model is
-  working so that it can better be trusted and understood by the people in
-  clinics.
+  \item The result of the investigation and application of the model on the
+    data results in better understanding of the disease, by giving cell
+    biologists hints about where they can put their focus.
+  \item For any given data from a single patient, the model can give some
+    information about the potential underlying cause of the disease which in
+    combination with the fact that we often times have several treatment
+    options for the same disease can be used in the diagnosis phase to improve
+    the treatment and prognosis. (TODO: one sentence!)
+  \item For a trained model, give an overall explanation on how the model is
+    working so that it can better be trusted and understood by the people in
+    clinics.
 \end{itemize}
 
 In the following chapters, some of the basics required to follow the later
