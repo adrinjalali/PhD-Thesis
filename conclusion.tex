@@ -1,9 +1,9 @@
 \chapter{Conclusion}
-In chapter~\ref{sec:fcs} we covered a flow cytometry data analysis pipeline, and
-its application to two types of non-Hodgkin lymphoma, \emph{i.e.} Follicular
-Lymphoma and Diffuse Large B Cell Lymphomas. We showed how the pipeline can
-extract novel insights from the data as well as effectively automate a laborious
-workflow.
+In chapter~\ref{sec:fcs} we covered a flow cytometry data analysis pipeline,
+and its application to two types of non-Hodgkin lymphoma, \emph{i.e.}
+Follicular Lymphoma and Diffuse Large B Cell Lymphomas. We showed how the
+pipeline can extract novel insights from the data as well as effectively
+automate a laborious workflow.
 
 We showed how flowType can extract features which can be used to train a model
 to classify subtypes. However, we did not consider the relationships between
@@ -15,11 +15,34 @@ data.
 In chapter~\ref{sec:adaptive-learning} we focused mostly on the analysis of DNA
 methylation data using adaptive and interpretable models. Although we put a
 heavy focus on the models, our experiments showed that the preprocessing step
-can play a crucial role in stability and the performance of those models. In the
-case of DNA methylation data, for instance, a step to aggregate methylation
+can play a crucial role in stability and the performance of those models. In
+the case of DNA methylation data, for instance, a step to aggregate methylation
 levels over genes made the models more stable, faster, and better performing.
 Our observations support the idea of putting more focus on the preprocessing
 steps, and to document them in a more informative way. This would also greatly
-help towards improved reproducibility of efforts in the field.
+help towards improved reproducibility of publications in the field.
 
-TODO: Thesis future work should be another PhD!
+This thesis was an effort towards better understanding of cancer as well as
+improving the diagnosis process. However, there are a few aspects which need to
+be done before these methods can best be employed in clinics:
+
+\begin{itemize}
+  \item Incorporating multiple data sources: the approaches we took in this
+    thesis all incorporated a single input type at a time. Of course as
+    mentioned in previous chapters, not all data sources are available for all
+    patients or at the time of diagnosis. However, the same way that a
+    pathologist would use different test results as accumulating evidence for a
+    potential diagnosis or to support a treatment, a model should also be able
+    to do the same and gain or loose confidence in a specific diagnosis as more
+    data comes in for a single patient.
+  \item Adaptive to missing data sources: incorporating increasing evidence
+    also means that models should be able to cope with missing data and missing
+    data sources. Our models in Chapter~\ref{sec:adaptive-learning} are efforts
+    towards handling noisy or missing data in a single data source, but similar
+    approaches can be taken to have an ensemble of models each working on a
+    specific data source.
+  \item Models confidences and reasoning/interpretability
+  \item Real world issues such as batches, etc.
+  \item Reproduce, deploy, test
+  \item Counsel of doctors $\rightarrow$ counsel of models
+\end{itemize}
