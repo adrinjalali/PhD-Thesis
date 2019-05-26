@@ -41,8 +41,59 @@ be done before these methods can best be employed in clinics:
     towards handling noisy or missing data in a single data source, but similar
     approaches can be taken to have an ensemble of models each working on a
     specific data source.
-  \item Models confidences and reasoning/interpretability
-  \item Real world issues such as batches, etc.
-  \item Reproduce, deploy, test
-  \item Counsel of doctors $\rightarrow$ counsel of models
+  \item Models confidences: from a pure mathematical and machine learning
+    perspective, we sometimes tend to focus too much on a classifier's
+    performance, and forget about the value of reporting and estimating a
+    model's confidence on the output for a specific input. In a sense, we put
+    our confidence on a model based on its overall performance/confidence,
+    whereas in practice, it is crucial to know how confident a model is on its
+    output for a given input. Bayesian models are useful for this purpose in
+    the sense that the posterior probability's variance (for a Gaussian
+    posterior for instance) can easily be interpreted as how confident the
+    model is. However, it is also possible to calculate a proxy for model's
+    confidence for non-Bayesian models as shown in
+    Chapter~\ref{sec:adaptive-learning}. The analogy from the real world is
+    that when you go to a doctor, independent of how ``good'' an individual
+    doctor is, you'd always appreciate if they would tell you that they are
+    maybe not confident in their diagnosis, and that you should maybe get a
+    second opinion. Exactly the same way, if a mode's confidence for a specific
+    sample is not high enough, we can always rely more on a human doctor, or
+    another model, or a model based on a different type of data.
+  \item Interpretability, reasoning: Similar to people preferring a doctor who
+    can tell them the reason behind a diagnosis, a pathologist can put more
+    trust on a model which can report why a certain output is asserted by the
+    model. Specially with all the noise, batch effects, small sample issues,
+    etc., it is important that a doctor can validate a model's reasoning, and
+    decide whether it is a reasonable reasoning or an artifact of one the
+    abovementioned issues.
+  \item Real world issues such as batches, noise, etc.: one of the reasons that
+    a model's confidence and interpretability are important, is that the data
+    in the real world, in contrast to the data cleaned and trimmed to include
+    only nice and clean data, is that they one way of detecting that a model
+    may be malfunctioning due to those effects. However, those effects are real
+    and happen way too frequently for the bioinformatics community to ignore. A
+    model would therefore ideally be able to handle those effects seen in the
+    data.
+  \item Reproduce, deploy, test: instead of looking at each publication which
+    tries to deliver a better or different classifier for cancer diagnosis as
+    an isolated effort, we can look at the communal effort as an effort to
+    improve and diversify the set of pieces of software we have, all of which
+    can differentiate between a given set of cancer types. With this
+    perspective, we can apply some of the concepts which are usually applied to
+    software, in particular continuous integration, \emph{i.e.} to continuously
+    build, deploy, and test new models. This would also make the works more
+    ``reproducible'', which we refer to its dominant absence, as a crisis.
+    Having a place where these models are deployed, would also help a larger
+    community to test them in real life and see how they perform, and for the
+    developers of these models to get feedback and continuously improve them.
+    It would also be easier to observe and work on some of the real life issues
+    such as batch effects or differences between labs when the models are
+    exposed and tested by a wider community.
+  \item Counsel of doctors $\rightarrow$ counsel of models: one main benefit of
+    having models developed by different groups is that we can also use a set
+    of them for a given problem/data, the same way that we'd sometimes desire a
+    group of doctors to work on a patient's case instead of an individual
+    doctor. One immediate use-case for such a system is to trigger/request for
+    a second opinion if the wisdom of the set disagrees with the diagnosis made
+    by an individual doctor.
 \end{itemize}
