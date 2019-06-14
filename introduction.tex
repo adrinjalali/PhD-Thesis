@@ -6,12 +6,12 @@
 \chapter{Introduction}
 \label{ch:intro}
 Cancer has been with the human species throughout our 4000 years of history.
-Although our understanding of cancer has changed drastically through time, its
-treatment stays challenging and in many cases we have not been able to cure it
-to this date. The immense frustration of dealing with cancer not only affects
-the patients, but also the doctors, pathologists, and oncologists treating
-those patients. Siddhartha Mukherjee in his book \emph{``The Emperor of All
-  Maladies''} explains the feeling with these
+Although our understanding of cancer has changed drastically over time, its
+treatment remains a challenge and for some cancer subtypes we have not been
+able to find an effective treatment yet. The immense frustration of dealing
+with cancer not only affects the patients, but also the doctors, pathologists,
+and oncologists treating those patients. Siddhartha Mukherjee in his book
+\emph{``The Emperor of All Maladies''} explains the feeling with these
 words~\cite[prologue]{the-emperor-of-all-maladies}:
 
 \begin{displayquote}
@@ -40,33 +40,35 @@ words~\cite[prologue]{the-emperor-of-all-maladies}:
 \end{displayquote}
 
 I can better put this thesis in context by giving my personal perspective on
-cancer research and diagnosis. I spent over a year researching in British
+cancer research and diagnosis. I spent over a year as a researcher at British
 Columbia's Cancer Research Center (BCCRC) in Vancouver, Canada, which also
 admitted patients for diagnosis and treatment. As a result, I worked closely
 with oncologists who were diagnosing patients as well as cell biologists
-researching fundamentals of cancer and new treatments for it. Their experiences
-and the challenges they were facing had a great impact on me and to a large
-extent shaped my research for the next few following years. Then, once I moved
-to the Bioinformatics lab in Max Planck Institute for Informatics in
-Saarbr\"ucken, Germany, I was better equipped with the required statistics and
-machine learning skills to tackle the computational problems explained here.
-Here is a list of some of the challenges I saw people were facing in BCCRC:
+researching the fundamentals of cancer and new treatments for it. Their
+experiences and the challenges they were facing had a great impact on me and to
+a large extent shaped my research over the next few years. Then, once I moved
+to the Bioinformatics Lab at the Max Planck Institute for Informatics in
+Saarbr\"ucken, Germany, the Lab and my supervisors had a very strong background
+in machine learning and as a result I was better equipped with the required
+statistics and machine learning skills to tackle the computational problems
+explained here. Here is a list of some of the challenges I saw people facing at
+BCCRC:
 
 \begin{itemize}
   \item Some patients enter the clinic carrying cancer type A, which is mild
-    and does not require an aggressive treatment. Therefore they are put under
-    the appropriate treatment while their condition is monitored through time.
+    and does not require an aggressive treatment. Therefore they are given the
+    appropriate treatment while their condition is monitored over time.
     However, the disease in some of these patients develops into another type,
-    let say type B, which is more aggressive and sometimes requires a harsher
-    or a different treatment. Considering the fact that like many other
-    diseases, cancer can be defeated best while at its earliest stages, we
-    could potentially achieve a better prognosis for these patients, had we
-    known their disease will develop into type B at a much earlier stage.
+    let's say type B, which is more aggressive and sometimes requires a
+    stronger or a different treatment. Considering the fact that like many
+    other diseases, cancer can be defeated best while in its earliest stages,
+    the prognosis for these patients would be better, if we knew their disease
+    would develop into type B earlier.
 
   \item Similar to the above issue, out of the many patients who go in
     remission, \emph{i.e} they seem free of cancer after the course of the
     treatment, some relapse with a cancer which is significantly more resistant
-    to usual treatments compared to when they where originally diagnosed. This
+    to usual treatments compared to when they were originally diagnosed. This
     sometimes happens when a very small number of cells from the original
     cancer are or become resistant to the drugs and survive the treatment, but
     go undetected for a while in the tests and scans. It may take months for
@@ -76,9 +78,9 @@ Here is a list of some of the challenges I saw people were facing in BCCRC:
     predicting the relapse earlier during the treatment or even at the time of
     the original diagnosis?
 
-  \item In BCCRC, people were also researching cancer by looking at the effects
-    of different drugs and drug combinations targeting different genes. Some of
-    my cell biologist friends, often taking recommendations from their
+  \item At BCCRC, cancer cell biologists also research cancer by looking at the
+    effects of different drugs and drug combinations targeting different genes.
+    Some of my cell biologist friends, often taking recommendations from their
     supervisors, would choose a few genes and spend years investigating the
     role of those genes in the development of a particular type of cancer. Of
     course they would do their best to choose the most relevant set of genes,
@@ -86,34 +88,33 @@ Here is a list of some of the challenges I saw people were facing in BCCRC:
     genome is rather challenging and does not always lead to successful
     treatments and positive results. There is also a bias towards the genes
     which have been discovered earlier and have been studied more in depth. If
-    the cancer happens to be related to one of the less studied genes, it
-    usually can stay under the radar for while.
+    the cancer happens to be related to one of the less studied genes, it will
+    usually stay under the radar for while.
 \end{itemize}
 
 All of the abovementioned issues involve decisions that are hard to make, and
-it does not help knowing that our deep understanding of cancer is far from
-complete. The battle against cancer has many fronts, including prevention,
-diagnosis, and treatment, all of which benefiting from the advancements in
-understanding the disease. As a part of the process, cancer researchers try to
-understand the disease in the lab, and once their findings are confirmed,
-accepted by the community, and pass the legal requirements, they are used by
-pathologists and oncologists in the clinics. However, the diagnosis itself is
-also complex, challenging, and in many cases not a definitive one. This is why
-sometimes doctors do not agree on the exact diagnosis, and a counsel of experts
-is required for a better and more reliable diagnosis and a treatment which
-hopefully results in a better prognosis.
+it does not help that we lack a deep understanding of cancer. The battle
+against cancer has many fronts, including prevention, diagnosis, and treatment,
+all of which benefit from advancements in understanding the disease. As part of
+the process, cancer researchers try to understand the disease in the lab, and
+once their findings are confirmed, accepted by the community, and pass the
+legal requirements, they are used by pathologists and oncologists in clinics.
+However, the diagnosis itself is also complex, challenging, and in many cases
+not a definitive one. This is why sometimes doctors do not agree on the exact
+diagnosis, and a counsel of experts is required for a better and more reliable
+diagnosis and a treatment which hopefully results in a better prognosis.
 
 To better understand the challenge, we need to realize that cancer is a
 collection of extremely smart and complicated diseases. Although they share
 many common characteristics, the same treatment does not result in a similar
-prognosis in different patients. For example, two patients may come with two
+prognosis in different patients. For example, two patients may come in with two
 physically very similar malignant tumors in their breasts. However, one of the
 patient's tumor grows in response to estrogen, while the other one shows no
 reaction to estrogen. In this case, a treatment which blocks estrogen receptors
 is very effective for the first patient (ER+), while being completely
-ineffective against the second patient who has an ER- subtype of breast cancer.
+ineffective in the second patient who has an ER- subtype of breast cancer.
 
-At the core of it, it comes to the fact that in normal cells there are
+At the core of it, it comes down to the fact that in normal cells there are
 processes and checks put in place which define when and if the cell should
 divide or die at a certain time or under certain conditions. Some of those
 mechanisms act like an automated self destruct switch which is triggered if
@@ -125,18 +126,18 @@ cancerous. Another difference between normal cells and cancerous ones, is that
 normal cells are capable of repairing most of the mutations happening on their
 DNA as a result of either external stress or during cell division, whereas
 those processes themselves are often damaged in a cancerous cell. As a result,
-the rate of mutation in cancerous cells is higher of a few orders of magnitude
+the rate of mutation in cancerous cells is higher by a few orders of magnitude
 compared to a normal healthy cell. The high rate of cell division in
-combination with hyper mutation, makes cancerous cells very adaptive to their
+combination with hypermutation, makes cancerous cells very adaptive to their
 environment, as well as against the drugs attacking them.
 
 Cancer treatments are methods and substances which ideally target only the
 cancerous cells and kill them, or stop their growth and cell division. In a
 sense, they are poison, but ideally only to cancer. However, cancer cells are
 derived from our own cells, and therefore it is not always easy to distinguish
-them from normal cells. The more difference between the cancer cells and our
-normal healthy cells, the easier it is to target them; but unfortunately not
-all cancer subtypes are easily distinguishable from healthy cells for the
+them from normal cells. The bigger the difference between the cancer cells and
+our normal healthy cells, the easier it is to target them; but unfortunately
+not all cancer subtypes are easily distinguishable from healthy cells for the
 purpose of treatment.
 
 The efforts in this thesis are divided into two sections. In the first part,
@@ -147,20 +148,19 @@ different characteristics of individual cells in a given sample, which in our
 case are all from biopsies or blood samples taken from patients. This type of
 single cell measurement data enables us to detect and sort different cell
 populations and cell types within a single given sample. Chapter~\ref{sec:fcs}
-explains our designed and implemented methods to analyze flow cytometry to
-address the following challenges:
+explains the methods we designed and implemented to analyze flow cytometry to
+accomplish the following goals:
 
 \begin{itemize}
   \item \emph{Automated analysis of the data:} manual analysis of flow
-    cytometry data involves manually looking at 2D projections of the data
-    along two selected features at a time, and potentially filtering a part of
-    the data before moving on to a different projection. This way at each step
-    a sub-population, \emph{i.e.} a subset of the cells, is selected for
-    further analysis. Presence or absence of a cell population, or its
-    predominance compared to other cell populations, can be indicative of a
-    certain type of cancer. Our developed methods can automate this process and
-    help clinicians to quickly find a certain cell population within a given
-    sample.
+    cytometry data involves looking at 2D projections of the data along two
+    selected features at a time, and potentially filtering a part of the data
+    before moving on to a different projection. This way at each step a
+    sub-population, \emph{i.e.} a subset of the cells, is selected for further
+    analysis. Presence or absence of a cell population, or its predominance
+    compared to other cell populations, can be indicative of a certain type of
+    cancer. The methods we developed can automate this process and help
+    clinicians to quickly find a certain cell population within a given sample.
   \item \emph{Novel cell population discovery}: our method analyzes the
     relationship between all the cell populations it finds with the target
     cancer subtypes, and reports the cell populations which seem to be
@@ -170,20 +170,20 @@ address the following challenges:
   \item \emph{Quality assurance}: in clinics, oncologists sometimes go through
     a QA process in which they randomly look at a limited number of past
     patients and retrospectively check the quality of the original diagnosis.
-    However, due to limited amount of available resources, the can only go
-    through a small number of cases. We develop a method to report cases where
-    there is a higher probability that the diagnosis could be improved, hoping
-    that retrospective investigation of those cases could generally improve the
-    diagnosis process.
-  \item \emph{Visualization}: one important aspect of analyzing cell populations is
-    that they are related to one another, \emph{i.e.} some cell populations are
-    a subset of others. While there is value in reporting relevant cell
-    populations for a diagnosis, it is also essential to visualize related
-    sub-populations to the reported ones, as well as showing how one can best
-    filter and find a specific group of cells if they were to do that manually.
-    Another reason to visualize the data the way we do, is that it helps a
-    cancer researcher to better understand why or how those cell populations
-    are relevant.
+    However, due to limited available resources, they can only go through a
+    small number of cases. We develop a method to report cases where there is a
+    higher probability that the diagnosis could be improved, hoping that
+    retrospective investigation of those cases could generally improve the
+    diagnostic process.
+  \item \emph{Visualization}: one important aspect of analyzing cell
+    populations is that they are related to one another, in the sense that some
+    cell populations are a subset of others. When a tool reports some cell
+    populations as important or relevant, it is also essential to report and
+    visualize which characteristics of those cell groups are more important in
+    defining and detecting them, so that they can also be best detected with
+    the manual process. Another reason to visualize the data the way we do, is
+    that it helps a cancer researcher to better understand why or how those
+    cell populations are relevant.
   \item \emph{Enabling similar tests using cheaper machines}: one important
     benefit of visualizing the cell populations the way we do, is that it shows
     alternative ways that a cell population can be isolated from the other
@@ -203,45 +203,45 @@ genome, and our focus is on gene expression profiles and a modification on the
 DNA, called methylation, \emph{i.e.} a methyl component is attached a
 Cytosine(C) or an Adenine(A) base on the DNA. A gene expression profile
 measures the activity of all 22k+ genes in a given sample, and a usual DNA
-methylation profile measures the methylation level of about 450k sites on the
-human DNA. DNA methylation levels can change due to environmental factors and
-during cell differentiation and aging; there is also evidence that they are
-sometimes heritable. These data, as well as others such as DNA, RNA, and
-protein sequence data have been increasingly used by biologists and
-computational biologists to better understand cell biology in many fields,
-including cancer research. These data and methods have been so essential to our
-understanding of cancer that the classification of some cancer types now depend
-on them. In some cases, molecular and chemical analysis of cancer has shown us
-that two different classes of cancer are indeed the same disease, only in
-different stages. Lymphoma and leukemia are two good examples which used to be
-considered two different cancers, and now together they form the \emph{lymphoid
-  neoplasms} group, since on the molecular level they have a lot in common.
+methylation profile measures the methylation level of about 450k sites on human
+DNA. DNA methylation levels can change due to environmental factors and during
+cell differentiation and aging; there is also evidence that they are sometimes
+heritable. These data, as well as others such as DNA, RNA, and protein sequence
+data have been increasingly used by biologists and computational biologists to
+better understand cell biology in many fields, including cancer research. These
+data and methods have been so essential to our understanding of cancer that the
+classification of some cancer types now depend on them. In some cases,
+molecular and chemical analysis of cancer has shown us that two different
+classes of cancer are indeed the same disease, only in different stages.
+Lymphoma and leukemia are two good examples which used to be considered two
+different cancers, and now together they form the \emph{lymphoid neoplasms}
+group, since on the molecular level they have a lot in common.
 
-Although there has been magnificent advancements in the field from the
+Although there have been magnificent advancements in the field from the
 computational perspective, the computational problems are still considered very
 hard problems. The curse of dimensionality on top of the low number of samples
 compared to the number of dimensions in the data all result in a hard
 computational problem as explained in detail in Chapter~\ref{sec:background}.
 Also, the fact that the data is often affected by noise and batch effects
-doesn't help the case neither, which we cover in more detail in
+doesn't help the case either, covered in more detail in
 Chapter~\ref{sec:adaptive-learning}. Another challenging factor is that cancer,
 and even a single cancer tumor, is heterogeneous and different cases show very
 different genetic profiles. Historically this has lead to further
-classification of cancer, and at times, changing the classification and merging
-some classes all together as mentioned above. As a result, ideally when a
+classification of cancer and, at times changing the classification and merging
+some classes altogether as mentioned above. As a result, ideally when a
 patient is prescribed a treatment, that treatment is fine tuned and adapted as
 much as possible to tackle the patient's specific disease. This fine tuning,
 which covers the spectrum from choosing the best combination of drugs to
-designing and manufacturing a drug specific to the patient and the patient
+designing and manufacturing a drug specific to that patient and that patient
 alone, is called personalized medicine. With a focus on adaptive and
 interpretable models, Chapter~\ref{sec:adaptive-learning} addresses the
 following challenges:
 
 \begin{itemize}
-  \item \emph{Per-patient significant gene/genome region discovery}: our
-    developed models are adaptive, \emph{i.e.} for any given data from a single
+  \item \emph{Per-patient significant gene/genome region discovery}: the models
+    we have developed are adaptive, \emph{i.e.} for a given data from a single
     patient, the model can give some information about the potential underlying
-    cause of the disease for the specific patient. The provided information
+    cause of the disease for that specific patient. The provided information
     would give clues to practitioners to better find a treatment for the
     patient.
   \item \emph{Per-disease significant gene/genome region discovery}: in order
@@ -249,7 +249,7 @@ following challenges:
     computational methods capable of reporting a list of promising genes that
     are influential in determining the cancer subtypes. The reported set of
     genes can then be a starting point for cell biologists to increase the
-    probability of them finding a new treatment.
+    probability of finding a new treatment.
   \item \emph{Interpretability, per-patient, per-disease}: our models
     investigate genes in networks and take their relationships between one
     another which can be seen from the data into account. Interpreting and
@@ -266,4 +266,4 @@ and implementation of a few pieces which together make an end to end pipeline
 to analyze such data, and apply that to some specific lymphoma subtypes. Then
 we continue in Chapter~\ref{sec:adaptive-learning} with the analysis of mostly
 DNA methylation data and design some adaptable and interpretable models with an
-eye on personalized medicine.
+eye towards personalized medicine.
