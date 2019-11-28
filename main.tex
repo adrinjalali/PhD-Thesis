@@ -48,9 +48,62 @@
 %\chapter{Preface}
 % ...
 
+\chapter{Acknowledgment}
+I would like to thank everybody who helped and supported me throughout the long
+journey I had to finish this thesis. First and foremost, I am grateful of the
+support I received from my supervisors Prof. Dr. Nico Pfeifer and Prof. Dr. Dr.
+Thomas Lengauer at the Max Planck Institute for Informatics in Saarbr\"ucken,
+Germany, and Dr. Ryan Brinkman at the Terry Fox Labs in the British Columbia
+Cancer Research Center in Vancouver, Canada. I also would like to thank Dr. MD.
+Andrew Weng in the same lab.
+
+I am also extremely thankful of my partner Aleksandra Piwowarek and my parents
+who have been very supportive and encouraging during the hard times and never
+gave up on being encouraging. I would not have finished this thesis without
+their continuous support.
+
+I would like to extend this acknowledgment to my colleagues with whom I have
+worked and collaborated, and who have supported me with all the brainstorming
+and discussions we have had. The list is long, but I would like to mention
+Sarvesh Nikumbh, Nora Speicher, Anna Feldmann, Nima Aghaeepour, and Kieren
+O'Neil.
+
+The last, but not least, is to acknowledge the support I have received from my
+friends from all around the world. I would like to mention Marjan Farahbod,
+Iran Mansoori, Matti Lyra, Hassan Hatefi, Faraz Makari, Rob McGee, and Cyrus
+Altschuck.
+
 % TODO: spell check the whole document
 
 \mainmatter
+
+\begin{abstract}
+Cancer is a hard problem. It is hard for the patients, for the doctors and
+nurses, and for the researchers working on understanding the disease and
+finding better treatments for it. The challenges faced by a pathologist
+diagnosing the disease for a patient is not necessarily the same as the ones
+faced by cell biologists working on experimental treatments and understanding
+the fundamentals of cancer. In this thesis we work on different challenges
+faced by both of the above teams.
+
+This thesis first presents methods to improve the analysis of the flow
+cytometry data used frequently in the diagnosis process, specifically for the
+two subtypes of non-Hodgkin Lymphoma which are our focus: Follicular Lymphoma
+and Diffuse Large B Cell Lymphoma. With a combination of concepts from graph
+theory, dynamic programming, and machine learning, we present methods to
+improve the diagnosis process and the analysis of the abovementioned data. The
+interpretability of the method helps a pathologist to better understand a
+patient's disease, which itself improves their choices for a treatment.
+
+In the second part, we focus on the analysis of DNA-methylation and gene
+expression data, both of which presenting the challenge of being very high
+dimensional yet with a few number of samples comparatively. We present an
+ensemble model which adapts to different patterns seen in each given data, in
+order to adapt to noise and batch effects. At the same time, the
+interpretability of our model helps a pathologist to better find and tune the
+treatment for the patient: a step further towards personalized medicine.
+\end{abstract}
+
 \include{introduction}
 
 \include{background}
