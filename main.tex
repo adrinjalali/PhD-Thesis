@@ -1,7 +1,7 @@
 %!TeX spellcheck = en-US
 
 \RequirePackage{pdf14}
-\documentclass{thesis}
+\documentclass[a4paper,11pt,twoside,openright]{thesis}
 %\pdfminorversion=7
 
 \usepackage{url}
@@ -35,27 +35,68 @@
 %\pdfoptionpdfminorversion 7
 %\pdfpageattr {/Group << /S /Transparency /I true /CS /DeviceRGB>>}
 
-\title{Interpretable Methods in Cancer Diagnostics}
-\author{Adrin Jalali}
 
 \begin{document}
 \frontmatter
 
+\title{Interpretable Methods in Cancer Diagnostics}
+\author{Adrin Jalali Khooshahr}
+\date{December 2019}
 \maketitle
-\tableofcontents
+%%% Information
+\newpage{%
+\null
+\thispagestyle{empty}%
+\begin{flushright}
+\null
+\begin{table}[b!]
+  \centering
+  \begin{tabular}[b]{l|l}
+    \textbf{Day of colloquium}         & 20.12.2019\\[1.1em]
+    \textbf{Dean of the faculty}       & Univ.-Professor Dr. Sebastian Hack\\[1.1em]
+    \\
+    \textbf{Chair of the committee}    & Prof.~Dr.\\[1.1em]
+    \textbf{Reporters} & \\
+    \textbf{First Reviewer}            & Prof.~Dr.~Nico Pfeifer\\%[1.1em]
+    \textbf{Second Reviewer}           & Prof.~Dr.~Olga Kalinina\\%[1.1em]
+    \textbf{Academic assistant}        & Dr.~
+  \end{tabular}
+\end{table}
+\null
+\end{flushright}
+\newpage}
+\newpage{%
+\null
+\thispagestyle{empty}%
+\newpage}
+%%% Dedication
+\newpage{%
+\null
+\thispagestyle{empty}%
+\begin{flushright}
+\null\vspace{\stretch{3}} 
+\textit{To Aleks}
+\vspace{\stretch{5}}\null
+\end{flushright}
+\newpage}
+\newpage{%
+\null
+\thispagestyle{empty}%
+\newpage}
+% Adjust page numbers
+\addtocounter{page}{-6}%
 
-% Introductory chapters
-%\chapter{Preface}
-% ...
+\chapter*{Acknowledgment}
+This thesis would not have been possible without the help and support of many
+individuals, collaborators, and my supervisors. I deeply appreciate their help
+and acknowledge I would not have been able to finish this work without their
+help.
 
-\chapter{Acknowledgment}
-I would like to thank everybody who helped and supported me throughout the long
-journey I had to finish this thesis. First and foremost, I am grateful of the
-support I received from my supervisors Prof. Dr. Nico Pfeifer and Prof. Dr. Dr.
-Thomas Lengauer at the Max Planck Institute for Informatics in Saarbr\"ucken,
-Germany, and Dr. Ryan Brinkman at the Terry Fox Labs in the British Columbia
-Cancer Research Center in Vancouver, Canada. I also would like to thank Dr. MD.
-Andrew Weng in the same lab.
+First and foremost, I am grateful of the support I received from my supervisors
+Prof. Dr. Nico Pfeifer and Prof. Dr. Dr. Thomas Lengauer at the Max Planck
+Institute for Informatics in Saarbr\"ucken, Germany, and Dr. Ryan Brinkman at
+the Terry Fox Labs in the British Columbia Cancer Research Center in Vancouver,
+Canada. I also would like to thank Dr. MD. Andrew Weng in the same lab.
 
 I am also extremely thankful of my partner Aleksandra Piwowarek and my parents
 who have been very supportive and encouraging during the hard times and never
@@ -72,10 +113,6 @@ The last, but not least, is to acknowledge the support I have received from my
 friends from all around the world. I would like to mention Marjan Farahbod,
 Iran Mansoori, Matti Lyra, Hassan Hatefi, Faraz Makari, Rob McGee, and Cyrus
 Altschuck.
-
-% TODO: spell check the whole document
-
-\mainmatter
 
 \begin{abstract}
 Cancer is a hard problem. It is hard for the patients, for the doctors and
@@ -104,29 +141,7 @@ interpretability of our model helps a pathologist to better find and tune the
 treatment for the patient: a step further towards personalized medicine.
 \end{abstract}
 
-\include{introduction}
-
-\include{background}
-
-\include{fcs}
-
-\include{adaptivelearning}
-
-\include{conclusion}
-
-\appendix
-\chapter{RchyOptimyx Appendix}
-\include{rchy-appendix}
-
-%\backmatter
-%\chapter{Last note}
-
-\listoftables
-\listoffigures
-
-\bibliographystyle{abbrv}
-\bibliography{thesis}
-
+\selectlanguage{ngerman}%
 \begin{abstract}
 Krebs ist ein schweres Problem. Es ist schwer für die Patienten, für die Ärzte
 und Krankenschwestern und für die Forscher, die daran arbeiten, die Krankheit
@@ -158,5 +173,33 @@ Batch-Effekte anzupassen. Gleichzeitig hilft die Interpretierbarkeit unseres
 Modells einem Pathologen, die Behandlung für den Patienten besser zu finden und
 abzustimmen: ein Schritt weiter in Richtung personalisierter Medizin.
 \end{abstract}
+\selectlanguage{english}%
+
+\tableofcontents
+
+\mainmatter
+
+\include{introduction}
+
+\include{background}
+
+\include{fcs}
+
+\include{adaptivelearning}
+
+\include{conclusion}
+
+\backmatter
+\appendix
+\chapter{RchyOptimyx Appendix}
+\include{rchy-appendix}
+
+%\chapter{Last note}
+
+\listoftables
+\listoffigures
+
+\bibliographystyle{abbrv}
+\bibliography{thesis}
 
 \end{document}
