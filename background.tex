@@ -90,7 +90,15 @@ We have used correlation~\cite{correlation}, mutual information~\cite{mutual-inf
 \subsection{Support Vector Machines}
 \label{sec:svms}
 
-Support vector machines (SVM) can be used both for regression and classification tasks~\cite{svm2, svr1}. As a binary classifier, SVM finds an optimal hyperplane to separate data points in the feature space by maximizing the hyperplane's margin to the nearest points on both sides of it. Therefore given a test data point, its side with regard to the hyperplane determines its class. As a regressor however, SVM finds an optimal hyperplane to interpolate given data points by minimizing the hyperplane's distance from data points. In this work we use SVMs as a binary classifier.
+Support vector machines (SVM) can be used both for regression and
+classification tasks~\cite{svm2, svr1}. As a binary classifier, SVM finds an
+optimal hyperplane to separate data points in the feature space by maximizing
+the hyperplane's margin to the nearest points on both sides of it. Therefore
+given a test data point, its side with regard to the hyperplane determines its
+class. As a regressor, a support vector regressor (SVR) fits a tube with radius
+$\epsilon$ to the data with an $\epsilon$-insensitive loss
+function~\cite{thenatureofstatisticallearningtheory} which penalizes for the
+data points outside the tube. In this work we use SVMs as a binary classifier.
 
 Formally speaking, given a data-set $\mathcal{D}$ of $n$ data points:
 
