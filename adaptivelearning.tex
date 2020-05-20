@@ -21,7 +21,13 @@ Another major challenge stems from the heterogeneity of cancer and cancer tumors
 
 Taking the above challenges into account, our goal is to come up with methods detecting these issues based on the observed information in a single given sample data. We propose two approaches, both of which try to adapt themselves differently to each given data point. We exploit the fact that our input features have genetic background and that genes and proteins work in complex networks, hence are dependent and correlated random variables. We extract patterns which occur between the input features by looking at the training dataset, and use those expected patterns to identify the features of a given new sample data whose values are less affected by the abovementioned factors, and rely mostly on those features to give an output prediction.
 
-In the remaining of this chapter, we first investigate a pre-existing kernel based method which takes into account a protein-protein interaction network as an auxiliary input. Unfortunately our conclusion is that the method cannot achieve its promise on real data. Then we continue with proposing two other methods in Sections~\ref{chap:ratboost-chapter} and~\ref{sec:raccoon}.
+In the remaining of this chapter, we first investigate a pre-existing kernel
+based method which takes into account a protein-protein interaction network as
+an auxiliary input. Unfortunately our conclusion is that the method cannot
+achieve its promise on real data. Then we continue with proposing two other
+methods in Sections~\ref{chap:ratboost-chapter} and~\ref{sec:raccoon}.
+Section~\ref{chap:ratboost-chapter} is an extended version of our existing
+published article~\cite{jalali2016interpretable}.
 
 \section{RatBoost}
 \label{chap:ratboost-chapter}
@@ -818,7 +824,13 @@ Interpreting \emph{Raccoon} for each given sample $x$ can be done in a similar f
 We hope the fact that the above method is very flexible, adaptive, and interpretable proves it a step further towards personalized medicine while at the same time helping cell biologists study cancer with better clues derived from the data. An implementation of the method is available on \emph{github}\footnote{\url{https://github.com/adrinjalali/Network-Classifier/tree/master/Raccoon}}.
 
 \section{Conclusion}
-In this chapter we identified some of the challenges related to analyzing cancer data such as noise, batch effects, and cancer (tumor) heterogeneity. We then showed how we exploit the fact that input features are dependent random variables to gain insight about each given new sample.
+In this chapter we identified some of the challenges related to analyzing
+cancer data such as noise, batch effects, and cancer (tumor) heterogeneity. We
+then showed how we exploit the fact that input features are dependent random
+variables to gain insight about each given new sample.
 
-The methods we introduced are adaptive and interpretable methods which not only have the potential of counteracting batch effects and noise, but are also a step further towards truly personalized medicine. The latter is a result of interpretability of our methods for each given sample, \emph{i.e.} a different interpretation of the model per patient.
-
+The methods we introduced are adaptive and interpretable methods which not only
+have the potential of counteracting batch effects and noise, but are also a
+step further towards truly personalized medicine. The latter is a result of
+interpretability of our methods for each given sample, \emph{i.e.} a different
+interpretation of the model per patient.
