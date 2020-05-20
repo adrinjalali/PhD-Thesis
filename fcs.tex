@@ -660,27 +660,80 @@ In this application note, we detail architectural improvements to flowType and R
 Our primary challenge was to enable flowType to generate a number of cell types tractable on most common workstations (e.g. those with 4--12GB of RAM).
 %RB\textbf{define tractable in terms of some kind of upper/lower bounds, goals need to be specific and measurable, you do this two sentences down, but add here}
 We hereafter denote the original flowType implementation as flowType-BF (brute force), and the new version as flowType-DP (dynamic programming).
-Whereas flowType-BF completely enumerates all cell types over all $[1,...,m]$ markers, we opted  in flowType-DP to use a breadth-first strategy of enumerating all cell types defined over a subset of $k\leq m$ markers. %Holger had a comment on how k is chosen for a given m. This is very much subjective; anecdotally we have noticed that 6 is a good value, as any more markers than that tend to converge down to 6 in RchyOptimyx analysis. However, any value up until memory runs out is possible. This is actually a limitation in mass cytometry or single cell RT-qPCR data, where 4 is the upper limit possible within memory.
-%Solution: use the memory estimation code
-We provide a memory use estimation function, to assist users in finding a $k$ that fits within the limits of their hardware.
-To improve computation time, in flowType-DP we implemented a dynamic programming approach, which exploits the fact that cell types can be arranged into a hierarchy, and membership of any given cell type over $n$ markers is equal to the intersection of one of its parent types (over $n-1$ markers) with a single-marker cell type.
-flowType-DP first enumerates all cell types involving only 1 marker by simple partitioning and then iterates over $2,...,k$ markers, computing all cell types for each level $n$ by set intersections between corresponding cell types in levels $n-1$ and $1$.
+Whereas flowType-BF completely enumerates all cell types over all $[1,...,m]$ markers, we opted  in flowType-DP to use a breadth-first strategy of enumerating all cell types defined over a subset of $k\leq m$ markers.
+
+%Holger had a comment on how k is chosen for a given m. This is very much
+%subjective; anecdotally we have noticed that 6 is a good value, as any more
+%markers than that tend to converge down to 6 in RchyOptimyx analysis. However,
+%any value up until memory runs out is possible. This is actually a limitation
+%in mass cytometry or single cell RT-qPCR data, where 4 is the upper limit
+%possible within memory. Solution: use the memory estimation code
+
+We provide a memory use estimation function, to assist users in finding a $k$
+that fits within the limits of their hardware. To improve computation time, in
+flowType-DP we implemented a dynamic programming approach, which exploits the
+fact that cell types can be arranged into a hierarchy, and membership of any
+given cell type over $n$ markers is equal to the intersection of one of its
+parent types (over $n-1$ markers) with a single-marker cell type. flowType-DP
+first enumerates all cell types involving only 1 marker by simple partitioning
+and then iterates over $2,...,k$ markers, computing all cell types for each
+level $n$ by set intersections between corresponding cell types in levels $n-1$
+and $1$.
 
 For example, membership of the cell type CD45$^{++}$CD117$^+$CD34$^-$ is computed as follows:
 \begin{align}
   &\lbrace \text{CD45}^{++}\text{CD117}^+\text{CD34}^-\rbrace & \nonumber
   \\= &\lbrace \text{CD45}^{++}\text{CD117}^+ \rbrace \cap \lbrace \text{CD34}^- \rbrace & \nonumber
   \\= &\lbrace \text{CD45}^{++} \rbrace \cap \lbrace \text{CD117}^+ \rbrace \cap \lbrace \text{CD34}^- \rbrace &
+\label{frm:phenotypeexample}
 \end{align}
 
-% In addition, we implemented flowType-DP in C++, using the Boost library dynamic\_bitset class to represent cell type membership sets.
+% In addition, we implemented flowType-DP in C++, using the Boost library
+% dynamic\_bitset class to represent cell type membership sets.
 
-To allow partitioning into levels other than positive and negative, we used a string representation for cell types.
-The string has one integer character for every marker, denoting the partition, or zero if the marker is not used.
-Values $1 , ..., n$ denote partitions $1$ to $n$.
-For example, if the set of markers were $\lbrace$CD3, CD45, CD13, CD117, CD34$\rbrace$ the cell type CD45$^{++}$CD117$^+$CD34$^-$ would be represented by \verb#03021#. 
-RchyOptimyx uses a dynamic programing algorithm for efficiently constructing $k$-shortest paths \cite{eppstein1998finding}. 
-We modified RchyOptimyx' graph construction component to be able to handle more than one partition per marker.
+To allow partitioning into levels other than positive and negative, we used a
+string representation for cell types. The string has one integer character for
+every marker, denoting the partition, or zero if the marker is not used. Values
+$1 , ..., n$ denote partitions $1$ to $n$. For example, if the set of markers
+were $\lbrace$CD3, CD45, CD13, CD117, CD34$\rbrace$ the cell type
+CD45$^{++}$CD117$^+$CD34$^-$ would be represented by \verb#03021#. RchyOptimyx
+uses a dynamic programing algorithm for efficiently constructing $k$-shortest
+paths~\cite{eppstein1998finding}. We modified RchyOptimyx' graph construction
+component to be able to handle more than one partition per marker.
+Algorithm~\ref{fig:flowtypedpalg} illustrates the method in pseudocode.
+
+\begin{algorithm}
+\caption{flowTypeDP}
+\label{fig:flowtypedpalg}
+\begin{algorithmic}[1]
+\Function{flowType}{$X$, thresholds, max\_depth}
+    \State markers $ \gets $ \Call{columnNames}{$X$}
+    \State n\_rows $ \gets $ \Call{len}{$X$}
+    \State root $ \gets $ \Call{ones}{n\_rows}
+    \State counts $ \gets $ lastLevel $ \gets $ \Call{dict}{}
+    \State counts[""] $ \gets $ n\_rows
+    \State lastLevel[""] $ \gets $ root
+    \ForAll{$ i \in 1...$max\_depth }
+        \State currentLevel $ \gets $ \Call{dict}{}
+        \ForAll{phenotype, population $ \in $ currentLevel.items()}
+            \ForAll{marker $ \notin $ phenotype}
+                \State populations $ \gets $ \Call{getPopulations}{phenotype, population, marker}
+                \State currentLevel.add(populations)
+            \EndFor
+        \EndFor
+        \State counts.add(\Call{populationCounts}{currentLevel})
+        \State lastLevel $ \gets $ currentLevel
+    \EndFor
+    \State \Return counts
+\EndFunction
+\end{algorithmic}
+\end{algorithm}
+
+In the above algorithm, line 12 calculates all the populations for adding a
+marker to the cell population of a phenotype with all the possibilities with
+different given thresholds as shown in Formula~\ref{frm:phenotypeexample}.
+Line 16 calculates the number of cells in those populations and adds them to
+the output \emph{counts}.
 
 \subsubsection{Results and Discussion}
 We evaluated flowType-DP against flowType-BF on a 10-marker dataset available from Flow Repository (ID FR-FCM-ZZZK) \cite{Aghaeepour2012}.
