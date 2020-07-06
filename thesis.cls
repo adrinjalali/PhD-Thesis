@@ -44,10 +44,9 @@
 %}
 \vspace{1cm} \centering \vspace{1cm}
 {\Huge\sffamily\bfseries\@title\unskip\strut\par} \vspace{2cm} {\Large
-    A dissertation submitted towards the degree
-    Doctor of Natural Science / Engineering
-    of the Faculty of Mathematics and Computer Science
-    of Saarland University
+A dissertation submitted towards the degree Doctor of Natural Sciences
+(Dr. rer. nat.) of the Faculty of Mathematics and Computer Science of Saarland
+University
   \unskip\strut\par} 
 \vspace{4cm} 
 {\scshape by\par} 
